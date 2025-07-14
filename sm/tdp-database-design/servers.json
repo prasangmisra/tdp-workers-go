@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "tdpdb",
+      "Port": 5432,
+      "Username": "tucows",
+      "Group": "Servers",
+      "Host": "sample-db",
+      "SSLMode": "prefer",
+      "MaintenanceDB": "postgres"
+    }
+  }
+}

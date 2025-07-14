@@ -1,0 +1,57 @@
+When I change computer from prod to local :
+VS execution:
+1. Start from TLD loop package
+2. Check VS environment - local
+3. Change tdp_ado connection in TLD loop package
+4. Desable  container with parameters, enable container with variables
+5. If I need to execute only enom_dm package I need to enter passwords to enom_dm package parameters
+
+cmd execution
+1. delete parameters  for tdp_ado connection in TLD loop package
+2. Change tdp_ado connection in TLD loop package
+3. Biuld and copy to folder ssis_local
+
+------------------------------------------------------------------------------------------------------------------
+
+1. I transfer  data from ITDP TO TDP without filter by domain status_id - all records by TLD
+
+2. I take information thin\thick TLD from TDP  - it should be enter with correct value in TDP before migration start
+
+3. Before migration start
+- list tld with information thin\thick   from Vilma
+- tdp should be populte correct with accredittion and tenant customer info for each TLD
+- tld.dns.min_nameservers
+- tld.lifecycle.domain_length
+- tld.lifecycle.add_grace_period
+- tld.lifecycle.transfer_grace_period
+- tld.lifecycle.redemption_grace_period
+- Enom validation 
+  domain without contact
+  domain without nameservers  or <min_nameservers
+  domain without expiration date
+  domain with wrong email
+  domain with wrong country code
+  domain with address1=null
+  domain with city=null
+
+  4. for executing package with config file  from cmd line:
+  DTExec.exe /Project "Enom_dm.ispac" /Package "package.dtsx" /ConfigFile "Enom_dm_dev.dtsConfig"
+  DTExec.exe /Project "Enom_dm.ispac" /Package "package.dtsx" /ConfigFile "Enom_dm_local.dtsConfig"
+
+  values in config file works only when it is additional parameter,
+  which was not used when package was built. a redefining parameter does not work
+
+  for creating config file :
+  - control flow - property -misc-configuration 
+  - add configuratin xml file.
+  - before build package - disable all config files
+  if not disable config file before build package - config file which is defined in cmd does not work.
+
+  if enable config file - you can export some value or add new to exiting config file.
+  if execute package in VS  with config file enabled - you did not get value from config file on the disk , you will get just current value from package.
+  
+  for make config file workable for define connectionString  in cmd - don't parameterize connection string in connection manager inthe package.
+  
+
+
+

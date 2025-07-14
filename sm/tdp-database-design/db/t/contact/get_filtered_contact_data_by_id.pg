@@ -1,0 +1,299 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, check if the required tables and function exist
+SELECT has_table('contact');
+SELECT has_table('contact_postal');
+SELECT has_table('contact_attribute');
+SELECT has_function('jsonb_select_contact_data_by_id');
+
+-- Create a contact with two contact_postal entries and some attributes
+WITH basic_contact AS (
+    INSERT INTO contact(
+        type_id,
+        short_id,
+        title,
+        org_reg,
+        org_vat,
+        org_duns,
+        tenant_customer_id,
+        email,
+        phone,
+        fax,
+        country,
+        language,        
+        tags,
+        documentation,
+        metadata
+    )
+    VALUES(
+        tc_id_from_name('contact_type','individual'),
+        'CONT-001',
+        'CFO',
+        'reg987654321',
+        'vat123456789',
+        'duns147258369',
+        (SELECT id FROM tenant_customer LIMIT 1),
+        'tomas.oesterbro@some.domain',
+        '+1.234567890',
+        '+1.234567899',
+        'DK',
+        'en',        
+        ARRAY['tag-1','tag-2'],
+        ARRAY['doc-A', 'doc-B'],
+        '{"note": "Test contact"}'::jsonb
+    ) RETURNING *
+)
+SELECT * INTO TEMP _basic_contact FROM basic_contact;
+
+-- Insert contact postal addresses
+INSERT INTO contact_postal(
+    contact_id,
+    is_international,
+    first_name,
+    last_name,
+    org_name,
+    address1,
+    address2,
+    address3,
+    city,
+    postal_code,
+    state
+)
+VALUES(
+    (SELECT id FROM _basic_contact),
+    FALSE,
+    'Tómas',
+    'Østerbro',
+    'Some-Company',
+    'Rosenvængets Allé 42',
+    NULL,
+    NULL,
+    'København',
+    '1234',
+    NULL
+),(
+    (SELECT id FROM _basic_contact),
+    TRUE,
+    'Tomas',
+    'Oesterbro',
+    'Some-Company',
+    'Rosenvaengets Alley 42',
+    NULL,
+    NULL,
+    'Copenhagen',
+    '1234',
+    NULL
+);
+
+-- Insert contact attributes
+INSERT INTO contact_attribute(
+    attribute_id,
+    attribute_type_id,
+    contact_id,
+    value
+)
+VALUES
+(
+    tc_id_from_name('attribute','birth_country'),
+    tc_id_from_name('attribute_type','contact'),
+    (SELECT id FROM _basic_contact),
+    'IS'
+),
+(
+    tc_id_from_name('attribute','birth_date'),
+    tc_id_from_name('attribute_type','contact'),
+    (SELECT id FROM _basic_contact),
+    '1961-02-05'
+),
+(
+    tc_id_from_name('attribute','identity_card_number'),
+    tc_id_from_name('attribute_type','contact'),
+    (SELECT id FROM _basic_contact),
+    'IDC123123123'
+),
+(
+    tc_id_from_name('attribute','tld_de_type'),
+    tc_id_from_name('attribute_type','contact'),
+    (SELECT id FROM _basic_contact),
+    '.de-type'
+);
+
+-- Test 1: Basic function test without selected elements
+SELECT isnt(
+    jsonb_select_contact_data_by_id((SELECT id FROM _basic_contact)),
+    NULL,
+    'jsonb_select_contact_data_by_id should return data for the contact'
+);
+
+-- Test 2: Check if all required fields are present regardless of selection
+SELECT ok(
+    jsonb_select_contact_data_by_id((SELECT id FROM _basic_contact)) ? 'id' AND
+    jsonb_select_contact_data_by_id((SELECT id FROM _basic_contact)) ? 'short_id' AND
+    jsonb_select_contact_data_by_id((SELECT id FROM _basic_contact)) ? 'contact_type' AND
+    jsonb_select_contact_data_by_id((SELECT id FROM _basic_contact)) ? 'tags' AND
+    jsonb_select_contact_data_by_id((SELECT id FROM _basic_contact)) ? 'metadata',
+    'Required fields should always be present'
+);
+
+-- Test 3: Check that non-selected fields are null
+SELECT is(
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['title', 'email']
+    ) -> 'phone',
+    'null'::jsonb,
+    'Non-selected element "phone" should be NULL'
+);
+
+-- Test 4: Check that selected fields are present
+SELECT ok(
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['title', 'email', 'phone']
+    ) -> 'title' IS NOT NULL AND
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['title', 'email', 'phone']
+    ) -> 'email' IS NOT NULL AND
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['title', 'email', 'phone']
+    ) -> 'phone' IS NOT NULL,
+    'Selected elements should be present in the result'
+);
+
+-- Test 5: Check that custom attributes are included when selected
+SELECT ok(
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['birth_country', 'birth_date']
+    ) -> 'birth_country' IS NOT NULL AND
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['birth_country', 'birth_date']
+    ) -> 'birth_date' IS NOT NULL,
+    'Selected custom attributes should be included'
+);
+
+-- Test 6: Check that postal data is included when selected
+SELECT ok(
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['first_name', 'last_name', 'address1']
+    ) ? 'contact_postals' AND
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['first_name', 'last_name', 'address1']
+    ) #> '{contact_postals,0,first_name}' IS NOT NULL AND
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['first_name', 'last_name', 'address1']
+    ) #> '{contact_postals,0,last_name}' IS NOT NULL AND
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['first_name', 'last_name', 'address1']
+    ) #> '{contact_postals,0,address1}' IS NOT NULL,
+    'Selected postal fields should be included'
+);
+
+-- Test 7: Check non-international address is first, international address is second
+SELECT ok(
+    (jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['first_name']
+    ) #> '{contact_postals,0,is_international}')::text = 'false' AND
+    (jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY['first_name']
+    ) #> '{contact_postals,1,is_international}')::text = 'true',
+    'International address should be ordered second'
+);
+
+-- Test 8: Function should return NULL for non-existent contact
+SELECT is(
+    jsonb_select_contact_data_by_id('00000000-0000-0000-0000-000000000000'::uuid),
+    NULL,
+    'Function should return NULL for non-existent contact ID'
+);
+
+-- Test 9: Create a complete expected result for comprehensive selection
+-- Expected result with all fields selected
+CREATE TEMP TABLE _expected_full_result ON COMMIT DROP AS 
+SELECT jsonb_build_object(
+    'id', (SELECT id FROM _basic_contact),
+    'short_id', 'CONT-001',
+    'contact_type', tc_name_from_id('contact_type', (SELECT type_id FROM _basic_contact)),
+    'title', 'CFO',
+    'org_reg', 'reg987654321',
+    'org_vat', 'vat123456789',
+    'org_duns', 'duns147258369',
+    'tenant_customer_id', (SELECT tenant_customer_id FROM _basic_contact),
+    'email', 'tomas.oesterbro@some.domain',
+    'phone', '+1.234567890',
+    'fax', '+1.234567899',
+    'country', 'DK',
+    'language', 'en',
+    'documentation', to_jsonb(ARRAY['doc-A', 'doc-B']),
+    'tags', to_jsonb(ARRAY['tag-1', 'tag-2']),
+    'metadata', '{"note": "Test contact"}'::jsonb,
+    'birth_country', 'IS',
+    'birth_date', '1961-02-05',
+    'identity_card_number', 'IDC123123123',
+    'tld_de_type', '.de-type',
+    'contact_postals', jsonb_build_array(
+        jsonb_build_object(
+            'is_international', false,
+            'first_name', 'Tómas',
+            'last_name', 'Østerbro',
+            'org_name', 'Some-Company',
+            'address1', 'Rosenvængets Allé 42',
+            'address2', null,
+            'address3', null,
+            'city', 'København',
+            'postal_code', '1234',
+            'state', null
+        ),
+        jsonb_build_object(
+            'is_international', true,
+            'first_name', 'Tomas',
+            'last_name', 'Oesterbro',
+            'org_name', 'Some-Company',
+            'address1', 'Rosenvaengets Alley 42',
+            'address2', null,
+            'address3', null,
+            'city', 'Copenhagen',
+            'postal_code', '1234',
+            'state', null
+        )
+    )
+) AS value;
+
+-- Test with all possible fields selected
+SELECT cmp_ok(
+    jsonb_select_contact_data_by_id(
+        (SELECT id FROM _basic_contact),
+        ARRAY[
+            'title', 'org_reg', 'org_vat', 'org_duns', 'tenant_customer_id', 
+            'email', 'phone', 'fax', 'country', 'language', 'documentation',
+            'first_name', 'last_name', 'org_name', 'address1', 'address2', 'address3', 
+            'city', 'postal_code', 'state', 'birth_country', 'birth_date', 
+            'identity_card_number', 'tld_de_type'
+        ]
+    ),
+    '@>',
+    (SELECT value FROM _expected_full_result),
+    'All selected fields should be included in the result'
+);
+
+-- Test 10: Test with empty array parameter
+SELECT ok(
+    jsonb_select_contact_data_by_id((SELECT id FROM _basic_contact), ARRAY[]::TEXT[]) IS NOT NULL,
+    'Empty array parameter should return result with required fields only'
+);
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

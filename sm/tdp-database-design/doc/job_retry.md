@@ -1,0 +1,3 @@
+# Job retries
+
+To create a retriable job, use the `job_submit_retriable` stored procedure. This allows you to specify the maximum number of retries `_max_retries` and the retry interval `_retry_interval`. When the job fails it will be set to `submitted` and will be requeued after the interval has elapsed. This will happen each time the job fails up until the point we have exhausted the maximum number of retries specified by `_max_retries`. At this point the job status will be failed.

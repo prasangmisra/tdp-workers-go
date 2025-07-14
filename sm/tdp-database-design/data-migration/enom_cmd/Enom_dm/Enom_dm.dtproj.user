@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DataTransformationsUserConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Configurations>
+    <Configuration>
+      <Name>Development</Name>
+      <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>false</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
+        <UserIDs />
+        <UserPasswords />
+        <OfflineMode>false</OfflineMode>
+        <ProgressReporting>true</ProgressReporting>
+        <ParameterConfigurationSensitiveValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2025-05-28T18:17:08.1357226Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{E585A09E-97E4-4630-B91C-1B263118BC7B}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAAG4DeoNR2Iw+0Qvl1ZA/9IAAAAAASAAACgAAAAEAAAAGeH3MDfL3JS0tkY50j3ctggAAAA8Us38iZJCMRv3FH5z6klazmzVQ6Rc37jy59y+MZYhqsUAAAA+rsd/5btZyhCGt9ZWS4r6QL93uU=</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{6A529046-AB30-4F5C-B2C8-2F7047E85979}</Id>
+            <Name>ITDP-TDP::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADXhF5Vq4apOMGwLXHJ/Kc+AAAAAASAAACgAAAAEAAAAOqNKdvYmFzSKmOTT1a97qIYAAAAgMBJduT7GgEBAqRzng3S+ZpcVoeFGHqlFAAAACIQ40/PxJwgasL3krrIXBJR/z3w</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{0CF44AA7-2C90-4525-B740-9CDECA8AE2E8}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADcmZKPUUsomYCb873R1tD3AAAAAASAAACgAAAAEAAAALGFe5sKIO/ikkINtXbp8bIQAAAAra60eHu1K+KrmGF6MPklqRQAAAATck+LJlzDmu+QnqPn0aAy7N5Qvg==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{3C48B452-399E-4159-91F5-0DD4320AC8CD}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABYkMHi2NTod9eNgkYzU1r8AAAAAASAAACgAAAAEAAAAOHRu5LIV9Po2eZ2fbwn3mQQAAAAHzMTh9kl0VqB+vdqtDoupBQAAACIi1dkudQoRx5hgkw4hmntg8hnnA==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAAeIhob2XwK0FF7mbxYjz3GAAAAAASAAACgAAAAEAAAAKIqBfm5NsoKSCwE9IWz6MAYAAAAeiHTZrAv7AZfWq1pltrbOL1Mxo5vkKNEFAAAAIsBCNtWuaGkz1emZSCg2kJiZMGX</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationSensitiveValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Local</Name>
+      <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>true</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
+        <ServerName>CEN0VWSQLMGR01\SQL2022</ServerName>
+        <PathOnServer>/SSISDB/Enom_dm/Enom_dm</PathOnServer>
+        <UserIDs />
+        <UserPasswords />
+        <OfflineMode>false</OfflineMode>
+        <ProgressReporting>true</ProgressReporting>
+        <ParameterConfigurationSensitiveValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2025-05-28T18:17:08.1436415Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{E585A09E-97E4-4630-B91C-1B263118BC7B}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAACKH9hRTdrXNuT2aEsvXociAAAAAASAAACgAAAAEAAAAB8xPFi+zzN7mIvD/CdebVIYAAAArzP83B/RjwRb8WPTCO0HcZYVUWdu8IvZFAAAAFYNJuhEKezA3elSePCoUU09PVzb</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{6A529046-AB30-4F5C-B2C8-2F7047E85979}</Id>
+            <Name>ITDP-TDP::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAACbc0hDbhar/9qw4q9/01gPAAAAAASAAACgAAAAEAAAAAGdgkKJRDUIzrcu0TQVskYYAAAAC1tYwqHbabxlE8s8eiTndhJ+Yyzoepb7FAAAAIexuN//EBXT8T8raoyuBcRlpYJl</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{0CF44AA7-2C90-4525-B740-9CDECA8AE2E8}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABDZBPEfxgJMvCHNBkDbbHYAAAAAASAAACgAAAAEAAAAJC9cTjwGpuQljZdFjj+YQ0QAAAA1k7XpJ9dLH20YA2WUOi2vhQAAABpwfuPq/CHP4GOiDFgLDBBTBFALA==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{3C48B452-399E-4159-91F5-0DD4320AC8CD}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABIapCEtY3ZF/0UkGWkjwx3AAAAAASAAACgAAAAEAAAANYsd2bxwz/pt+QSEvmZbosQAAAAyFS17Q8gbmj/vdotz7BH7hQAAACXPCO66Dgx/vJhj2yUdRfXAOWjyA==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAD/zMU/8gtGqtUWqCpMwRIzAAAAAASAAACgAAAAEAAAAJjtJj8sSzvvYtUgd5kQX/oYAAAAbjLuTsea7XQfUgIeTF06MqvXTSbfIpeiFAAAABqcGZS2E/KTBWg/fVEs04YoKArW</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationSensitiveValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Local_prod</Name>
+      <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>false</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
+        <ServerName>cen0vwsqlmgr01\SQL2022</ServerName>
+        <PathOnServer>/SSISDB/Enom_dm/Enom_dm</PathOnServer>
+        <UserIDs />
+        <UserPasswords />
+        <OfflineMode>true</OfflineMode>
+        <ProgressReporting>true</ProgressReporting>
+        <ParameterConfigurationSensitiveValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2025-05-28T18:17:08.1484208Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{E585A09E-97E4-4630-B91C-1B263118BC7B}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAC3gcP2vcI2SeuP2HmMk7y/AAAAAASAAACgAAAAEAAAAF+kRQ2b33M2pDEvk0T27N0YAAAAVEWmlbYzbbiVa98oJQpJShrG+3OCaA0WFAAAAOxdKiPsZXrNBgi0bob38BcCSKu+</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{6A529046-AB30-4F5C-B2C8-2F7047E85979}</Id>
+            <Name>ITDP-TDP::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADLHug4kyW7l+JdjdZeLES0AAAAAASAAACgAAAAEAAAAHENqh7KoqzLZhDpE/jvBcQYAAAA+n6flcvLamweb+ZFbSJChLW9sjocBZZeFAAAAI378iXO83nTb4ZGjp5sdo1+ZlQ4</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{0CF44AA7-2C90-4525-B740-9CDECA8AE2E8}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABWdOSUvpQIiNC08oqKhTEKAAAAAASAAACgAAAAEAAAAHFBBcw72d5CsUaqlXr8ZhgQAAAAT2ygoyhIpCMImEThXTFP8hQAAADRQlLs9EyQHnVGoMp7pvHe0m6LhQ==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{3C48B452-399E-4159-91F5-0DD4320AC8CD}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADrGVHR+84NyMrWb12F5cnZAAAAAASAAACgAAAAEAAAAI2uNAjZiHeFJmlxPddsELkQAAAAZ8cIQD2mh3QMdWPOETH52RQAAABaiXnPoJ7wg49K+UKPPtQLebWPjA==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADSM0RWahQCtxw+V0VfXGB9AAAAAASAAACgAAAAEAAAAKTwQlYkhrRLMVtoIsrpMRIYAAAAUQG2eCiWP3WnDNOvXIwTwjgV6j93LU8aFAAAACq9tWEa1lHXrt3eCTA5KGu59aqH</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationSensitiveValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>QA</Name>
+      <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>false</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
+        <UserIDs />
+        <UserPasswords />
+        <OfflineMode>false</OfflineMode>
+        <ProgressReporting>true</ProgressReporting>
+        <ParameterConfigurationSensitiveValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2025-05-28T18:17:08.1542143Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{E585A09E-97E4-4630-B91C-1B263118BC7B}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAACaG5v31wxB0qpArOoaKMveAAAAAASAAACgAAAAEAAAAKFiw9Jm9HrgdPtL6BMHPVogAAAA7j/nUxrcTx+jNM07ECm+6wmWmIXAYxYgCL0V3+rtYOAUAAAAtPfn8uxuHr8+9biedQXuBlcCd2E=</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{6A529046-AB30-4F5C-B2C8-2F7047E85979}</Id>
+            <Name>ITDP-TDP::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABXIatHG1dIDn3siVa4s8y3AAAAAASAAACgAAAAEAAAAOFKqfFKddzpAvpOfha0xRMYAAAAXwL7LLRfJnP+kyjLSsWuuZM+tUCd+qVwFAAAALFFBcTNByudrI8xyktkj+LwWNMo</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{0CF44AA7-2C90-4525-B740-9CDECA8AE2E8}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADnvq3eqcmyHjaXSIF8/NOTAAAAAASAAACgAAAAEAAAAL7naaVemTNlU2P6JopxTLIQAAAAjxagn5Pyja3wUTXJIlSMtBQAAAAij1tfDjmVG5q+ZpY3Wt4Rm4O6fA==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{3C48B452-399E-4159-91F5-0DD4320AC8CD}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAADkEV+G+GgCKp4P4mwOS7NAAAAAASAAACgAAAAEAAAAFpumnw057i4e66uzbDlBjoQAAAAI8KjEItDteMcoEbHdmsT7xQAAAAFipu2Xe4IQAs6VhvNHiK8+7GTWQ==</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADXu6eq2aKRh4e1TE3CneQxAAAAAASAAACgAAAAEAAAAOXd7MNN58QWxlE3BjgBGnsYAAAAgO2uKVfnUhyv0phDrmqYSIlB4LahJ17NFAAAAAOHD8YtN59NeWYLaMnCz25X8DIS</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationSensitiveValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Prod</Name>
+      <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>false</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
+        <ServerName>CEN0VWSQLMGR01\SQL2022</ServerName>
+        <PathOnServer>/SSISDB/Enom_dm/Enom_dm</PathOnServer>
+        <UserIDs />
+        <UserPasswords />
+        <OfflineMode>false</OfflineMode>
+        <ProgressReporting>true</ProgressReporting>
+        <ParameterConfigurationSensitiveValues>
+          <ConfigurationSetting>
+            <Id>{E585A09E-97E4-4630-B91C-1B263118BC7B}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_Password</Name>
+            <Value xsi:type="xsd:string">uNZvddMFfboUXN2hi3YA</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2025-05-28T18:17:08.1601623Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{6A529046-AB30-4F5C-B2C8-2F7047E85979}</Id>
+            <Name>ITDP-TDP::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABv2nQeo81m4X9/0MwjdupQAAAAAASAAACgAAAAEAAAAI0gK0lqWAkWgsZ/BrMt+nEYAAAA9SYqZcaMbgjI/PSSn1dI1YGaRF1+feDeFAAAALyE4T6vSlQo/ThHQ2OFl8zZ4iFP</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{0CF44AA7-2C90-4525-B740-9CDECA8AE2E8}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABK48rzXGNlghnRCXLE5NMvAAAAAASAAACgAAAAEAAAACpK1n74tWyHppfeGeC0bB4YAAAAjDufrINvnTFW7JMqlYGlwmaw/93IjBnUFAAAAOUFi1xN4qxb5s2meaEV3OHOH92b</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{3C48B452-399E-4159-91F5-0DD4320AC8CD}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAB1iu27XWAmH6Fb1R2PthciAAAAAASAAACgAAAAEAAAAGvfMH/eg1QNaBxv0VxRm4oYAAAAeubLJPPakabrh/uIAZDCSyuaHY6u0yi/FAAAAMTsCIVEOJTWyJW4o+gchNS9vRAT</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAACUE+tLZIFZzhHIdvAXwv7eAAAAAASAAACgAAAAEAAAAKvayuCdMyIwgD1K32Xmn+oYAAAAn+DiKaZ9GdHW9wCfjdOkDHzYn4cK9DlKFAAAAGw2j13uvypJNLhYLOK9SKkreqGk</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationSensitiveValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>prod_snapshot</Name>
+      <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>false</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
+        <ServerName>CEN0VWSQLMGR01\SQL2022</ServerName>
+        <PathOnServer>/SSISDB/Enom_dm/Enom_dm</PathOnServer>
+        <UserIDs />
+        <UserPasswords />
+        <OfflineMode>false</OfflineMode>
+        <ProgressReporting>true</ProgressReporting>
+        <ParameterConfigurationSensitiveValues>
+          <ConfigurationSetting>
+            <Id>{E585A09E-97E4-4630-B91C-1B263118BC7B}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_Password</Name>
+            <Value xsi:type="xsd:string">uNZvddMFfboUXN2hi3YA</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2025-05-28T18:17:08.168931Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{6A529046-AB30-4F5C-B2C8-2F7047E85979}</Id>
+            <Name>ITDP-TDP::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAABscNundOF1q3PNXzzgVdgJAAAAAASAAACgAAAAEAAAAHUXxT6bbcokQTL6d3D7m44YAAAAZ+h79pu5vsQ5Qe7+rcs704EokemGB9qIFAAAAHteVaIXnAPUznjXGAEwzOLmwjJ4</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{0CF44AA7-2C90-4525-B740-9CDECA8AE2E8}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAAK8ra16ah59gdnPEkVfonEAAAAAASAAACgAAAAEAAAADHJWbpiSDpza1NQwwnrHsYYAAAACvhGOamxqQ+HD48Y44aFaqAs912Svu23FAAAABqiF/yJwd1q+AQEUN3f4FV7DII+</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{3C48B452-399E-4159-91F5-0DD4320AC8CD}</Id>
+            <Name>OpenSRS_dm::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAAB1I33HaKxMXUm0Ni1osKcuAAAAAASAAACgAAAAEAAAADa5gBMUGOd1zvnppRteVdgYAAAAR5hfw3IU9X8/XaNJ7+Y8trazVtNq6L1yFAAAAMU0ec0kiXHF4BAraPKMUaP9kISb</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAACAAAAAAADZgAAwAAAABAAAADZ2Y2dA941Ug3eBplKhaYIAAAAAASAAACgAAAAEAAAANJ/LO8CwxcDdp/8QHTJyzgYAAAAw/o91qF0pR8csGoEy+wKZm8eP8Ricr+bFAAAAF69g68/0XJ87+npe2HlvW0Ev6mX</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationSensitiveValues>
+      </Options>
+    </Configuration>
+  </Configurations>
+</DataTransformationsUserConfiguration>

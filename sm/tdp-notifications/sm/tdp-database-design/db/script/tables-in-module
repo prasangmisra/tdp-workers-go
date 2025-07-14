@@ -1,0 +1,9 @@
+#!/bin/bash
+
+pattern=`egrep -rhio '^\s*(create\s+(foreign\s+)*table) (.*?)\(' $1/* | perl -lanE 'm{create table (.*)\(}i and say $1'|xargs echo| tr ' ' '|'`
+
+if [ "$pattern" = "" ]; then
+  echo "^-$"
+else
+  echo "^$pattern$"
+fi

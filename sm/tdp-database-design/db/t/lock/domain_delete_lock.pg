@@ -1,0 +1,115 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld 
+    FROM v_accreditation_tld
+    WHERE tld_name = 'help' 
+        AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+        AND is_default;
+
+
+-- create a domain entry for testing
+WITH test_domain AS (
+  INSERT INTO domain(
+    tenant_customer_id,
+    name,
+    accreditation_tld_id,
+    ry_created_date,
+    ry_expiry_date,
+    expiry_date
+  ) VALUES (
+    (SELECT id FROM _tenant_customer),
+    FORMAT('tdp-test-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+    (SELECT id FROM _acc_tld),
+    NOW(),
+    NOW() + ('1 years')::INTERVAL,
+    NOW() + ('1 years')::INTERVAL
+  ) RETURNING * 
+)
+SELECT * INTO TEMP _test_domain FROM test_domain;
+
+-- add lock for domain delete
+SELECT lives_ok($$
+    SELECT set_domain_lock((SELECT id FROM _test_domain), 'delete');
+    $$,
+    'insert lock for domain'
+);
+
+-- create an order
+WITH o AS (
+INSERT INTO "order"(
+    tenant_customer_id,
+    type_id
+)
+VALUES(
+    (SELECT id FROM v_tenant_customer LIMIT 1),
+    (SELECT id FROM v_order_type WHERE product_name='domain' AND name='update')
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _order FROM o;
+
+SELECT throws_matching($$
+    INSERT INTO order_item_delete_domain(
+        order_id,
+        name
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain)
+    );
+    $$,
+'delete prohibited',
+'domain delete is prohibited by delete lock');
+
+-- add registrar lock for domain delete
+SELECT lives_ok($$
+    SELECT set_domain_lock((SELECT id FROM _test_domain), 'delete', TRUE);
+    $$,
+    'insert registrar lock for domain'
+);
+
+SELECT throws_matching($$
+    INSERT INTO order_item_delete_domain(
+        order_id,
+        name
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain)
+    );
+    $$,
+'delete prohibited by registrar',
+'domain delete is prohibited by registrar delete lock');
+
+-- remove both locks for domain delete
+SELECT lives_ok($$
+    SELECT remove_domain_lock((SELECT id FROM _test_domain), 'delete', FALSE);
+    $$,
+    'remove lock for domain'
+);
+SELECT lives_ok($$
+    SELECT remove_domain_lock((SELECT id FROM _test_domain), 'delete', TRUE);
+    $$,
+    'remove registrar lock for domain'
+);
+
+SELECT lives_ok($$
+    INSERT INTO order_item_delete_domain(
+        order_id,
+        name
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain)
+    );
+    $$,
+'domain delete is not longer prohibited');
+
+-- finish testing
+SELECT * FROM finish(true);
+
+--COMMIT;
+ROLLBACK;

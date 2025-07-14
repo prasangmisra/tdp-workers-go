@@ -1,0 +1,86 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+-- set fee_check_allowed to true to create two validation jobs
+Update v_attribute
+SET value=true
+WHERE key='tld.lifecycle.fee_check_allowed'
+    AND tld_name = 'sexy'
+    AND tenant_id=(SELECT tenant_id FROM _tenant_customer);
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM _tenant_customer),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='renew')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+WITH oi AS (
+    INSERT INTO order_item_renew_domain (
+        order_id,
+        name,
+        period,
+        current_expiry_date
+    ) VALUES (
+        (SELECT id FROM _order),
+        'example-to-be-renewed.sexy',
+        2,
+        (SELECT ry_expiry_date FROM domain WHERE name = 'example-to-be-renewed.sexy')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _renew_order_item FROM oi;
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- there should be 1 job created to validate domain
+SELECT cmp_ok((
+    SELECT COUNT(*)::INT
+    FROM v_job vj
+    JOIN renew_domain_plan tidp ON tidp.id = vj.reference_id
+    WHERE tidp.order_item_id = (SELECT id FROM _renew_order_item)
+    AND vj.job_type_name = 'validate_domain_premium'),
+    '=',
+    1::INT
+);
+
+-- let's update the validate_domain_premium job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','failed')
+    WHERE id = (
+        SELECT job_id
+        FROM v_job vj
+        JOIN renew_domain_plan tidp ON tidp.id = vj.reference_id
+        WHERE tidp.order_item_id = (SELECT id FROM _renew_order_item)
+            AND vj.job_type_name = 'validate_domain_premium'
+            AND vj.job_status_name = 'submitted'
+    )
+$$);
+
+
+-- there should be 1 item failed
+SELECT cmp_ok(
+    (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _renew_order_item)) WHERE plan_status_name = 'failed'),
+    '=',
+    1::INT
+);
+
+-- end testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

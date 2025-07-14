@@ -1,0 +1,178 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq-local
+    environment:
+      - RABBITMQ_ERLANG_COOKIE='rabbitcookie'
+      - RABBITMQ_DEFAULT_USER=domains
+      - RABBITMQ_DEFAULT_PASS=tucows
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "25672:25672"
+      - "15671:15671"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ../etc/rabbitmq:/etc/rabbitmq/
+      - ../etc/certs/server:/etc/certs/
+    networks:
+      - tdpnotification
+
+  domainsdb:
+    build:
+      context: ../sm/tdp-database-design
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=tucows
+      - POSTGRES_PASSWORD=tucows1234
+    volumes:
+      - ../sm/tdp-database-design/etc/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ../sm/tdp-database-design/db/t:/tests/t
+      - ../sm/tdp-database-design/db:/db
+    ports:
+      - "5433:5432"
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    working_dir: /db
+    healthcheck:
+      test: if [ ! -f ../ready ]; then touch ../ready && make all test-data DBENV=dev; fi
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    networks:
+      - tdpnotification
+
+  subdb:
+    build:
+      context: ../database
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=tucows
+      - POSTGRES_PASSWORD=tucows1234
+    volumes:
+      - ../database/etc/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ../database/db/t:/tests/db/t
+      - ../database/db:/db
+    ports:
+      - "5434:5432"
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    working_dir: /db
+    healthcheck:
+      test: if [ ! -f ../ready ]; then touch ../ready && make all test-data; fi
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    networks:
+      - tdpnotification
+
+  subscription-manager-service:
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: subscription-manager-service
+    environment:
+      - ENV=dev
+    volumes:
+      - ../subscription-manager-service:/app/subscription-manager-service
+      - ../etc/certs/client:/etc/certs/
+    depends_on:
+      rabbitmq:
+        condition: service_started
+      domainsdb:
+        condition: service_healthy
+      subdb:
+        condition: service_healthy
+    networks:
+      - tdpnotification
+
+  api-service:
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: api-service
+    environment:
+      - LOG_OUTPUT_SINK=stdout
+    volumes:
+      - ../api-service:/app/api-service
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8190:8190"
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_started
+    networks:
+      - tdpnotification
+
+  notification-manager-service:
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: notification-manager-service
+    environment:
+      - ENV=dev
+    volumes:
+      - ../notification-manager-service:/app/notification-manager-service
+      - ../etc/certs/client:/etc/certs/
+    depends_on:
+      rabbitmq:
+        condition: service_started
+      subdb:
+        condition: service_healthy
+    networks:
+      - tdpnotification
+
+  webhook-sender-service:
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: webhook-sender-service
+    environment:
+      - ENV=dev
+    volumes:
+      - ../webhook-sender-service:/app/webhook-sender-service
+      - ../etc/certs/client:/etc/certs/
+    depends_on:
+      rabbitmq:
+        condition: service_started
+    networks:
+      - tdpnotification
+
+  email-sender-service:
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: email-sender-service
+    environment:
+      - LOG_OUTPUT_SINK=stdout
+    volumes:
+      - ../email-sender-service:/app/email-sender-service
+      - ../etc/certs/client:/etc/certs/
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_started
+    networks:
+      - tdpnotification
+      
+networks:
+  tdpnotification:
+    name: tdpnotification
+    driver: bridge

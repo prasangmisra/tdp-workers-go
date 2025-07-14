@@ -1,0 +1,4 @@
+*.env
+.secrets
+!.gitignore
+!README.md

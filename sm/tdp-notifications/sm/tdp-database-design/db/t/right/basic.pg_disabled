@@ -1,0 +1,363 @@
+
+BEGIN;
+
+-- The below is some boilerplate to allow for creating a domain order to test
+-- the right enforcement trigger.
+
+INSERT INTO business_entity ( name, descr )
+VALUES
+( 'test-entity-1',     'Test business entity #1' ),
+( 'test-entity-2',     'Test business entity #2' ),
+( 'test-entity-3',     'Test business entity #3' ),
+( 'test-entity-4',     'Test business entity #4' ),
+( 'test-entity-5',     'Test business entity #5' ),
+( 'test-entity-6',     'Test business entity #6' ),
+( 'test-entity-7',     'Test business entity #7' ),
+( 'test-entity-backend-provider-1', 'Test business entity backend provider #1' ),
+( 'test-entity-registry-1', 'Test business entity registry #1' ),
+( 'test-entity-tld-3', 'Test business entity tld #3' ),
+( 'test-entity-tld-4', 'Test business entity tld #4' );
+
+INSERT INTO tenant ( business_entity_id, name, descr)
+SELECT be.id,
+       FORMAT('tenant-%s', be.name),
+       FORMAT('Test tenant %s', be.name)
+FROM business_entity be
+WHERE be.created_date = NOW();
+
+INSERT INTO customer ( business_entity_id, name )
+SELECT be.id,
+       FORMAT('customer-%s', be.name)
+FROM business_entity be
+WHERE be.created_date = NOW();
+
+INSERT INTO "user" ( email, name )
+VALUES
+( 'lem@tucows.com', 'Luis E. Muñoz' ),
+( 'jdoe@dev.null', 'John Doe' );
+
+INSERT INTO tenant_customer ( tenant_id, customer_id, customer_number )
+SELECT t.id, c.id, FORMAT('#%s', c.name)
+FROM business_entity be
+     JOIN tenant t
+          ON t.business_entity_id = be.id
+             AND be.created_date = NOW()
+             AND t.created_date = NOW()
+     JOIN customer c
+          ON c.business_entity_id = be.id
+             AND c.created_date = NOW()
+;
+
+INSERT INTO customer_user ( customer_id, user_id )
+SELECT c.id, u.id
+FROM customer c
+     JOIN "user" u
+          ON u.email IN ( 'lem@tucows.com' )
+             AND u.created_date = NOW()
+             AND c.created_date = NOW()
+             AND c.name ~ '^customer-'
+;
+
+INSERT INTO provider ( business_entity_id, name, is_proxy )
+SELECT be.id, 'example backend provider', false
+FROM business_entity be
+WHERE be.name = 'test-entity-backend-provider-1'
+      AND be.created_date = NOW()
+;
+
+INSERT INTO registry ( business_entity_id, name )
+SELECT be.id, 'example registry'
+FROM business_entity be
+WHERE be.name = 'test-entity-registry-1'
+      AND be.created_date = NOW()
+;
+
+INSERT INTO tld ( registry_id, name )
+SELECT r.id, 'example'
+FROM registry r
+WHERE r.created_date = NOW()
+      AND r.name = 'example registry'
+;
+
+INSERT INTO provider_tld(provider_id, tld_id, service_range)
+SELECT bp.id, t.id, '[-infinity,infinity]'::TSRANGE
+FROM provider bp
+    JOIN tld t
+         ON bp.created_date = NOW()
+            AND t.created_date = NOW()
+            AND bp.name = 'example backend provider'
+            AND t.name = 'example'
+;
+
+INSERT INTO domain(tenant_customer_id, provider_tld_id, name)
+SELECT tc.id, bpt.id, 'test-1.example'
+FROM tenant_customer tc
+     JOIN tenant t
+          ON tc.tenant_id = t.id
+             AND t.name = 'tenant-test-entity-1'
+             AND tc.created_date = NOW()
+             AND t.created_date = NOW()
+     JOIN tld
+          ON tld.created_date = NOW()
+             AND tld.name = 'example'
+     JOIN provider bp
+          ON bp.created_date = NOW()
+             AND bp.name = 'example backend provider'
+     JOIN provider_tld bpt
+          ON bpt.created_date = NOW()
+             AND bpt.provider_id = bp.id
+             AND bpt.tld_id = tld.id
+;
+
+-- End of boilerplate. Tests start below.
+
+SELECT plan(14);
+
+SELECT has_table('right_order');
+
+-- Check that the alive trigger was auto-created
+
+SELECT has_index('right_order', 'right_order_alive_id_unique');
+
+-- This operation should be blocked by default
+
+PREPARE add_test_new_domain_order AS
+INSERT INTO domain_order
+    ( tenant_customer_id, order_type_id, customer_user_id, order_status_id,
+      provider_tld_id, domain_id )
+    SELECT tc.id, ot.id, cu.id, os.id, bpt.id, d.id
+    FROM tenant_customer tc
+         JOIN tenant t
+              ON tc.tenant_id = t.id
+                 AND t.name = 'tenant-test-entity-1'
+                 AND tc.created_date = NOW()
+                 AND t.created_date = NOW()
+         JOIN tld
+              ON tld.created_date = NOW()
+                 AND tld.name = 'example'
+         JOIN provider bp
+              ON bp.created_date = NOW()
+                 AND bp.name = 'example backend provider'
+         JOIN provider_tld bpt
+              ON bpt.created_date = NOW()
+                 AND bpt.provider_id = bp.id
+                 AND bpt.tld_id = tld.id
+         JOIN "user" u
+              ON u.created_date = NOW()
+                 AND u.email = 'lem@tucows.com'
+         JOIN customer c
+              ON c.created_date = NOW()
+                 AND c.name = 'customer-test-entity-1'
+         JOIN customer_user cu
+              ON cu.created_date = NOW()
+                 AND cu.user_id = u.id
+                 AND cu.customer_id = c.id
+         JOIN product p
+              ON p.name = 'domain'
+         JOIN order_type ot
+              ON ot.name = 'new'
+                 AND ot.product_id = p.id
+         JOIN order_status os
+              ON os.name = 'created'
+         JOIN domain d
+              ON d.created_date = NOW()
+                 AND d.name = 'test-1.example';
+
+SELECT throws_matching(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'operation blocked by right constraint',
+  'domain registration order is forbidden by default'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+INSERT INTO right_order(descr, block_matching)
+VALUES ( 'universal allow', false );
+
+SELECT lives_ok(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'domain registration order is allowed by new wildcard right'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order WHERE descr = 'universal allow' AND created_date =NOW();
+
+INSERT INTO right_order(descr, block_matching, product_id)
+SELECT 'product-specific allow', false, p.id
+FROM product p
+WHERE p.name = 'domain';
+
+SELECT lives_ok(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'domain registration order allowed by product right'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'product-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, product_id)
+SELECT 'product-specific allow', false, p.id
+FROM product p
+WHERE p.name = 'certificate';
+
+SELECT throws_matching(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'operation blocked by right constraint',
+  'domain registration order did not match wrong product'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'product-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, tenant_id)
+SELECT 'tenant-specific allow', false, t.id
+FROM tenant t
+WHERE t.name = 'tenant-test-entity-1';
+
+SELECT lives_ok(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'domain registration order allowed by tenant right'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'tenant-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, tenant_id)
+SELECT 'tenant-specific allow', false, t.id
+FROM tenant t
+WHERE t.name = 'tenant-test-entity-2';
+
+SELECT throws_matching(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'operation blocked by right constraint',
+  'domain registration order did not match wrong tenant'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'tenant-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, customer_id)
+SELECT 'customer-specific allow', false, c.id
+FROM customer c
+WHERE c.name = 'customer-test-entity-1';
+
+SELECT lives_ok(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'domain registration order allowed by customer right'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'customer-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, customer_id)
+SELECT 'customer-specific allow', false, c.id
+FROM customer c
+WHERE c.name = 'customer-test-entity-2';
+
+SELECT throws_matching(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'operation blocked by right constraint',
+  'domain registration order did not match wrong customer'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'customer-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, order_type_id)
+SELECT 'order-type-specific allow', false, ot.id
+FROM product p
+     JOIN order_type ot
+          ON p.name = 'domain'
+             AND ot.product_id = p.id
+             AND ot.name = 'new'
+;
+
+SELECT lives_ok(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'domain registration order allowed by order-type right'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'order-type-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, order_type_id)
+SELECT 'order-type-specific allow', false, ot.id
+FROM product p
+     JOIN order_type ot
+          ON p.name = 'domain'
+             AND ot.product_id = p.id
+             AND ot.name = 'renew'
+;
+
+SELECT throws_matching(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'operation blocked by right constraint',
+  'domain registration order did not match wrong order-type'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'order-type-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, tenant_customer_id)
+SELECT 'tenant-customer-specific allow', false, tc.id
+FROM customer c
+     JOIN tenant t
+          ON t.name = 'tenant-test-entity-1'
+             AND c.name = 'customer-test-entity-1'
+     JOIN tenant_customer tc
+          ON tc.tenant_id = t.id
+             AND tc.customer_id = c.id
+;
+
+SELECT lives_ok(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'domain registration order allowed by tenant-customer right'
+);
+
+DELETE FROM domain_order WHERE created_date = NOW();
+DELETE FROM right_order
+WHERE descr = 'tenant-customer-specific allow'
+      AND created_date =NOW()
+;
+
+INSERT INTO right_order(descr, block_matching, tenant_customer_id)
+SELECT 'tenant-customer-specific allow', false, tc.id
+FROM customer c
+     JOIN tenant t
+          ON t.name = 'tenant-test-entity-2'
+             AND c.name = 'customer-test-entity-2'
+     JOIN tenant_customer tc
+          ON tc.tenant_id = t.id
+             AND tc.customer_id = c.id
+;
+
+SELECT throws_matching(
+  $Q$ EXECUTE add_test_new_domain_order $Q$,
+  'operation blocked by right constraint',
+  'domain registration order did not match wrong tenant-customer'
+);
+
+ROLLBACK;

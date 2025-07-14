@@ -1,0 +1,3 @@
+[submodule "sm/tdp-database-design"]
+	path = sm/tdp-database-design
+	url = git@github.com:tucowsinc/tdp-database-design.git

@@ -1,0 +1,60 @@
+name: Build and Test TDP Databases
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: [ripple]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Database Container
+        run: |
+          docker-compose -f docker-compose.yml \
+                         -p ${{github.sha}} \
+                         up --build -d sample-db;
+          sleep 10;
+          docker-compose -f docker-compose.yml \
+                         -p ${{github.sha}} \
+                         exec -w /db -T sample-db \
+                         make all test-data DBENV=dev;
+          sleep 5;
+          docker-compose -f docker-compose.yml \
+                         -p ${{github.sha}} \
+                         exec -w /db -T sample-db \
+                         make test-finance-data DBENV=dev;
+
+      - name: Run TDP Database Tests
+        run: |
+          docker-compose -f docker-compose.yml \
+                         -p ${{github.sha}} \
+                         exec \
+                         -e PGUSER='tucows' \
+                         -e PGHOST='localhost' \
+                         -e PGPORT='5432' \
+                         -e PGDATABASE='tdpdb' \
+                         -e PGPASSWORD='tucows1234' \
+                         -w /tests/db sample-db \
+                         pg_prove -f --recurse t;
+
+      - name: Run Finance Tests
+        run: |
+          docker-compose -f docker-compose.yml \
+                        -p ${{github.sha}} \
+                        exec \
+                        -e PGUSER='tucows' \
+                        -e PGHOST='localhost' \
+                        -e PGPORT='5432' \
+                        -e PGDATABASE='tdpdb' \
+                        -e PGPASSWORD='tucows1234' \
+                        -w /tests/db sample-db \
+                        pg_prove -f --recurse t_finance;
+

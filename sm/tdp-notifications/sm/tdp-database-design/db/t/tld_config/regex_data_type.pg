@@ -1,0 +1,109 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- clean attr_value table
+DELETE FROM attr_value;
+
+-- Add test attr_key with regex data type
+SELECT lives_ok($$
+    INSERT INTO attr_key(
+        name,
+        category_id,
+        descr,
+        value_type_id,
+        default_value,
+        allow_null
+    ) VALUES (
+        'mock_attr_key_regex',
+        tc_id_from_name('attr_category', 'lifecycle'),
+        'Regex pattern to verify some information',
+        tc_id_from_name('attr_value_type', 'REGEX'),
+        '^.{1,255}$'::TEXT,
+        FALSE
+    );
+    $$,
+    'Add test attr_key with regex data type'
+);
+
+-- Add custom regex value for mock_attr_key_regex key for 'help' tld
+SELECT lives_ok($$
+    INSERT INTO attr_value(
+        key_id, 
+        value_regex, 
+        tld_id,
+        tenant_id
+    ) VALUES (
+        (SELECT id FROM attr_key WHERE name = 'mock_attr_key_regex'),
+        '^.{0,5}$',
+        (SELECT id FROM tld WHERE name = 'help'),
+        (SELECT tenant_id FROM v_tenant_customer limit 1)
+    );
+    $$,
+    'Add valid regex value for mock_attr_key_regex key'
+);
+
+-- Add invalid regex value for mock_attr_key_regex key for 'xyz' tld
+SELECT throws_ok($$
+    INSERT INTO attr_value(
+        key_id, 
+        value_regex, 
+        tld_id, 
+        tenant_id
+    ) VALUES (
+        (SELECT id FROM attr_key WHERE name = 'mock_attr_key_regex'),
+        '[a-z',
+        (SELECT id FROM tld WHERE name = 'xyz'),
+        (SELECT tenant_id FROM v_tenant_customer limit 1)
+    );
+    $$, 
+    'P0001', 
+    'Invalid regular expression: [a-z',
+    'Add invalid regex value for mock_attr_key_regex key'
+);
+
+
+------------------------------------------------------------- is_valid_regex -------------------------------------------------------------
+
+-- Test valid regex 'abc.*123'
+SELECT cmp_ok(
+    (SELECT is_valid_regex('abc.*123')), 
+    '=',
+    true
+);
+
+-- Test valid regex '^hello\s\w+$'
+SELECT cmp_ok(
+    (SELECT is_valid_regex('^hello\s\w+$')),
+    '=',
+    true
+);
+
+-- Test invalid regex '[a-z'
+SELECT throws_ok($$
+    SELECT is_valid_regex('[a-z')
+$$,
+'P0001',
+'Invalid regular expression: [a-z',
+'Test invalid regex [a-z');
+
+-- Test invalid regex '\'
+SELECT throws_ok($$
+    SELECT is_valid_regex('\')
+$$,
+'P0001',
+'Invalid regular expression: \',
+'Test invalid regex \');
+
+-- Test valid empty regex ''
+SELECT cmp_ok(
+    (SELECT is_valid_regex('')),
+    '=',
+    true
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

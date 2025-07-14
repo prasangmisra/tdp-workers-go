@@ -1,0 +1,41 @@
+name: Clean Docker Networks, Volumes, Containers and Images on the Runner
+
+on:
+  #  schedule:
+  #    - cron: "0 * * * *" # Run every hour
+  workflow_dispatch:
+    inputs:
+      image_older_than_hours:
+        description: "Prune all images older than this number of hours. Default is 12 hours"
+        required: false
+        type: number
+
+env:
+  IMAGE_UNTIL: ${{ github.event.inputs.image_older_than_hours || '12' }}h
+
+jobs:
+  github-context:
+    runs-on: [self-hosted, tdp]
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    steps:
+      - name: Display context
+        run: echo "$GITHUB_CONTEXT"
+
+  clean-docker:
+    needs: [github-context]
+    runs-on: [self-hosted, tdp]
+    steps:
+      - name: Cleanup all unused containers
+        run: docker container prune --force
+
+      - name: Cleanup all unused networks
+        run: docker network prune --force
+
+      - name: Cleanup all unused volumes
+        run: docker volume prune --force
+
+      - name: Cleanup all outdated unused images
+        run: |
+          echo Cleanup all unused images older than $IMAGE_UNTIL
+          docker image prune --all --force --filter "until=$IMAGE_UNTIL"

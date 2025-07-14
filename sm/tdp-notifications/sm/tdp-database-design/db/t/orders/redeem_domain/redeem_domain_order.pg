@@ -1,0 +1,125 @@
+BEGIN;
+
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- create an order
+WITH o AS (
+INSERT INTO "order"(
+    tenant_customer_id,
+    type_id
+)
+VALUES(
+    (SELECT id FROM v_tenant_customer LIMIT 1),
+    (SELECT id FROM v_order_type WHERE product_name='domain' AND name='delete')
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _delete_order FROM o;
+
+
+SELECT lives_ok($$
+    INSERT INTO order_item_delete_domain(
+        order_id,
+        name
+    ) VALUES(
+        (SELECT id FROM _delete_order),
+        'example-to-be-deleted.sexy'
+    )
+$$);
+
+
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _delete_order),TRUE) WHERE id=(SELECT id FROM _delete_order);
+$$,'move order to next status (pending->processing)');
+
+SELECT lives_ok($$
+    UPDATE provision_domain_delete SET in_redemption_grace_period = TRUE
+        WHERE domain_name = 'example-to-be-deleted.sexy';
+$$);
+
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE status_id = tc_id_from_name('job_status','submitted') AND type_id = tc_id_from_name('job_type','provision_domain_delete');
+$$);
+
+
+SELECT collect_tap(
+               cmp_ok(d.name,'=',dd.domain_name,'domain name in order matches provision_delete_domain')
+       )
+FROM v_order_delete_domain dd
+         JOIN domain d ON d.id = dd.domain_id
+         JOIN provision_domain_delete pdd ON pdd.domain_id = d.id;
+
+-- create an order
+WITH o AS (
+INSERT INTO "order"(
+    tenant_customer_id,
+    type_id
+)
+VALUES(
+    (SELECT id FROM v_tenant_customer LIMIT 1),
+    (SELECT id FROM v_order_type WHERE product_name='domain' AND name='redeem')
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _redeem_order FROM o;
+
+SELECT lives_ok($$
+    INSERT INTO domain_rgp_status(
+        domain_id,
+        status_id
+    ) VALUES (
+        (SELECT id FROM domain WHERE name = 'example-to-be-deleted.sexy'),
+        tc_id_from_name('rgp_status', 'redemption_grace_period')
+    );
+$$);
+
+WITH oi AS (
+INSERT INTO order_item_redeem_domain (order_id, name)
+VALUES (
+    (SELECT id FROM _redeem_order),
+    'example-to-be-deleted.sexy'
+    )
+    RETURNING *
+    )
+SELECT * INTO TEMP _redeem_order_item FROM oi;
+
+SELECT lives_ok($$
+    SELECT * FROM _redeem_order_item;
+$$);
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _redeem_order),TRUE) WHERE id=(SELECT id FROM _redeem_order);
+$$,'move order to next status (pending->processing)');
+
+
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status', 'completed')
+    FROM provision_domain_redeem pdr
+    JOIN _redeem_order_item roi ON roi.domain_id = pdr.domain_id
+    WHERE job.status_id = tc_id_from_name('job_status', 'submitted')
+    AND pdr.id = job.reference_id;
+$$);
+
+
+SELECT collect_tap(
+       cmp_ok(d.name,'=',rd.domain_name,'domain name in order matches provision_redeem_domain')
+)
+FROM v_order_redeem_domain rd
+         JOIN domain d ON d.id = rd.domain_id
+         JOIN provision_domain_redeem pdr ON pdr.domain_id = d.id;
+
+SELECT lives_ok($$
+    SELECT deleted_date IS NULL
+    FROM domain
+    WHERE name = 'example-to-be-deleted.sexy';
+$$, 'check domain deleted_date is null');
+
+-- end testing
+SELECT * FROM finish(true);
+
+
+ROLLBACK;

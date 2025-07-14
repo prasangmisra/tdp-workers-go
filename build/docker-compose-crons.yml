@@ -1,0 +1,59 @@
+x-cron-base: &cron-base
+  build:
+    context: ${DOCKERFILE_CONTEXT:-..}
+    dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+    target: app-local
+    args:
+      SERVICE_TYPE: crons
+  depends_on:
+    - rabbitmq
+    - domainsdb
+  env_file:
+    - ../.env
+  environment:
+    LOG_LEVEL: DEBUG
+    RABBITMQ_TLS_ENABLED: 'true'
+    RABBITMQ_TLS_SKIP_VERIFY: 'true'
+    RABBITMQ_PORT: 5672
+  volumes:
+    - ../crons:/app/crons
+    - ../pkg:/app/pkg
+    - ../etc/certs/client:/etc/certs/
+  networks:
+    - tdp-worker
+
+services:
+  rabbitmq:
+    extends:
+      file: docker-compose-workers.yml
+      service: rabbitmq
+
+  domainsdb:
+    extends:
+      file: docker-compose-workers.yml
+      service: domainsdb
+
+  transfer_in_cron:
+    <<: *cron-base
+    environment:
+      CRON_TYPE: "transfer-in-cron"
+
+  transfer_away_cron:
+    <<: *cron-base
+    environment:
+      CRON_TYPE: "transfer-away-cron"
+
+  domain_purge_cron:
+    <<: *cron-base
+    environment:
+      CRON_TYPE: "domain-purge-cron"
+
+  event_enqueue_cron:
+    <<: *cron-base
+    environment:
+      CRON_TYPE: "event-enqueue-cron"
+      NOTIFICATION_QUEUE: WorkerNotifications
+
+networks:
+  tdp-worker:
+    name: tdp-worker

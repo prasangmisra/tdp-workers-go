@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="Enom_ODBC_MSSQL.nludina"
+  DTS:DTSID="{CAC58E38-2C68-4C2E-9DBB-82D41B726F76}"
+  DTS:CreationName="ODBC">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="uid=nludina;Dsn=Enom_ODBC_MSSQL;">
+      <DTS:Password
+        DTS:Name="pwd"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAyh/dMUA/RUGNRC64Vq0l9wAAAAACAAAAAAAQZgAAAAEAACAAAAAS7Rjwu+GqzjP9+iJewSzakNx5pCYmbB5CUCgqVKJSoAAAAAAOgAAAAAIAACAAAAAZ1GuorGJzGq9ibmKrmnILNfVGQ2UBcUdGsFccvY7lW4AAAAC5xun3Lh44XcRsSbZFK+RABX6fGm2CuXMW52P1p4DfnERCbd7/S0SIqQv0oMI2sRn05+6NG/Tqgqj1EfZUczBQunpGQ329tlx3/jeuBGFjsgldHtHV3ME8a29ziwXl42JkZ6XIwwnTD+o8q/pUPCQZZzHr64h9xMxkCjLYrvolmUAAAAB5DO3iknMxDwQsvVmCovKhOsru2N7MGPD80gs/oD2IZ0XLn3Nhfcl7eiznNosTOvjpslXYShlhzivRvuJHekV2</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

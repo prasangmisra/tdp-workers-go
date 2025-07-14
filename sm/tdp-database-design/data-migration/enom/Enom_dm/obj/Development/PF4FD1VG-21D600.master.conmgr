@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="PF4FD1VG-21D600.master"
+  DTS:DTSID="{126EEB57-12FD-4E14-8766-78208BB91B0E}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=PF4FD1VG-21D600;Initial Catalog=master;Provider=SQLOLEDB.1;Integrated Security=SSPI;Application Name=SSIS-Enom_dm-{126EEB57-12FD-4E14-8766-78208BB91B0E}PF4FD1VG-21D600.master;Auto Translate=False;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

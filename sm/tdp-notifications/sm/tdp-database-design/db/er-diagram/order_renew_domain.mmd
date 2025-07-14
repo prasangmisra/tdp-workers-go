@@ -1,0 +1,35 @@
+erDiagram
+    order_item_renew_domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id 
+        text name 
+        integer period 
+        uuid accreditation_tld_id FK
+        timestamp_with_time_zone current_expiry_date 
+    }
+
+    renew_domain_plan {
+        uuid id PK
+        uuid order_item_id FK
+        uuid parent_id 
+        uuid status_id 
+        uuid order_item_object_id 
+        uuid reference_id 
+        text result_message 
+        jsonb result_data 
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    order_item_renew_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    order_item_renew_domain }o--|| order : "order_id"
+    order_item_renew_domain }o--|| order_item_status : "status_id"
+    renew_domain_plan }o--|| order_item_renew_domain : "order_item_id"

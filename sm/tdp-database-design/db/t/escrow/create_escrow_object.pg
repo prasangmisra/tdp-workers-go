@@ -1,0 +1,60 @@
+BEGIN;
+
+-- start testing
+SET search_path TO escrow, public;
+
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('escrow_config');
+SELECT has_table('escrow_status');
+SELECT has_table('escrow');
+
+-- clean tables
+DELETE FROM escrow;
+DELETE FROM escrow_config;
+
+-- create escrow_config record
+WITH test_escrow_config AS (
+    INSERT INTO escrow_config (
+        tenant_id,
+        iana_id,
+        deposit_method,
+        host,
+        port,
+        authentication_method,
+        encryption_method,
+        notes
+    ) VALUES (
+        (SELECT id FROM tenant LIMIT 1),
+        '9999',
+        'SFTP',
+        'sftp://escrow.vendor.com',
+        22,
+        'SSH_KEY',
+        'GPG',
+        'Daily escrow delivery to Iron Mountain'
+    ) RETURNING *
+)
+SELECT * INTO TEMP _escrow_config FROM test_escrow_config;
+
+
+-- create escrow record
+WITH test_escrow AS (
+    INSERT INTO escrow (
+        config_id,
+        status_id,
+        metadata
+    ) VALUES (
+        (SELECT id FROM _escrow_config),
+        tc_id_from_name('escrow_status', 'pending'),
+        '{"example_metadata_key": "example_metadata_value"}'::JSONB
+    ) RETURNING *
+)
+SELECT * INTO TEMP _escrow FROM test_escrow;
+
+-- finish testing
+SELECT * FROM finish(true);
+
+--COMMIT;
+ROLLBACK;

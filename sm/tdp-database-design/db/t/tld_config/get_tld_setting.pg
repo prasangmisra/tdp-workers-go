@@ -1,0 +1,211 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- tld setting full name path + tld id
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'tld.dns.allowed_nameserver_count',
+                p_tld_id=>(SELECT id FROM tld WHERE name = 'sexy')
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld id
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'allowed_nameserver_count',
+                p_tld_id=>(SELECT id FROM tld WHERE name = 'sexy')
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld id + tenant id
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'allowed_nameserver_count',
+                p_tld_id=>(SELECT id FROM tld WHERE name = 'sexy'),
+                p_tenant_id=>(SELECT id FROM tenant WHERE name = 'opensrs')
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld id + tenant id + tld name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'allowed_nameserver_count',
+                p_tld_id=>(SELECT id FROM tld WHERE name = 'sexy'),
+                p_tenant_id=>(SELECT id FROM tenant WHERE name = 'opensrs'),
+                p_tld_name=>'help'
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld id + tenant id + tld name + tenant name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'allowed_nameserver_count',
+                p_tld_id=>(SELECT id FROM tld WHERE name = 'sexy'),
+                p_tenant_id=>(SELECT id FROM tenant WHERE name = 'opensrs'),
+                p_tld_name=>'help',
+                p_tenant_name=>'opensrs'
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key => 'allowed_nameserver_count',
+                p_tld_name => 'sexy'
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key => 'allowed_nameserver_count',
+                p_tld_name => 'sexy'
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld name + tenant name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key => 'allowed_nameserver_count',
+                p_tld_name => 'sexy',
+                p_tenant_name => 'opensrs'
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld name + tenant id
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key => 'allowed_nameserver_count',
+                p_tld_name => 'sexy',
+                p_tenant_id =>(SELECT id FROM tenant WHERE name = 'opensrs')
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- tld setting name + tld id + tenant name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key => 'allowed_nameserver_count',
+                p_tld_id =>(SELECT id FROM tld WHERE name = 'sexy'),
+                p_tenant_name => 'opensrs'
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- non existing tld name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key => 'allowed_nameserver_count',
+                p_tld_name => 'fake.tld'
+            )
+    ) IS NULL,
+    'value is null'
+);
+
+
+-- no tld id/name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                'allowed_nameserver_count'
+            )
+    ) IS NULL,
+    'value is null'
+);
+
+-- non existing tenant name
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key => 'allowed_nameserver_count',
+                p_tld_name => 'sexy',
+                p_tenant_name => 'fake_tenant'
+            )
+    ) IS NULL,
+    'value is null'
+);
+
+-- non existing tld setting
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'fake_tld_setting',
+                p_tld_id=>(SELECT id FROM tld WHERE name = 'sexy')
+            )
+    ) IS NULL,
+    'value is null'
+);
+
+-- tld setting name + accreditation tld id
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'allowed_nameserver_count',
+                p_accreditation_tld_id=>(SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name = 'sexy' LIMIT 1)
+            )
+    ) IS NOT NULL,
+    'value is not null'
+);
+
+-- non existing accreditation tld id
+SELECT ok(
+    (
+        SELECT
+            get_tld_setting(
+                p_key=>'allowed_nameserver_count',
+                p_accreditation_tld_id=>(SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name = 'fake.tld')
+            )
+    ) IS NULL,
+    'value is null'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

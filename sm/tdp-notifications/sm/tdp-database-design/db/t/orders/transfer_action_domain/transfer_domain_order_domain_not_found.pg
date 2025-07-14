@@ -1,0 +1,76 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_transfer_away_domain');
+
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='transfer_away')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+
+SELECT FORMAT('tdp-test-%s.sexy',EXTRACT(epoch from NOW())::INT) as name INTO TEMP _domain;
+
+SELECT throws_imatching($$
+    INSERT INTO order_item_transfer_away_domain(
+        name,
+        transfer_status_id,
+        requested_by,
+        requested_date,
+        action_by,
+        action_date,
+        expiry_date,
+        accreditation_tld_id,
+        order_id
+    ) VALUES(
+        (SELECT name FROM _domain),
+        (SELECT id FROM transfer_status WHERE name='pending'),
+        'test',
+        NOW(),
+        (SELECT name FROM _tenant_customer),
+        NOW(),
+        NOW(),
+        (SELECT id FROM _acc_tld),
+        (SELECT id FROM _order)
+    );
+    $$,
+   (SELECT CONCAT('Domain ''<NULL> ', name, ''' not found') FROM _domain),
+    'Raises not found');
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

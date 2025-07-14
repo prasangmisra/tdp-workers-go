@@ -1,0 +1,137 @@
+name: Build, Test and Deploy
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version"
+        required: false
+        type: string
+      description:
+        required: false
+        description: "Description"
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_TAG: ${{ github.event.inputs.version || github.sha }}
+
+jobs:
+  github-context:
+    runs-on: [self-hosted, tdp]
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    steps:
+      - name: Display context
+        run: echo "$GITHUB_CONTEXT"
+
+  define-matrix:
+    needs: [github-context]
+    runs-on: [self-hosted, tdp]
+    outputs:
+      services: ${{ steps.services.outputs.services }}
+    steps:
+      - name: Define services matrix for all jobs
+        id: services
+        run: |
+          echo 'services=["api-service", "subscription-manager-service", "notification-manager-service", "webhook-sender-service", "enqueuer", "email-sender-service"]' >> "$GITHUB_OUTPUT"
+
+  build_and_test:
+    needs: [define-matrix]
+    runs-on: [self-hosted, tdp]
+    strategy:
+      matrix:
+        service_name: ${{ fromJSON(needs.define-matrix.outputs.services) }}
+    env:
+      IMAGE_NAME: tucowsinc/tdp/notifications-${{ matrix.service_name }}
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          token: ${{ secrets.DOMAINS_BOT_ACCESS_TOKEN }}
+
+      - name: Build Docker Image For ${{ matrix.service_name }}
+        run: |
+          docker build --build-arg SERVICE_TYPE=${{ matrix.service_name }} \
+            -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
+            -t $REGISTRY/$IMAGE_NAME:latest \
+            --target=app -f build/Dockerfile .
+
+      - name: Check code formatting
+        run: |
+          docker run \
+          --entrypoint sh \
+          $REGISTRY/$IMAGE_NAME:$IMAGE_TAG -c 'make check-code-format'
+
+      - name: Run Tests For ${{ matrix.service_name }}
+        id: tests
+        env:
+          TMPDIR: "/tmp/${{ steps.date.outputs.date }}/${{github.sha}}"
+          DC_PROJECT_NAME: ${{ github.sha }}-${{ matrix.service_name }}
+        run: |
+          make --directory=${{ matrix.service_name }} itest
+          echo "tests_dir=$TMPDIR/test_results/${{ matrix.service_name }}" >> $GITHUB_OUTPUT
+
+      - name: Total Test Coverage For ${{ matrix.service_name }}
+        id: coverage
+        run: |
+          coverage=$(cat ${{ steps.tests.outputs.tests_dir }}/totalcoverage.txt)
+          echo "total_coverage=$coverage" >> $GITHUB_OUTPUT
+          echo Total Test Coverage is $coverage%
+
+      - name: Check Test Coverage Threshold For ${{ matrix.service_name }}
+        env:
+          TEST_COVERAGE_THRESHOLD: 36
+          TOTAL_TEST_COVERAGE: ${{ steps.coverage.outputs.total_coverage }}
+        if: ${{ fromJSON(env.TOTAL_TEST_COVERAGE) < fromJSON(env.TEST_COVERAGE_THRESHOLD) }} # fromJSON is used to convert string to number
+        run: |
+          echo “Total Test Coverage $TOTAL_TEST_COVERAGE% is lower than the threshold value $TEST_COVERAGE_THRESHOLD%”
+          exit 1
+
+      - name: Upload Coverage HTML ${{ matrix.service_name }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage_report_${{ matrix.service_name }}
+          path: ${{ steps.tests.outputs.tests_dir }}/testcoverage.html
+
+  push_image:
+    needs:
+      - define-matrix
+      - build_and_test
+    runs-on: [self-hosted, tdp]
+    strategy:
+      matrix:
+        service_name: ${{ fromJSON(needs.define-matrix.outputs.services) }}
+    environment: dev
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      (
+        github.ref == 'refs/heads/develop' ||
+        startsWith(github.ref, 'refs/heads/hotfix/') ||
+        startsWith(github.ref, 'refs/heads/release/')
+      )
+    env:
+      IMAGE_NAME: tucowsinc/tdp/notifications-${{ matrix.service_name }}
+    steps:
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image ${{ matrix.service_name }}
+        run: |
+          docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+          docker push $REGISTRY/$IMAGE_NAME:latest

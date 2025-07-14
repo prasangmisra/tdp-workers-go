@@ -1,0 +1,1 @@
+ALTER TABLE order_item_create_domain DROP CONSTRAINT IF EXISTS idn_lang_require_when_idn_uname_is_provided;

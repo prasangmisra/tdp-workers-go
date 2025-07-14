@@ -1,0 +1,35 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+WITH tables AS (
+    SELECT table_name FROM (
+        VALUES
+        ('validation_rule'),
+        ('validation_association')
+    ) AS t (table_name)
+)
+SELECT has_table(table_name) FROM tables;
+
+WITH views AS (
+    SELECT view_name FROM (
+        VALUES
+        ('v_validation_rule'),
+        ('v_validation_association')
+    ) AS t (view_name)
+)
+SELECT has_view(view_name) FROM views;
+
+PREPARE validation_rule_invalid_validity AS
+    INSERT INTO validation_rule(name, rule, validity)
+    VALUES ('some-rule-name', 'some rule', '[1900-01-01 00:00, infinity)');
+SELECT throws_ok('validation_rule_invalid_validity');
+
+PREPARE validation_rule_valid_validity AS
+    INSERT INTO validation_rule(name, rule, validity)
+    VALUES ('some-rule-name', 'some rule', TSTZRANGE(CURRENT_DATE, CURRENT_DATE + INTERVAL '1 day'));
+SELECT lives_ok('validation_rule_valid_validity');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

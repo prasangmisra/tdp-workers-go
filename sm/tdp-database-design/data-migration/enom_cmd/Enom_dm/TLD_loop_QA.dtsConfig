@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<DTSConfiguration>
+	<DTSConfigurationHeading>
+		<DTSConfigurationFileInfo GeneratedBy="TUCOWSAD\nludina" GeneratedFromPackageName="Package1" GeneratedFromPackageID="{5D627782-F00E-4C50-A0A2-2B33447F7584}" GeneratedDate="8/21/2024 2:00:42 PM"/>
+	</DTSConfigurationHeading>
+	<Configuration ConfiguredType="Property" Path="\Package.Connections[tdpdb_ado].Properties[ConnectionString]" ValueType="String">
+		<ConfiguredValue>uid=tucows;Dsn=TDPQA;</ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Connections[tdpdb_ado].Properties[Password]" ValueType="String">
+		<ConfiguredValue></ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Enom_ADO_MigrationDB_ConnectionString].Properties[Value]" ValueType="String">
+		<ConfiguredValue>Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=EnomMigrationDB;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{BC794E31-B8BA-4B83-ABA1-2D182A9CA30B}CEN2vwmssql01.staging.local.EnomMigrationDB.nludina1;</ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Enom_ADO_NameHost_ConnectionString].Properties[Value]" ValueType="String">
+		<ConfiguredValue>Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=NameHost;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{A2F36F7A-D1B2-4736-9EB7-6117A2368D6F}CEN2vwmssql01.staging.local.NameHost.nludina1;</ConfiguredValue>
+	</Configuration>
+	
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Enom_MSSQL_Password].Properties[Value]" ValueType="String">
+		<ConfiguredValue></ConfiguredValue>
+	</Configuration>
+	
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Enom_Nazca_Identity_ODBC_ConnectionString].Properties[Value]" ValueType="String">
+		<ConfiguredValue>uid=nludina;Dsn=PostgreSQL_nazca_dev;</ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Enom_Nazca_Identity_Password].Properties[Value]" ValueType="String">
+		<ConfiguredValue></ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::log_xml_file_path].Properties[Value]" ValueType="String">
+		<ConfiguredValue>C:\ssis\enom_dm_log.xml</ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Migration_phase].Properties[Value]" ValueType="String">
+		<ConfiguredValue>1.1</ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Tdpdb_ConnectionString].Properties[Value]" ValueType="String">
+		<ConfiguredValue>uid=tucows;Dsn=TDPQA;</ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Tdpdb_Password].Properties[Value]" ValueType="String">
+		<ConfiguredValue></ConfiguredValue>
+	</Configuration>
+	<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Tenant].Properties[Value]" ValueType="String">
+		<ConfiguredValue>enom</ConfiguredValue>
+	</Configuration>
+</DTSConfiguration>

@@ -1,0 +1,132 @@
+erDiagram
+    provision_status {
+        uuid id PK
+        text name 
+        text descr 
+        boolean is_success 
+        boolean is_final 
+    }
+
+    provision_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        uuid host_id FK
+    }
+
+    provision_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        uuid contact_id FK
+        text handle 
+        text pw 
+    }
+
+    provision_domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        text name 
+        integer registration_period 
+        text pw 
+        boolean is_complete 
+        uuid accreditation_tld_id FK
+        timestamp_with_time_zone ry_created_date 
+        timestamp_with_time_zone ry_expiry_date 
+    }
+
+    provision_domain_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provision_domain_id FK
+        uuid contact_id FK
+        uuid contact_type_id FK
+    }
+
+    provision_domain_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provision_domain_id FK
+        uuid host_id FK
+    }
+
+    provision_domain_renew {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        uuid domain_id FK
+        integer period 
+        timestamp_with_time_zone current_expiry_date 
+        boolean is_auto 
+        timestamp_with_time_zone ry_expiry_date 
+    }
+
+    provision }o--|| provision_status : "status_id"
+    provision_host }o--|| provision_status : "status_id"
+    provision_domain_renew }o--|| provision_status : "status_id"
+    provision_domain }o--|| provision_status : "status_id"
+    provision_contact }o--|| provision_status : "status_id"
+    provision_host }o--|| host : "host_id"
+    provision_host }o--|| tenant_customer : "tenant_customer_id"
+    provision_contact }o--|| contact : "contact_id"
+    provision_contact }o--|| tenant_customer : "tenant_customer_id"
+    provision_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    provision_domain }o--|| tenant_customer : "tenant_customer_id"
+    provision_domain_contact }o--|| provision_domain : "provision_domain_id"
+    provision_domain_host }o--|| provision_domain : "provision_domain_id"
+    provision_domain_contact }o--|| contact : "contact_id"
+    provision_domain_contact }o--|| domain_contact_type : "contact_type_id"
+    provision_domain_host }o--|| host : "host_id"
+    provision_domain_renew }o--|| domain : "domain_id"
+    provision_domain_renew }o--|| tenant_customer : "tenant_customer_id"

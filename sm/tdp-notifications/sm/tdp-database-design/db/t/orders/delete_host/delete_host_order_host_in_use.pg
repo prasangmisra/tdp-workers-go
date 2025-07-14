@@ -1,0 +1,99 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_delete_host');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- create a domain entry for testing
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM _tenant_customer),
+        'tdp-test-abc.help',
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _domain FROM test_domain;
+
+-- create a host
+WITH basic_host AS (
+    INSERT INTO host(
+        tenant_customer_id,
+        "name",
+        domain_id
+    ) VALUES(
+        (SELECT id FROM _tenant_customer),
+        'ns1.' || (SELECT name from _domain),
+        (SELECT id FROM _domain)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _host FROM basic_host;
+
+-- add the host address 
+INSERT INTO host_addr(
+    host_id,
+    address
+) VALUES (
+    (SELECT id FROM _host),
+    '192.166.1.100'::INET
+);
+
+
+-- link host and domain
+INSERT INTO domain_host(
+    domain_id,
+    host_id
+) VALUES (
+    (SELECT id FROM _domain),
+    (SELECT id FROM _host)
+);
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    ) VALUES(
+        (SELECT id FROM _tenant_customer),
+        (SELECT id FROM v_order_type WHERE product_name='host' AND name='delete')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+-- check if host can be deleted
+SELECT throws_matching($$
+    INSERT INTO order_item_delete_host (
+        order_id,
+        host_id
+    ) VALUES (
+        (SELECT id FROM _order),
+        (SELECT id FROM _host)
+    );
+    $$,
+'cannot delete host: in use.',
+'Check if host can be deleted');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;
+-- COMMIT;

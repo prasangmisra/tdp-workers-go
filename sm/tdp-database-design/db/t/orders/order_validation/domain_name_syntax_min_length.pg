@@ -1,0 +1,48 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+   (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+   'created',
+   'order status is ''created'' by default'
+);
+
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+-- create a domain with a domain name that is too short
+SELECT throws_matching($$
+    INSERT INTO order_item_create_domain(order_id,name)
+    VALUES(
+        (SELECT id FROM _order),
+        'a.sexy'
+    )
+    $$,
+   'Domain name length must be in this range \[\d+-\d+\]',
+    'fail order creation, domain name is less than lower bound'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

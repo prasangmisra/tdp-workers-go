@@ -1,0 +1,68 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_transfer_in_domain');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id, tld_id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='transfer_in')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+
+-- by default order should have a created status
+SELECT is(
+   (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+   'created',
+   'order status is ''created'' by default'
+);
+
+
+-- create a domain transfer_in order with a invalid auth info
+SELECT throws_matching($$
+    INSERT INTO order_item_transfer_in_domain(
+        name,
+        accreditation_tld_id,
+        transfer_period,
+        auth_info,
+        order_id
+    ) VALUES(
+        'tdp-test-1.help',
+        (SELECT id FROM _acc_tld),
+        1,
+        'K6M&+hdaztRyhX^#!9CzIL5TZ7tE_=V=KsMJ9372&gp7t^mz!KP@ejGqx&ji%-Khms0Y8QkVc@r^*!Z$fF^6qru2ogN$#e1foV3W1c9Uuz06MI_cLH#ius8z&X6Eh9MnNBUC&XlQ_wVSLPmW^YpKG0fRhkN1=^riE84yEBlocsSYRxiJ^2q4q!et%8ID1-DcbZ=-aeXe@^3Nq$5uL$A5egbumg4C#V!fuYNp8OwKL8goHoP1-!5wj%=gE+dbG^7g',
+        (SELECT id FROM _order)
+    )
+    $$,
+    'Auth info does not match the required pattern',
+    'fail order creation, auth info does not match the required pattern'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

@@ -1,0 +1,1381 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DeploymentModel>Project</DeploymentModel>
+  <ProductVersion>16.0.5556.0</ProductVersion>
+  <SchemaVersion>9.0.1.0</SchemaVersion>
+  <State>$base64$PFNvdXJjZUNvbnRyb2xJbmZvIHhtbG5zOnhzZD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zOmRkbDI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yIiB4bWxuczpkZGwyXzI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yLzIiIHhtbG5zOmRkbDEwMF8xMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDA4L2VuZ2luZS8xMDAvMTAwIiB4bWxuczpkZGwyMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAiIHhtbG5zOmRkbDIwMF8yMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAvMjAwIiB4bWxuczpkZGwzMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAiIHhtbG5zOmRkbDMwMF8zMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAvMzAwIiB4bWxuczpkZGw0MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAiIHhtbG5zOmRkbDQwMF80MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAvNDAwIiB4bWxuczpkZGw1MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAiIHhtbG5zOmRkbDUwMF81MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAvNTAwIiB4bWxuczpkd2Q9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vRGF0YVdhcmVob3VzZS9EZXNpZ25lci8xLjAiPg0KICA8RW5hYmxlZD5mYWxzZTwvRW5hYmxlZD4NCiAgPFByb2plY3ROYW1lPjwvUHJvamVjdE5hbWU+DQogIDxBdXhQYXRoPjwvQXV4UGF0aD4NCiAgPExvY2FsUGF0aD48L0xvY2FsUGF0aD4NCiAgPFByb3ZpZGVyPjwvUHJvdmlkZXI+DQo8L1NvdXJjZUNvbnRyb2xJbmZvPg==</State>
+  <Database>
+    <Name>Enom_dm.database</Name>
+    <FullPath>Enom_dm.database</FullPath>
+  </Database>
+  <DataSources />
+  <DataSourceViews />
+  <DeploymentModelSpecificContent>
+    <Manifest>
+      <SSIS:Project SSIS:ProtectionLevel="EncryptSensitiveWithUserKey" xmlns:SSIS="www.microsoft.com/SqlServer/SSIS">
+        <SSIS:Properties>
+          <SSIS:Property SSIS:Name="ID">{66cb10c4-4a10-485f-846d-fe37c376d94b}</SSIS:Property>
+          <SSIS:Property SSIS:Name="Name">Enom_dm</SSIS:Property>
+          <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
+          <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
+          <SSIS:Property SSIS:Name="VersionBuild">0</SSIS:Property>
+          <SSIS:Property SSIS:Name="VersionComments">
+          </SSIS:Property>
+          <SSIS:Property SSIS:Name="CreationDate">2024-02-15T17:48:09.3591701Z</SSIS:Property>
+          <SSIS:Property SSIS:Name="CreatorName">TUCOWSAD\nludina</SSIS:Property>
+          <SSIS:Property SSIS:Name="CreatorComputerName">LAPTOP-UHHLA3LI</SSIS:Property>
+          <SSIS:Property SSIS:Name="Description">
+          </SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAASnx+nzZItUa26dQeIONnVgAAAAACAAAAAAAQZgAAAAEAACAAAACq8ZODRCYWvQos17+mEsI0qofCSkee69rSsJHh8fgDZAAAAAAOgAAAAAIAACAAAAANEg6LM0bZ7+pq/BiYoRnFd5Y1I41LMXYglkfMCfc4RpAAAACTAK37zjeMEz9mw+8uPAErmGQJhnLAjFpSzUNTjdBqznNcjKBffDGcEkOg6LNO+HhGXnFC0B6Px+DqPYFSmeM/iTBsNM7Ar7EwFhJGXi4MxypRsfwihnvycCOT00wGiKIUYUWrgBnRyh6hvOajfisPlqDEixwSpyATyiNprTDmzCIna29Y1eU/ee3KwjGLP8VAAAAAuAvsWD053BsGeBLT/J5WxCifsqHkxPf5lpIxifL3D6CFWrSRmtJKq9z9YnaD8qzV7+BD/+pbCtq6oNVVyQv7WQ==</SSIS:Property>
+          <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
+        </SSIS:Properties>
+        <SSIS:Packages>
+          <SSIS:Package SSIS:Name="TLD_loop.dtsx" SSIS:EntryPoint="1" />
+          <SSIS:Package SSIS:Name="Enom_dm.dtsx" SSIS:EntryPoint="1" />
+        </SSIS:Packages>
+        <SSIS:ConnectionManagers />
+        <SSIS:DeploymentInfo>
+          <SSIS:ProjectConnectionParameters />
+          <SSIS:PackageInfo>
+            <SSIS:PackageMetaData SSIS:Name="TLD_loop.dtsx">
+              <SSIS:Properties>
+                <SSIS:Property SSIS:Name="ID">{5D627782-F00E-4C50-A0A2-2B33447F7584}</SSIS:Property>
+                <SSIS:Property SSIS:Name="Name">Package1</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">174</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionComments">
+                </SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{E910B200-A0C6-4BA6-B6B9-7EE0DB897DC3}</SSIS:Property>
+                <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
+                <SSIS:Property SSIS:Name="Description">
+                </SSIS:Property>
+                <SSIS:Property SSIS:Name="ProtectionLevel">1</SSIS:Property>
+              </SSIS:Properties>
+              <SSIS:Parameters>
+                <SSIS:Parameter SSIS:Name="parent_tld">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{C1D0192C-1DB9-4F09-9A36-A20A5785EA32}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">tld</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Tdpdb_ConnectionString_">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{A019F7C8-15E6-4772-AA8E-C48295347BDE}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">uid=tdpadm;Dsn=PostgreSQL_tdp_dev_unicode;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Tdpdb_Password_">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{D27DB419-A02B-481B-A474-C7763CCF56F1}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAASnx+nzZItUa26dQeIONnVgAAAAACAAAAAAAQZgAAAAEAACAAAACE3f6/Tpw58XQmB7/jJuORuxieuCMkie3xjGoITL2WkAAAAAAOgAAAAAIAACAAAABNpBkhCC53711XbDYetJ1UUNMi4hh+C/Y4OpYF5DpA4IAAAAAhK0hN+YUjkBkXBRJPjHO9M/i4ROlXB9vu16wAP0LfSQ88x9UKjZ3q59isBj/X+BXnPtEqdfvel2tgXO5u7pNo3XhZ+0/ck+uyOxNlIvC0eGH1dE2QUBh2mUW5/Lt7oMrJ0mxLtjbHLWrzM8wtm7V4QWfkB2v+9mQH8H3PTKtcKkAAAACvWldiMxIte2nTAzzJuUMfOmmy4BFfW4j2X0UWElDN6hElQFtr3QaLQnh/BVcXzvvWg+Svaq2EK9NQrKiYrjUV</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ado.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ado.ConnectUsingManagedIdentity">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ado.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ado.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ado.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ado.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">tdpadm</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+              </SSIS:Parameters>
+            </SSIS:PackageMetaData>
+            <SSIS:PackageMetaData SSIS:Name="Enom_dm.dtsx">
+              <SSIS:Properties>
+                <SSIS:Property SSIS:Name="ID">{80C86F9C-D6F3-424C-A2BD-835180CB0175}</SSIS:Property>
+                <SSIS:Property SSIS:Name="Name">Enom_dm_by_TLD</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">2406</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionComments">
+                </SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{E1BB0E79-B7F1-4BB1-94BD-7D259E6C65A1}</SSIS:Property>
+                <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
+                <SSIS:Property SSIS:Name="Description">
+                </SSIS:Property>
+                <SSIS:Property SSIS:Name="ProtectionLevel">1</SSIS:Property>
+              </SSIS:Properties>
+              <SSIS:Parameters>
+                <SSIS:Parameter SSIS:Name="Enom_ADO_EnomMigrationDB_ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{440466E9-3071-4645-BA86-AE83E8511784}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=EnomMigrationDB;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{BC794E31-B8BA-4B83-ABA1-2D182A9CA30B}CEN2vwmssql01.staging.local.EnomMigrationDB.nludina1;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Enom_ADO_NameHost_ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{BF468CA9-2110-4C78-A2BF-181F2D8C3206}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=NameHost;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{A2F36F7A-D1B2-4736-9EB7-6117A2368D6F}CEN2vwmssql01.staging.local.NameHost.nludina1;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Enom_MSSQL_Password">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{3C35ED45-1DBC-43D7-B5E0-7A80DF44EE54}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAASnx+nzZItUa26dQeIONnVgAAAAACAAAAAAAQZgAAAAEAACAAAADFLfA8GRzo4KEr0lcfVjoODsga6K+3JhP1ohAVVls+hQAAAAAOgAAAAAIAACAAAABbuoQMbn37PrhG+OVDg4MaD5ZJFE+S0xefDaYN3fMvC5AAAADfbrLby8nydJahBtfSmbHaguX5dGsL+ofp0Z1KnhJXaKDFKAVr+f9HyKFXFscAM6C0K19Ht6yOq4bePxCBqsTHQGzyB2SRu2CJFSHinKfRTNTX/ZLpoptki8CHI7Y1y0NCtSI+AI9iUrJuIjUCI60K4u9wXGyDqbbbBwLrXLw2Q9oSZNN2DN2tT9ZJHpmPbxBAAAAAuKsqSy0fTedIuQUUrMp8S29RNjAPms/agAIQjSAw6jnORgncT1MRKm9VzprtBLo7iQKJIi+PRpewWX5bRFO9Bw==</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Enom_Nazca_Identity_01_ODBC_ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{CD0F7AD7-D988-4E3E-ADF3-8CCE0698EBE5}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">uid=nludina;Dsn=PostgreSQL_nazca_dev;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Enom_Nazca_Identity_ODBC_ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{5614D374-5AB9-473D-B3B5-7BF7FB90A08E}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">uid=nludina;Dsn=PostgreSQL_nazca_dev;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Enom_Nazca_Identity_Password">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{E585A09E-97E4-4630-B91C-1B263118BC7B}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAASnx+nzZItUa26dQeIONnVgAAAAACAAAAAAAQZgAAAAEAACAAAAAfkqsiMgQX+j64Gmd0xQzRwPERGVxo4XDRioi2iKY3CgAAAAAOgAAAAAIAACAAAAC6miimzQORxPnlOcxL5ZJKxCqCo6ottDBuL3hwAfUHiJAAAACfh+fWjqd4nDgFUTzIck1uetWvJNQAm3HUJQU83orsqKrrnhNxpvE2ptSUY3HRtV9HODq/7OLBfkdcs9lSGGjVsRiC+zbA0+ohOJbL8coWq6uXqGjSb8QKIE186FB3fBJ3RRkZnI+B2Uexd2ql/b9c6hGuwHcpQmh+db0CRilstkKL6KvM4iJFjeXzdYDkHzZAAAAAYQX4oFQmsDH7783XXkoFg5wXxuyzfGhqiKb+C0a+E+t/nrOL7upZgU364rsH6Kjmx723fRs8kDqsMuuszjsO1w==</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Enom_ODBC_NameHost_ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{745DA3B0-D2B4-4F7F-BEF7-56B331424995}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">uid=nludina;Dsn=Enom_ODBC_MSSQL_NameHost;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Enom_TDP_domain_table_name">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{A47DC222-FCC8-4DF1-8808-E818C2C92A52}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">TDP_domain_test</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="log_xml_file_path">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{234240E3-7C38-411F-BF77-B8BE367E8DCF}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">C:\tdp-database-design\data-migration\enom_cmd\Enom_dm\log\enom_dm_log.xml</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Migration_phase">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{2EE9D12E-D443-4FD6-88A3-D4B9BB891DBF}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">1.1</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Tdpdb_ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{DC4E575D-A1D5-4CB7-AD67-14B89855BED5}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">uid=tdpadm;Dsn=PostgreSQL_tdp_dev_unicode;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Tdpdb_Password">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAASnx+nzZItUa26dQeIONnVgAAAAACAAAAAAAQZgAAAAEAACAAAABVUDGjqeg5FEDyCyNLlQpWlvQeuBD6r30GdrD1UOjQtAAAAAAOgAAAAAIAACAAAABP2tMpvPpuTLLUhQ+XlOu2Lg97BElXC5D1Hnqx2NAxAoAAAABk2PDG/ejcMs49oz1HbCzUphFZh7Id6dO3N2BLGVMY9f6XaSlea+N/9IpaED6wxQXSQEvdxIvAoKwT5Dz3Ly9jAXx+xy6KDaJz29ahCKEHj0dC7B/LxFKDnn5iVr6nchq1AZo9+j2wlIeVM1xzzQlWoYvFY/nFqLI8sc7VKpPVCEAAAABApw/b76HQtPrwxPZVW5ckcqUCDo3IzfjLDjk2goOOnZoV2JDVZCes5L5uPs4IS8OGBg+YxVeDRYDDXOTduFA+</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="Tenant">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{C8247322-7D8C-4EAB-9AB6-5D677CE747E8}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">enom</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="TLD">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">{4D474342-7B2A-473E-877F-0014B6AEAB85}</SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">click</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.dm_enom_schema_creation.sql.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.dm_enom_schema_creation.sql.ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">C:\tdp-database-design\data-migration\dm_enom_schema_creation.sql</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_EnomMigrationDB.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_EnomMigrationDB.ConnectUsingManagedIdentity">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_EnomMigrationDB.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">EnomMigrationDB</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_EnomMigrationDB.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_EnomMigrationDB.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">CEN2vwmssql01.staging.local</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_EnomMigrationDB.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">nludina</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_NameHost.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_NameHost.ConnectUsingManagedIdentity">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_NameHost.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">NameHost</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_NameHost.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_NameHost.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">CEN2vwmssql01.staging.local</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ADO_NameHost.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">nludina</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_dm_log.xml.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">nludina</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity_01.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity_01.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity_01.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity_01.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_nazca_identity_01.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">nludina</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ODBC_NameHost.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ODBC_NameHost.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ODBC_NameHost.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ODBC_NameHost.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.Enom_ODBC_NameHost.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">nludina</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.itdp_schema_creation.sql.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.itdp_schema_creation.sql.ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">C:\tdp-database-design\data-migration\itdp_schema_creation.sql</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">tdpadm</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ADO.NET.ConnectByProxy">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ADO.NET.ConnectUsingManagedIdentity">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ADO.NET.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ADO.NET.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ADO.NET.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.tdpdb_ADO.NET.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">tdpadm</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+              </SSIS:Parameters>
+            </SSIS:PackageMetaData>
+          </SSIS:PackageInfo>
+        </SSIS:DeploymentInfo>
+      </SSIS:Project>
+    </Manifest>
+  </DeploymentModelSpecificContent>
+  <ControlFlowParts />
+  <Miscellaneous />
+  <Configurations>
+    <Configuration>
+      <Name>Development</Name>
+      <Options>
+        <OutputPath>bin</OutputPath>
+        <ConnectionMappings />
+        <ConnectionProviderMappings />
+        <ConnectionSecurityMappings />
+        <DatabaseStorageLocations />
+        <TargetServerVersion>SQLServer2022</TargetServerVersion>
+        <AzureMode>false</AzureMode>
+        <LinkedAzureTenantId />
+        <LinkedAzureAccountId />
+        <LinkedAzureSSISIR />
+        <LinkedAzureStorage />
+        <RemoteExecutionFolder />
+        <ParameterConfigurationValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2024-11-07T10:58:41.7182686Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{DC4E575D-A1D5-4CB7-AD67-14B89855BED5}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=tdpadm;Dsn=PostgreSQL_tdp_dev_unicode;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{440466E9-3071-4645-BA86-AE83E8511784}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_EnomMigrationDB_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=EnomMigrationDB;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{BC794E31-B8BA-4B83-ABA1-2D182A9CA30B}CEN2vwmssql01.staging.local.EnomMigrationDB.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{BF468CA9-2110-4C78-A2BF-181F2D8C3206}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=NameHost;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{A2F36F7A-D1B2-4736-9EB7-6117A2368D6F}CEN2vwmssql01.staging.local.NameHost.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{5614D374-5AB9-473D-B3B5-7BF7FB90A08E}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_dev;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{CD0F7AD7-D988-4E3E-ADF3-8CCE0698EBE5}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_01_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_dev;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{A019F7C8-15E6-4772-AA8E-C48295347BDE}</Id>
+            <Name>Package1::Tdpdb_ConnectionString_</Name>
+            <Value xsi:type="xsd:string">uid=tdpadm;Dsn=PostgreSQL_tdp_dev_unicode;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{745DA3B0-D2B4-4F7F-BEF7-56B331424995}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ODBC_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=Enom_ODBC_MSSQL_NameHost;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">uuW2oosohr8quapieP</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">uuW2oosohr8quapieP</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Local</Name>
+      <Options>
+        <OutputPath>bin</OutputPath>
+        <ConnectionMappings />
+        <ConnectionProviderMappings />
+        <ConnectionSecurityMappings />
+        <DatabaseStorageLocations />
+        <TargetServerVersion>SQLServer2022</TargetServerVersion>
+        <AzureMode>false</AzureMode>
+        <LinkedAzureTenantId />
+        <LinkedAzureAccountId />
+        <LinkedAzureSSISIR />
+        <LinkedAzureStorage />
+        <RemoteExecutionFolder />
+        <ParameterConfigurationValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2024-11-07T10:58:41.721376Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{DC4E575D-A1D5-4CB7-AD67-14B89855BED5}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=tucows;Dsn=PostgreSQL35W;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{440466E9-3071-4645-BA86-AE83E8511784}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_EnomMigrationDB_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=EnomMigrationDB;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{BC794E31-B8BA-4B83-ABA1-2D182A9CA30B}CEN2vwmssql01.staging.local.EnomMigrationDB.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{BF468CA9-2110-4C78-A2BF-181F2D8C3206}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=NameHost;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{A2F36F7A-D1B2-4736-9EB7-6117A2368D6F}CEN2vwmssql01.staging.local.NameHost.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{5614D374-5AB9-473D-B3B5-7BF7FB90A08E}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_dev;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{CD0F7AD7-D988-4E3E-ADF3-8CCE0698EBE5}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_01_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_dev;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{A019F7C8-15E6-4772-AA8E-C48295347BDE}</Id>
+            <Name>Package1::Tdpdb_ConnectionString_</Name>
+            <Value xsi:type="xsd:string">uid=tucows;Dsn=PostgreSQL35W</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{745DA3B0-D2B4-4F7F-BEF7-56B331424995}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ODBC_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=Enom_ODBC_MSSQL_NameHost;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">tucows1234</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">tucows1234</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Local_prod</Name>
+      <Options>
+        <OutputPath>bin</OutputPath>
+        <ConnectionMappings />
+        <ConnectionProviderMappings />
+        <ConnectionSecurityMappings />
+        <DatabaseStorageLocations />
+        <TargetServerVersion>SQLServer2022</TargetServerVersion>
+        <AzureMode>false</AzureMode>
+        <LinkedAzureTenantId />
+        <LinkedAzureAccountId />
+        <LinkedAzureSSISIR />
+        <LinkedAzureStorage />
+        <RemoteExecutionFolder />
+        <ParameterConfigurationValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2024-11-07T10:58:41.7240674Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{DC4E575D-A1D5-4CB7-AD67-14B89855BED5}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=postgres;Dsn=PostgreSQL35W;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{440466E9-3071-4645-BA86-AE83E8511784}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_EnomMigrationDB_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=VenomDB1;User ID=nludina;Initial Catalog=EnomMigrationDB;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{EA1AB8D1-1F16-4E59-BEBD-75ADB38848AE}VenomDB1.EnomMigrationDB.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{BF468CA9-2110-4C78-A2BF-181F2D8C3206}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=VenomDB1;User ID=nludina;Initial Catalog=NameHost;Persist Security Info=True;Connect Timeout=10000;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{4B3BDDDB-748E-4F54-B8D0-2CE3EE1DFC94}Enom_ADO_NameHost;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{5614D374-5AB9-473D-B3B5-7BF7FB90A08E}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_prod;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{CD0F7AD7-D988-4E3E-ADF3-8CCE0698EBE5}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_01_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_prod_01;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{A019F7C8-15E6-4772-AA8E-C48295347BDE}</Id>
+            <Name>Package1::Tdpdb_ConnectionString_</Name>
+            <Value xsi:type="xsd:string">uid=postgres;Dsn=PostgreSQL35W;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{745DA3B0-D2B4-4F7F-BEF7-56B331424995}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ODBC_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=Enom_ODBC_MSSQL_NameHost;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">GabbaGabbaHey1</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">GabbaGabbaHey1</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>QA</Name>
+      <Options>
+        <OutputPath>bin</OutputPath>
+        <ConnectionMappings />
+        <ConnectionProviderMappings />
+        <ConnectionSecurityMappings />
+        <DatabaseStorageLocations />
+        <TargetServerVersion>SQLServer2022</TargetServerVersion>
+        <AzureMode>false</AzureMode>
+        <LinkedAzureTenantId />
+        <LinkedAzureAccountId />
+        <LinkedAzureSSISIR />
+        <LinkedAzureStorage />
+        <RemoteExecutionFolder />
+        <ParameterConfigurationValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2024-11-07T10:58:41.7272583Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{DC4E575D-A1D5-4CB7-AD67-14B89855BED5}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=tucows;Dsn=TDPQA;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{440466E9-3071-4645-BA86-AE83E8511784}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_EnomMigrationDB_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=EnomMigrationDB;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{BC794E31-B8BA-4B83-ABA1-2D182A9CA30B}CEN2vwmssql01.staging.local.EnomMigrationDB.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{BF468CA9-2110-4C78-A2BF-181F2D8C3206}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=NameHost;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{A2F36F7A-D1B2-4736-9EB7-6117A2368D6F}CEN2vwmssql01.staging.local.NameHost.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{5614D374-5AB9-473D-B3B5-7BF7FB90A08E}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_dev</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{CD0F7AD7-D988-4E3E-ADF3-8CCE0698EBE5}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_01_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_dev;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{A019F7C8-15E6-4772-AA8E-C48295347BDE}</Id>
+            <Name>Package1::Tdpdb_ConnectionString_</Name>
+            <Value xsi:type="xsd:string">uid=tucows;Dsn=TDPQA;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{745DA3B0-D2B4-4F7F-BEF7-56B331424995}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ODBC_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=Enom_ODBC_MSSQL_NameHost;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{D27DB419-A02B-481B-A474-C7763CCF56F1}</Id>
+            <Name>Package1::Tdpdb_Password_</Name>
+            <Value xsi:type="xsd:string">BJGT7BQNbpBzUfVQ</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{60E5BB1A-D7CF-4CF1-8516-55741FDDC04B}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_Password</Name>
+            <Value xsi:type="xsd:string">GabbaGabbaHey1</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationValues>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Prod</Name>
+      <Options>
+        <OutputPath>bin</OutputPath>
+        <ConnectionMappings />
+        <ConnectionProviderMappings />
+        <ConnectionSecurityMappings />
+        <DatabaseStorageLocations />
+        <TargetServerVersion>SQLServer2022</TargetServerVersion>
+        <AzureMode>false</AzureMode>
+        <LinkedAzureTenantId />
+        <LinkedAzureAccountId />
+        <LinkedAzureSSISIR />
+        <LinkedAzureStorage />
+        <RemoteExecutionFolder />
+        <ParameterConfigurationValues>
+          <ConfigurationSetting>
+            <Id>LastModifiedTime</Id>
+            <Name>LastModifiedTime</Name>
+            <Value xsi:type="xsd:dateTime">2024-11-07T10:58:41.7311381Z</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{DC4E575D-A1D5-4CB7-AD67-14B89855BED5}</Id>
+            <Name>Enom_dm_by_TLD::Tdpdb_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=tucows;Dsn=PostgreSQL_Tdp_prod;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{440466E9-3071-4645-BA86-AE83E8511784}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_EnomMigrationDB_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=VenomDB1;User ID=nludina;Initial Catalog=EnomMigrationDB;Persist Security Info=True;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{EA1AB8D1-1F16-4E59-BEBD-75ADB38848AE}VenomDB1.EnomMigrationDB.nludina1;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{BF468CA9-2110-4C78-A2BF-181F2D8C3206}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ADO_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">Data Source=VenomDB1;User ID=nludina;Initial Catalog=NameHost;Persist Security Info=True;Connect Timeout=10000;Encrypt=False;Application Name=SSIS-Enom_dm_by_TLD-{4B3BDDDB-748E-4F54-B8D0-2CE3EE1DFC94}Enom_ADO_NameHost;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{5614D374-5AB9-473D-B3B5-7BF7FB90A08E}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_prod;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{CD0F7AD7-D988-4E3E-ADF3-8CCE0698EBE5}</Id>
+            <Name>Enom_dm_by_TLD::Enom_Nazca_Identity_01_ODBC_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=PostgreSQL_nazca_prod_01;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{A019F7C8-15E6-4772-AA8E-C48295347BDE}</Id>
+            <Name>Package1::Tdpdb_ConnectionString_</Name>
+            <Value xsi:type="xsd:string">uid=tucows;Dsn=PostgreSQL_Tdp_prod;</Value>
+          </ConfigurationSetting>
+          <ConfigurationSetting>
+            <Id>{745DA3B0-D2B4-4F7F-BEF7-56B331424995}</Id>
+            <Name>Enom_dm_by_TLD::Enom_ODBC_NameHost_ConnectionString</Name>
+            <Value xsi:type="xsd:string">uid=nludina;Dsn=Enom_ODBC_MSSQL_NameHost;</Value>
+          </ConfigurationSetting>
+        </ParameterConfigurationValues>
+      </Options>
+    </Configuration>
+  </Configurations>
+</Project>

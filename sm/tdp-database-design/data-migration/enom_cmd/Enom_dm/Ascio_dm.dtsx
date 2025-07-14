@@ -1,0 +1,1075 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="2/15/2024 5:48:09 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="LAPTOP-UHHLA3LI"
+  DTS:CreatorName="TUCOWSAD\nludina"
+  DTS:DTSID="{44A3EC57-7D39-4052-935E-B87AF0C03B9F}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:ForceExecutionResult="2"
+  DTS:LastModifiedProductVersion="16.0.5556.0"
+  DTS:LocaleID="1033"
+  DTS:MaxConcurrentExecutables="10"
+  DTS:ObjectName="OpenSRS_dm"
+  DTS:PackageType="5"
+  DTS:VersionBuild="2697"
+  DTS:VersionGUID="{F4A20A05-B31C-4D59-B2E2-2ABF8B50EFB0}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[Enom_dm_log.xml]"
+      DTS:CreationName="FILE"
+      DTS:DTSID="{32D17AFC-5F5F-4FE1-98A1-E986689C9141}"
+      DTS:ObjectName="Enom_dm_log.xml">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[$Package::log_xml_file_path]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:FileUsageType="1"
+          DTS:ConnectionString="C:\tdp-database-design\data-migration\enom_cmd\Enom_dm\log\enom_dm_log.xml" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[tdpdb]"
+      DTS:CreationName="ODBC"
+      DTS:DTSID="{9665FBE1-BD9E-40BF-90E5-048A71F4F1E1}"
+      DTS:ObjectName="tdpdb">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[$Package::Tdpdb_ConnectionString]</DTS:PropertyExpression>
+      <DTS:PropertyExpression
+        DTS:Name="Password">@[$Package::Tdpdb_Password]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="uid=migration_user;Dsn=PostgreSQL_TEST_PROD;">
+          <DTS:Password
+            DTS:Name="Pwd"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAbUbA4x0ZPWdphoQIYXIR/AAAAAASAAACgAAAAEAAAAEh4Q4PZZUMpBWnET9LpchIwAAAAhwM7mOQlfYWi/bzPJaFiXFCFTn/ntNtV2gRNh/+TmGIsQujcsIXVJBoxDNiAEwR0FAAAABTRbTfFEmc437abFI+JoWpjdkKW</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[tdpdb_ADO.NET]"
+      DTS:CreationName="ADO.NET:System.Data.Odbc.OdbcConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+      DTS:DTSID="{DAE45C58-25AE-4538-AFB8-AFC59C2D4D54}"
+      DTS:ObjectName="tdpdb_ADO.NET">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[$Package::Tdpdb_ConnectionString]</DTS:PropertyExpression>
+      <DTS:PropertyExpression
+        DTS:Name="Password">@[$Package::Tdpdb_Password]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="uid=migration_user;Dsn=PostgreSQL_TEST_PROD;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAB8T7yH0mNGiTuGXwMko4bOAAAAAASAAACgAAAAEAAAAFwXTq1jwrs3rwzn9rHAZj4wAAAAlqAoaylgz/CLkhe5KMR02Dp2rG97w4FPEle0IBuixue7XEFtIcBsL4ztNW2QVhLLFAAAAH0w96lSGnFO+kCZDkQCZR7fDbEM</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Configurations>
+    <DTS:Configuration
+      DTS:ConfigurationString="C:\tdp-database-design\data-migration\enom_cmd\Enom_dm\Enom_dm_dev.dtsConfig"
+      DTS:ConfigurationType="1"
+      DTS:CreationName=""
+      DTS:DTSID="{BC58EA4D-AD82-4B31-BC91-2074B5928E88}"
+      DTS:ObjectName="Dev" />
+    <DTS:Configuration
+      DTS:ConfigurationString="C:\tdp-database-design\data-migration\enom_cmd\Enom_dm\Enom_dm_local.dtsConfig"
+      DTS:ConfigurationType="1"
+      DTS:CreationName=""
+      DTS:DTSID="{844B4879-28C6-4569-BADF-06F25850192E}"
+      DTS:ObjectName="local" />
+  </DTS:Configurations>
+  <DTS:LogProviders>
+    <DTS:LogProvider
+      DTS:ConfigString="Enom_dm_log.xml"
+      DTS:CreationName="Microsoft.LogProviderXMLFile"
+      DTS:Description="Writes log entries for events to an XML file"
+      DTS:DTSID="{CFFFF97C-4AFD-418E-8945-5D41DFEC2B08}"
+      DTS:ObjectName="SSIS log provider for XML files1">
+      <DTS:ObjectData>
+        <InnerObject />
+      </DTS:ObjectData>
+    </DTS:LogProvider>
+  </DTS:LogProviders>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{AA55F5D5-54B5-4527-BC7B-36D3B3C98FE4}"
+      DTS:ObjectName="log_xml_file_path">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">C:\tdp-database-design\data-migration\enom_cmd\Enom_dm\log\enom_dm_log.xml</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{7BE4203F-5EFA-4E70-A72E-7B295EC00FB2}"
+      DTS:ObjectName="Migration_phase">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">1.3</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{D2EF52C6-94B9-42F9-8F0D-A08478C21603}"
+      DTS:ObjectName="Tdpdb_ConnectionString">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">uid=migration_user;Dsn=PostgreSQL_TEST_PROD;</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{3C48B452-399E-4159-91F5-0DD4320AC8CD}"
+      DTS:ObjectName="Tdpdb_Password"
+      DTS:Sensitive="True">
+      <DTS:Property
+        DTS:Name="ParameterValue">
+        <DTS:Property
+          DTS:DataType="8"
+          DTS:Name="ParameterValue"
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAVkmsD9Ji4UCbEVvvtX3EWAAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAA97q2f1dX//SWrJsx4DHNcAAAAAASAAACgAAAAEAAAAADBhWWzSzE9b5KnipDSyZcwAAAAAUstPKPIDp71sVju/lmjyMZsArd8+Ae0KyILjaogwzzdeP0Q2dhv7F1+7Cb9MuG9FAAAABwvAQqmuSm5xxrUE32/9TNMW+3u</DTS:Property>
+      </DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{C63F0E69-7FEC-43B9-B84E-806F741494A6}"
+      DTS:ObjectName="Tenant">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">ascio</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{C23845D8-695D-4925-A7DD-BCA26BD6A435}"
+      DTS:ObjectName="TLD">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">co.in</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{3AC58002-BD69-4AB7-AB15-203191A5E55E}"
+      DTS:ObjectName="_Enom_TDP_domain_table_name">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">TDP_domain_test</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{46C8A931-4176-4D5D-97B8-B7FB49428484}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="dm_log_id">
+      <DTS:VariableValue
+        DTS:DataType="3">1</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{F38E038E-CC1D-471B-AC84-6DC10BF19C74}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="list_big_tlds">
+      <DTS:VariableValue
+        DTS:DataType="8">com</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{8BA30D9B-53EF-40D9-A861-1E09A9069C74}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="list_middle_and_big_tlds">
+      <DTS:VariableValue
+        DTS:DataType="8">com' ,'net</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{8CA9475C-701D-408A-8FAF-CF829813ACC9}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="max_dm_log_query">
+      <DTS:VariableValue
+        DTS:DataType="8">SELECT COALESCE(MAX(ID)+1,1)::int as max_id from itdp.dm_log;</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:LoggingOptions
+    DTS:FilterKind="0"
+    DTS:LoggingMode="1">
+    <DTS:Property
+      DTS:DataType="8"
+      DTS:Name="EventFilter">4,7,OnError,13,OnInformation,10,OnProgress,12,OnTaskFailed</DTS:Property>
+    <DTS:Property
+      DTS:EventName="Diagnostic"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="DiagnosticEx"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnError"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">0</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnExecStatusChanged"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnInformation"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">0</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePostComponentCall"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePostEndOfRowset"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePostPrimeOutput"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePreComponentCall"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePreEndOfRowset"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelinePrePrimeOutput"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPipelineRowsSent"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPostExecute"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPostValidate"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPreExecute"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnPreValidate"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnProgress"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">0</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnQueryCancel"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnTaskFailed"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">0</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">0</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnVariableValueChanged"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:Property
+      DTS:EventName="OnWarning"
+      DTS:Name="ColumnFilter">
+      <DTS:Property
+        DTS:Name="Computer">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="Operator">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceName">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="SourceID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="ExecutionID">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="MessageText">-1</DTS:Property>
+      <DTS:Property
+        DTS:Name="DataBytes">-1</DTS:Property>
+    </DTS:Property>
+    <DTS:SelectedLogProviders>
+      <DTS:SelectedLogProvider
+        DTS:InstanceID="{CFFFF97C-4AFD-418E-8945-5D41DFEC2B08}" />
+    </DTS:SelectedLogProviders>
+  </DTS:LoggingOptions>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Create partition in ITDP for tenant and tld"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{E68F0030-B3B1-4FBE-9DFB-DFD719E82977}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Create partition in ITDP for tenant and tld"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:PropertyExpression
+        DTS:Name="SqlStatementSource">"
+-- domain
+CREATE TABLE IF NOT EXISTS   itdp.domain_"+ @[$Package::Tenant] +"  PARTITION OF itdp.DOMAIN
+    FOR VALUES IN ('"+ @[$Package::Tenant] +"')
+   PARTITION BY LIST (tld);
+  
+CREATE TABLE IF NOT EXISTS  itdp.domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"  PARTITION OF itdp.domain_"+ @[$Package::Tenant] +"
+    FOR VALUES IN ('"+ @[$Package::TLD] +"');  
+
+CREATE INDEX  IF NOT EXISTS domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_source_domain_id_idx ON itdp.domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"  USING btree (source_domain_id);
+
+DO $$
+BEGIN 
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_name_key') then
+     	ALTER TABLE itdp.domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"   ADD CONSTRAINT domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_name_key UNIQUE (name);
+    end if;
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_status_id_fkey') then
+     	ALTER TABLE itdp.domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"   ADD 	CONSTRAINT domain_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_status_id_fkey FOREIGN KEY (status_id) REFERENCES itdp.domain_status(id);
+    end if;	
+END$$  ;
+
+-------------------------------------------------------------------------------------------------------    
+-- host    
+CREATE TABLE IF NOT EXISTS   itdp.host_"+ @[$Package::Tenant] +" PARTITION OF itdp.host
+   FOR VALUES IN ('"+ @[$Package::Tenant] +"')
+   PARTITION BY LIST (tld);
+  
+CREATE TABLE IF NOT EXISTS  itdp.host_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"  PARTITION OF itdp.host_"+ @[$Package::Tenant] +"
+    FOR VALUES IN ('"+ @[$Package::TLD] +"'); 
+
+CREATE INDEX  IF NOT EXISTS host_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_source_host_id_idx ON itdp.host_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +" USING btree (source_host_id);
+CREATE INDEX  IF NOT EXISTS host_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_name_idx ON itdp.host_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +" USING btree (name);
+CREATE INDEX  IF NOT EXISTS host_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_itdp_domain_id_idx ON itdp.host_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +" USING btree (itdp_domain_id) ;
+
+
+-- host_addr    
+CREATE TABLE IF NOT EXISTS   itdp.host_addr_"+ @[$Package::Tenant] +" PARTITION OF itdp.host_addr
+   FOR VALUES IN ('"+ @[$Package::Tenant] +"')
+   PARTITION BY LIST (tld);
+  
+CREATE TABLE IF NOT EXISTS  itdp.host_addr_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"  PARTITION OF itdp.host_addr_"+ @[$Package::Tenant] +"
+    FOR VALUES IN ('"+ @[$Package::TLD] +"'); 
+--------------------------------------------------------------------------------------------------------   
+--contact   
+ CREATE TABLE IF NOT EXISTS  itdp.contact_"+ @[$Package::Tenant] +"  PARTITION OF itdp.contact
+    FOR VALUES IN ('"+ @[$Package::Tenant] +"')
+   PARTITION BY LIST (tld);
+  
+CREATE TABLE IF NOT EXISTS  itdp.contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"  PARTITION OF itdp.contact_"+ @[$Package::Tenant] +"
+    FOR VALUES IN ('"+ @[$Package::TLD] +"'); 
+ 
+ CREATE INDEX  IF NOT EXISTS contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_source_contact_id_idx ON itdp.contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +" USING btree (source_contact_id);
+
+DO $$
+BEGIN 
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_country_fkey') then
+     	ALTER TABLE itdp.contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"   ADD CONSTRAINT contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_country_fkey FOREIGN KEY (country) REFERENCES itdp.country(alpha2);
+    end if;
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_language_fkey') then
+     	ALTER TABLE itdp.contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"   ADD CONSTRAINT contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_language_fkey FOREIGN KEY (language) REFERENCES itdp.language(alpha2); 
+    end if;
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_type_id_fkey') then
+     	ALTER TABLE itdp.contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"    ADD CONSTRAINT contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_type_id_fkey FOREIGN KEY (type_id) REFERENCES itdp.contact_type(id) ; 
+    end if;
+END$$  ;
+   
+ -------------------------------------------------------------------------------------------  
+--contact_postal   
+ CREATE TABLE IF NOT EXISTS  itdp.contact_postal_"+ @[$Package::Tenant] +"  PARTITION OF itdp.contact_postal 
+    FOR VALUES IN ('"+ @[$Package::Tenant] +"')
+   PARTITION BY LIST (tld);
+  
+CREATE TABLE IF NOT EXISTS  itdp.contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"  PARTITION OF itdp.contact_postal_"+ @[$Package::Tenant] +"
+    FOR VALUES IN ('"+ @[$Package::TLD] +"'); 
+
+DO $$
+BEGIN 
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_check') then
+     	ALTER TABLE itdp.contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"   ADD CONSTRAINT contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_check CHECK (((NOT is_international) OR (is_null_or_ascii(first_name) AND is_null_or_ascii(last_name)
+	AND is_null_or_ascii(org_name) AND is_null_or_ascii(address1) AND is_null_or_ascii(address2) AND is_null_or_ascii(address3)
+	AND is_null_or_ascii(city) AND is_null_or_ascii(postal_code) AND is_null_or_ascii(state))));
+    end if;
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_contact_id_is_international_key') then
+     	ALTER TABLE itdp.contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"   ADD CONSTRAINT contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_contact_id_is_international_key UNIQUE (contact_id, is_international);
+    end if;
+	if not exists (select conname    FROM pg_constraint
+		INNER JOIN pg_class ON conrelid=pg_class.oid
+		INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         
+        WHERE relname = 'contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"' AND nspname='itdp'  and conname = 'contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_contact_id_fkey') then
+     	ALTER TABLE itdp.contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"    ADD CONSTRAINT contact_postal_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"_contact_id_fkey FOREIGN KEY (dm_source,tld,contact_id) REFERENCES itdp.contact_"+ @[$Package::Tenant] +"_"+ REPLACE(@[$Package::TLD],".","_") +"(dm_source,tld,id);
+    end if;
+END$$  ; 
+   "</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{9665FBE1-BD9E-40BF-90E5-048A71F4F1E1}"
+          SQLTask:SqlStatementSource="&#xA;-- domain&#xA;CREATE TABLE IF NOT EXISTS   itdp.domain_ascio  PARTITION OF itdp.DOMAIN&#xA;    FOR VALUES IN ('ascio')&#xA;   PARTITION BY LIST (tld);&#xA;  &#xA;CREATE TABLE IF NOT EXISTS  itdp.domain_ascio_co_in  PARTITION OF itdp.domain_ascio&#xA;    FOR VALUES IN ('co.in');  &#xA;&#xA;CREATE INDEX  IF NOT EXISTS domain_ascio_co_in_source_domain_id_idx ON itdp.domain_ascio_co_in  USING btree (source_domain_id);&#xA;&#xA;DO $$&#xA;BEGIN &#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'domain_ascio_co_in' AND nspname='itdp'  and conname = 'domain_ascio_co_in_name_key') then&#xA;     &#x9;ALTER TABLE itdp.domain_ascio_co_in   ADD CONSTRAINT domain_ascio_co_in_name_key UNIQUE (name);&#xA;    end if;&#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'domain_ascio_co_in' AND nspname='itdp'  and conname = 'domain_ascio_co_in_status_id_fkey') then&#xA;     &#x9;ALTER TABLE itdp.domain_ascio_co_in   ADD &#x9;CONSTRAINT domain_ascio_co_in_status_id_fkey FOREIGN KEY (status_id) REFERENCES itdp.domain_status(id);&#xA;    end if;&#x9;&#xA;END$$  ;&#xA;&#xA;-------------------------------------------------------------------------------------------------------    &#xA;-- host    &#xA;CREATE TABLE IF NOT EXISTS   itdp.host_ascio PARTITION OF itdp.host&#xA;   FOR VALUES IN ('ascio')&#xA;   PARTITION BY LIST (tld);&#xA;  &#xA;CREATE TABLE IF NOT EXISTS  itdp.host_ascio_co_in  PARTITION OF itdp.host_ascio&#xA;    FOR VALUES IN ('co.in'); &#xA;&#xA;CREATE INDEX  IF NOT EXISTS host_ascio_co_in_source_host_id_idx ON itdp.host_ascio_co_in USING btree (source_host_id);&#xA;CREATE INDEX  IF NOT EXISTS host_ascio_co_in_name_idx ON itdp.host_ascio_co_in USING btree (name);&#xA;CREATE INDEX  IF NOT EXISTS host_ascio_co_in_itdp_domain_id_idx ON itdp.host_ascio_co_in USING btree (itdp_domain_id) ;&#xA;&#xA;&#xA;-- host_addr    &#xA;CREATE TABLE IF NOT EXISTS   itdp.host_addr_ascio PARTITION OF itdp.host_addr&#xA;   FOR VALUES IN ('ascio')&#xA;   PARTITION BY LIST (tld);&#xA;  &#xA;CREATE TABLE IF NOT EXISTS  itdp.host_addr_ascio_co_in  PARTITION OF itdp.host_addr_ascio&#xA;    FOR VALUES IN ('co.in'); &#xA;--------------------------------------------------------------------------------------------------------   &#xA;--contact   &#xA; CREATE TABLE IF NOT EXISTS  itdp.contact_ascio  PARTITION OF itdp.contact&#xA;    FOR VALUES IN ('ascio')&#xA;   PARTITION BY LIST (tld);&#xA;  &#xA;CREATE TABLE IF NOT EXISTS  itdp.contact_ascio_co_in  PARTITION OF itdp.contact_ascio&#xA;    FOR VALUES IN ('co.in'); &#xA; &#xA; CREATE INDEX  IF NOT EXISTS contact_ascio_co_in_source_contact_id_idx ON itdp.contact_ascio_co_in USING btree (source_contact_id);&#xA;&#xA;DO $$&#xA;BEGIN &#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'contact_ascio_co_in' AND nspname='itdp'  and conname = 'contact_ascio_co_in_country_fkey') then&#xA;     &#x9;ALTER TABLE itdp.contact_ascio_co_in   ADD CONSTRAINT contact_ascio_co_in_country_fkey FOREIGN KEY (country) REFERENCES itdp.country(alpha2);&#xA;    end if;&#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'contact_ascio_co_in' AND nspname='itdp'  and conname = 'contact_ascio_co_in_language_fkey') then&#xA;     &#x9;ALTER TABLE itdp.contact_ascio_co_in   ADD CONSTRAINT contact_ascio_co_in_language_fkey FOREIGN KEY (language) REFERENCES itdp.language(alpha2); &#xA;    end if;&#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'contact_ascio_co_in' AND nspname='itdp'  and conname = 'contact_ascio_co_in_type_id_fkey') then&#xA;     &#x9;ALTER TABLE itdp.contact_ascio_co_in    ADD CONSTRAINT contact_ascio_co_in_type_id_fkey FOREIGN KEY (type_id) REFERENCES itdp.contact_type(id) ; &#xA;    end if;&#xA;END$$  ;&#xA;   &#xA; -------------------------------------------------------------------------------------------  &#xA;--contact_postal   &#xA; CREATE TABLE IF NOT EXISTS  itdp.contact_postal_ascio  PARTITION OF itdp.contact_postal &#xA;    FOR VALUES IN ('ascio')&#xA;   PARTITION BY LIST (tld);&#xA;  &#xA;CREATE TABLE IF NOT EXISTS  itdp.contact_postal_ascio_co_in  PARTITION OF itdp.contact_postal_ascio&#xA;    FOR VALUES IN ('co.in'); &#xA;&#xA;DO $$&#xA;BEGIN &#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'contact_postal_ascio_co_in' AND nspname='itdp'  and conname = 'contact_postal_ascio_co_in_check') then&#xA;     &#x9;ALTER TABLE itdp.contact_postal_ascio_co_in   ADD CONSTRAINT contact_postal_ascio_co_in_check CHECK (((NOT is_international) OR (is_null_or_ascii(first_name) AND is_null_or_ascii(last_name)&#xA;&#x9;AND is_null_or_ascii(org_name) AND is_null_or_ascii(address1) AND is_null_or_ascii(address2) AND is_null_or_ascii(address3)&#xA;&#x9;AND is_null_or_ascii(city) AND is_null_or_ascii(postal_code) AND is_null_or_ascii(state))));&#xA;    end if;&#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'contact_postal_ascio_co_in' AND nspname='itdp'  and conname = 'contact_postal_ascio_co_in_contact_id_is_international_key') then&#xA;     &#x9;ALTER TABLE itdp.contact_postal_ascio_co_in   ADD CONSTRAINT contact_postal_ascio_co_in_contact_id_is_international_key UNIQUE (contact_id, is_international);&#xA;    end if;&#xA;&#x9;if not exists (select conname    FROM pg_constraint&#xA;&#x9;&#x9;INNER JOIN pg_class ON conrelid=pg_class.oid&#xA;&#x9;&#x9;INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace         &#xA;        WHERE relname = 'contact_postal_ascio_co_in' AND nspname='itdp'  and conname = 'contact_postal_ascio_co_in_contact_id_fkey') then&#xA;     &#x9;ALTER TABLE itdp.contact_postal_ascio_co_in    ADD CONSTRAINT contact_postal_ascio_co_in_contact_id_fkey FOREIGN KEY (dm_source,tld,contact_id) REFERENCES itdp.contact_ascio_co_in(dm_source,tld,id);&#xA;    end if;&#xA;END$$  ; &#xA;   " xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Sequence Container"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{480d823d-714a-4369-9e75-6801047818fb}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sequence Container">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\dm_log - dm_start"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{661c5f16-bfb4-44fb-86fb-f1cdddb2c05f}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="dm_log - dm_start"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"BEGIN ;
+INSERT INTO itdp.dm_log
+( id, phase, dm_source, tld, start_date, status)
+VALUES( "+ (DT_WSTR, 5) @[User::dm_log_id] +",'"+  @[$Package::Migration_phase] +"', '"+ @[$Package::Tenant]  +"', '"+ @[$Package::TLD] +"', NOW(), 'ascio_dm started' );
+
+UPDATE  itdp.tld t
+SET migration_status = NULL , 
+	result_domain.extract = NULL ,
+	result_host.extract =  NULL ,
+	result_contact.extract = NULL ,
+	result_domain.dm_enom = NULL ,
+	result_domain.itdp = NULL ,
+	result_domain.error = NULL ,
+	result_domain.tdp  = NULL ,
+	result_host.dm_enom = NULL ,
+	result_host.itdp = NULL ,
+	result_host.error = NULL ,
+	result_host.tdp = NULL ,
+	result_contact.dm_enom = NULL ,
+	result_contact.itdp = NULL ,
+	result_contact.error = NULL ,
+	result_contact.tdp = NULL ,
+	result_domain.dm_enom_itdp_pk  = NULL ,
+	result_contact.dm_enom_itdp_pk = NULL ,
+result_host.dm_enom_itdp_pk  = NULL ,
+	updated_date = now()
+WHERE t.TLD_name  = '"+ @[$Package::TLD] +"' AND t.dm_source='"+ @[$Package::Tenant] +"'  AND phase = '"+@[$Package::Migration_phase]+"';
+COMMIT;"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{DAE45C58-25AE-4538-AFB8-AFC59C2D4D54}"
+              SQLTask:SqlStatementSource="BEGIN ;&#xA;INSERT INTO itdp.dm_log&#xA;( id, phase, dm_source, tld, start_date, status)&#xA;VALUES( 1,'1.3', 'ascio', 'co.in', NOW(), 'ascio_dm started' );&#xA;&#xA;UPDATE  itdp.tld t&#xA;SET migration_status = NULL , &#xA;&#x9;result_domain.extract = NULL ,&#xA;&#x9;result_host.extract =  NULL ,&#xA;&#x9;result_contact.extract = NULL ,&#xA;&#x9;result_domain.dm_enom = NULL ,&#xA;&#x9;result_domain.itdp = NULL ,&#xA;&#x9;result_domain.error = NULL ,&#xA;&#x9;result_domain.tdp  = NULL ,&#xA;&#x9;result_host.dm_enom = NULL ,&#xA;&#x9;result_host.itdp = NULL ,&#xA;&#x9;result_host.error = NULL ,&#xA;&#x9;result_host.tdp = NULL ,&#xA;&#x9;result_contact.dm_enom = NULL ,&#xA;&#x9;result_contact.itdp = NULL ,&#xA;&#x9;result_contact.error = NULL ,&#xA;&#x9;result_contact.tdp = NULL ,&#xA;&#x9;result_domain.dm_enom_itdp_pk  = NULL ,&#xA;&#x9;result_contact.dm_enom_itdp_pk = NULL ,&#xA;result_host.dm_enom_itdp_pk  = NULL ,&#xA;&#x9;updated_date = now()&#xA;WHERE t.TLD_name  = 'co.in' AND t.dm_source='ascio'  AND phase = '1.3';&#xA;COMMIT;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\dm_log - tdp_transfer_end"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{810f8bc5-c7b9-4efa-ab78-cc5fc639a255}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="dm_log - tdp_transfer_end"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"UPDATE  itdp.dm_log dl
+SET end_date_tdp_transfer=now(),
+	status='TDP Migration finished',
+	result_domain = t.result_domain,
+	result_host=t.result_host,
+	result_contact=t.result_contact
+FROM itdp.tld t
+WHERE t.tld_name=dl.tld AND t.dm_source=dl.dm_source
+ AND	 dl.id = "+ (DT_WSTR, 5) @[User::dm_log_id] +" 
+ AND dl.dm_source='"+ @[$Package::Tenant] +"' 
+ AND dl.tld='"+ @[$Package::TLD] +"';"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{9665FBE1-BD9E-40BF-90E5-048A71F4F1E1}"
+              SQLTask:SqlStatementSource="UPDATE  itdp.dm_log dl&#xA;SET end_date_tdp_transfer=now(),&#xA;&#x9;status='TDP Migration finished',&#xA;&#x9;result_domain = t.result_domain,&#xA;&#x9;result_host=t.result_host,&#xA;&#x9;result_contact=t.result_contact&#xA;FROM itdp.tld t&#xA;WHERE t.tld_name=dl.tld AND t.dm_source=dl.dm_source&#xA; AND&#x9; dl.id = 1 &#xA; AND dl.dm_source='ascio' &#xA; AND dl.tld='co.in';" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Execute TDP-TDP"
+          DTS:CreationName="Microsoft.ExecutePackageTask"
+          DTS:Description="Execute Package Task"
+          DTS:DTSID="{53fae542-5a09-44df-a124-c5d32bd3a0d8}"
+          DTS:ExecutableType="Microsoft.ExecutePackageTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Execute TDP-TDP"
+          DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <ExecutePackageTask>
+              <UseProjectReference>True</UseProjectReference>
+              <PackageName>ITDP-TDP.dtsx</PackageName>
+              <ParameterAssignment>
+                <ParameterName>Tenant</ParameterName>
+                <BindedVariableOrParameterName>$Package::Tenant</BindedVariableOrParameterName>
+              </ParameterAssignment>
+              <ParameterAssignment>
+                <ParameterName>TLD</ParameterName>
+                <BindedVariableOrParameterName>$Package::TLD</BindedVariableOrParameterName>
+              </ParameterAssignment>
+              <ParameterAssignment>
+                <ParameterName>dm_log_id</ParameterName>
+                <BindedVariableOrParameterName>User::dm_log_id</BindedVariableOrParameterName>
+              </ParameterAssignment>
+            </ExecutePackageTask>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Get max dm_log"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{a3db9590-f6d1-49b6-9868-6c27e5b7c7f0}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get max dm_log"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{DAE45C58-25AE-4538-AFB8-AFC59C2D4D54}"
+              SQLTask:SqlStmtSourceType="Variable"
+              SQLTask:SqlStatementSource="User::max_dm_log_query"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::dm_log_id" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{4a2fa5b1-f80b-4967-95c0-13d7f33bc3f3}"
+          DTS:From="Package\Sequence Container\Get max dm_log"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Sequence Container\dm_log - dm_start" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{cba39153-9498-418f-986d-b9a50c20d037}"
+          DTS:From="Package\Sequence Container\dm_log - dm_start"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Sequence Container\Execute TDP-TDP" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{463E7082-AFD0-40BE-8EE5-7B1E553000A9}"
+          DTS:From="Package\Sequence Container\Execute TDP-TDP"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Sequence Container\dm_log - tdp_transfer_end"
+          DTS:Value="2" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:EventHandlers>
+    <DTS:EventHandler
+      DTS:refId="Package.EventHandlers[OnError]"
+      DTS:CreationName="OnError"
+      DTS:DTSID="{44E0F8A9-A124-40CE-9623-749B4AF02FAC}"
+      DTS:EventID="10485920"
+      DTS:EventName="OnError"
+      DTS:LocaleID="-1">
+      <DTS:Variables>
+        <DTS:Variable
+          DTS:CreationName=""
+          DTS:Description="The propagate property of the event"
+          DTS:DTSID="{D2608F53-17F0-4636-B993-F4DC7E6B3BAE}"
+          DTS:IncludeInDebugDump="6789"
+          DTS:Namespace="System"
+          DTS:ObjectName="Propagate">
+          <DTS:VariableValue
+            DTS:DataType="11">-1</DTS:VariableValue>
+        </DTS:Variable>
+      </DTS:Variables>
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package.EventHandlers[OnError]\Save errorlog"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{FDEFE524-90C6-4449-A6C9-16533529E5D8}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Save errorlog"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2022; © 2022 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:PropertyExpression
+            DTS:Name="SqlStatementSource">"INSERT INTO itdp.ssis_errorlog
+(id, machinename, packagename, taskname, errorcode, errordescription, dated)
+VALUES(gen_random_uuid(), '"+ @[System::MachineName]+" ', '"+ @[System::PackageName] +"', '"+ @[System::SourceName]  +"', "+(DT_WSTR,12) @[System::ErrorCode] +", '"+ REPLACE(@[System::ErrorDescription],"'","") +"', now())"</DTS:PropertyExpression>
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{9665FBE1-BD9E-40BF-90E5-048A71F4F1E1}"
+              SQLTask:SqlStatementSource="INSERT INTO itdp.ssis_errorlog&#xA;(id, machinename, packagename, taskname, errorcode, errordescription, dated)&#xA;VALUES(gen_random_uuid(), 'CEN0VWSQLMGR01 ', 'OpenSRS_dm', '', 0, '', now())" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:EventHandler>
+  </DTS:EventHandlers>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="267.2,41.6"
+          Id="Package\Create partition in ITDP for tenant and tld"
+          TopLeft="300.899994946019,220.133331802554" />
+        <NodeLayout
+          Size="161.6,41.6"
+          Id="Package\Sequence Container\dm_log - dm_start"
+          TopLeft="225.433321404126,5.5" />
+        <NodeLayout
+          Size="200,41.6"
+          Id="Package\Sequence Container\dm_log - tdp_transfer_end"
+          TopLeft="342.633301324813,155.133330374228" />
+        <NodeLayout
+          Size="164,41.6"
+          Id="Package\Sequence Container\Execute TDP-TDP"
+          TopLeft="103.585191321792,149.85555525824" />
+        <NodeLayout
+          Size="153.6,41.6"
+          Id="Package\Sequence Container\Get max dm_log"
+          TopLeft="5.5,6.2333331947184" />
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint]"
+          TopLeft="159.1,26.6666665973592">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="66.333321404126,0"
+              Start="0,0"
+              End="58.833321404126,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="58.833321404126,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 1]"
+          TopLeft="306.233321404126,47.1">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-120.648130082334,102.755555258239"
+              Start="0,0"
+              End="-120.648130082334,95.2555552582395">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,47.3777776291197" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,47.3777776291197"
+                    Point2="0,51.3777776291197"
+                    Point3="-4,51.3777776291197" />
+                  <mssgle:LineSegment
+                    End="-116.648130082334,51.3777776291197" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-116.648130082334,51.3777776291197"
+                    Point2="-120.648130082334,51.3777776291197"
+                    Point3="-120.648130082334,55.3777776291197" />
+                  <mssgle:LineSegment
+                    End="-120.648130082334,95.2555552582395" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 2]"
+          TopLeft="267.585191321792,173.294442816234">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="75.0481100030206,0"
+              Start="0,0"
+              End="67.5481100030206,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="67.5481100030206,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="8.4696018765103,5,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="548,252"
+          Size="548,295.2"
+          Id="Package\Sequence Container"
+          TopLeft="242.97136719601,306.427607458586" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <DtsEventHandler
+    design-time-name="Package.EventHandlers[OnError]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="168,42.4"
+          Id="Package.EventHandlers[OnError]\Save errorlog"
+          TopLeft="546.99998369813,212.999993652106" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

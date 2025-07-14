@@ -1,0 +1,933 @@
+Parent TLD,TLD,TLD Type,Registry Name/ business_entity,Technical Backend/ provider,Order Type,Supported Period,Registry cost,Registry Cost Currency,ICANN fee,Tax/VAT/GST if applied,Manual Proc. Fee € (EURO),5% Intercompany fee,Direct accreditation,Orders via (if required),Updated by,Cost effective from 
+love,love,gTLD,Waterford Limited,Tucows Registry Services,Register,1-10,20,USD,yes,,0,no,yes,,PT,
+love,love,gTLD,Waterford Limited,Tucows Registry Services,Renew,1-9,20,USD,yes,,0,no,yes,,PT,
+love,love,gTLD,Waterford Limited,Tucows Registry Services,Transfer,1,20,USD,yes,,0,no,yes,,PT,
+love,love,gTLD,Waterford Limited,Tucows Registry Services,Restore (RGP),0,90,USD,no,,0,no,yes,,PT,
+click,click,gTLD,Internet Naming Co.,Tucows Registry Services,Register,1-10,9,USD,yes,,0,no,yes,,PT,
+click,click,gTLD,Internet Naming Co.,Tucows Registry Services,Renew,1-9,9,USD,yes,,0,no,yes,,PT,
+click,click,gTLD,Internet Naming Co.,Tucows Registry Services,Transfer,1,9,USD,yes,,0,no,yes,,PT,
+click,click,gTLD,Internet Naming Co.,Tucows Registry Services,Restore (RGP),0,90,USD,no,,0,no,yes,,PT,
+sexy,sexy,gTLD,Internet Naming Co.,Tucows Registry Services,Register,1-10,2500,USD,yes,,0,no,yes,,PT,
+sexy,sexy,gTLD,Internet Naming Co.,Tucows Registry Services,Renew,1-9,2500,USD,yes,,0,no,yes,,PT,
+sexy,sexy,gTLD,Internet Naming Co.,Tucows Registry Services,Transfer,1,2500,USD,yes,,0,no,yes,,PT,
+sexy,sexy,gTLD,Internet Naming Co.,Tucows Registry Services,Restore (RGP),0,30,USD,no,,0,no,yes,,PT,
+country,country,gTLD,Internet Naming Co.,Tucows Registry Services,Register,1-10,2000,USD,yes,,0,no,yes,,PT,
+country,country,gTLD,Internet Naming Co.,Tucows Registry Services,Renew,1-9,2000,USD,yes,,0,no,yes,,PT,
+country,country,gTLD,Internet Naming Co.,Tucows Registry Services,Transfer,1,2000,USD,yes,,0,no,yes,,PT,
+country,country,gTLD,Internet Naming Co.,Tucows Registry Services,Restore (RGP),0,30,USD,no,,0,no,yes,,PT,
+property,property,gTLD,Digital Property Infrastructure Limited,Tucows Registry Services,Register,1-10,100,USD,yes,,0,no,yes,,PT,
+property,property,gTLD,Digital Property Infrastructure Limited,Tucows Registry Services,Renew,1-9,100,USD,yes,,0,no,yes,,PT,
+property,property,gTLD,Digital Property Infrastructure Limited,Tucows Registry Services,Transfer,1,100,USD,yes,,0,no,yes,,PT,
+property,property,gTLD,Digital Property Infrastructure Limited,Tucows Registry Services,Restore (RGP),0,30,USD,no,,0,no,yes,,PT,
+link,link,gTLD,Nova Registry Ltd.,Tucows Registry Services,Register,1-10,7,USD,yes,,0,no,yes,,PT,
+link,link,gTLD,Nova Registry Ltd.,Tucows Registry Services,Renew,1-9,7,USD,yes,,0,no,yes,,PT,
+link,link,gTLD,Nova Registry Ltd.,Tucows Registry Services,Transfer,1,7,USD,yes,,0,no,yes,,PT,
+link,link,gTLD,Nova Registry Ltd.,Tucows Registry Services,Restore (RGP),0,30,USD,no,,0,no,yes,,PT,
+cloud,cloud,gTLD,ARUBA PEC S.p.A.,Tucows Registry Services,Register,1-10,15,USD,yes,,0,no,yes,,PT,
+cloud,cloud,gTLD,ARUBA PEC S.p.A.,Tucows Registry Services,Renew,1-9,15,USD,yes,,0,no,yes,,PT,
+cloud,cloud,gTLD,ARUBA PEC S.p.A.,Tucows Registry Services,Transfer,1,15,USD,yes,,0,no,yes,,PT,
+cloud,cloud,gTLD,ARUBA PEC S.p.A.,Tucows Registry Services,Restore (RGP),0,40,USD,no,,0,no,yes,,PT,
+music,music,gTLD,DotMusic Limited,Tucows Registry Services,Register,1-10,37,USD,yes,,0,no,yes,,PN,
+music,music,gTLD,DotMusic Limited,Tucows Registry Services,Renew,1-9,37,USD,yes,,0,no,yes,,PN,
+music,music,gTLD,DotMusic Limited,Tucows Registry Services,Transfer,1,37,USD,yes,,0,no,yes,,PN,
+music,music,gTLD,DotMusic Limited,Tucows Registry Services,Restore (RGP),0,50,USD,no,,0,no,yes,,PN,
+academy,academy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,33.00,USD,yes,,0,no,yes,,PN,4 October 2024
+academy,academy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,33.00,USD,yes,,0,no,yes,,PN,4 October 2024
+academy,academy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,33.00,USD,yes,,0,no,yes,,PN,4 October 2024
+academy,academy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+accountants,accountants,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,81.00,USD,yes,,0,no,yes,,PN,4 October 2024
+accountants,accountants,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,81.00,USD,yes,,0,no,yes,,PN,4 October 2024
+accountants,accountants,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,81.00,USD,yes,,0,no,yes,,PN,4 October 2024
+accountants,accountants,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+actor,actor,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+actor,actor,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+actor,actor,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+actor,actor,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+agency,agency,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+agency,agency,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+agency,agency,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+agency,agency,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+archi,archi,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,72.00,USD,yes,,0,no,yes,,PN,4 October 2024
+archi,archi,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,72.00,USD,yes,,0,no,yes,,PN,4 October 2024
+archi,archi,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,72.00,USD,yes,,0,no,yes,,PN,4 October 2024
+archi,archi,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+army,army,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+army,army,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+army,army,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+army,army,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+associates,associates,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+associates,associates,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+associates,associates,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+associates,associates,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+attorney,attorney,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+attorney,attorney,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+attorney,attorney,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+attorney,attorney,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+auction,auction,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+auction,auction,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+auction,auction,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+auction,auction,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+band,band,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+band,band,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+band,band,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+band,band,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+bet,bet,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bet,bet,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bet,bet,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bet,bet,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+bike,bike,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bike,bike,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bike,bike,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bike,bike,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+bingo,bingo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bingo,bingo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bingo,bingo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+bingo,bingo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+black,black,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+black,black,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+black,black,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+black,black,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+blue,blue,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+blue,blue,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+blue,blue,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+blue,blue,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+boutique,boutique,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+boutique,boutique,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+boutique,boutique,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+boutique,boutique,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+broker,broker,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+broker,broker,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+broker,broker,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+broker,broker,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+builders,builders,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+builders,builders,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+builders,builders,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+builders,builders,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+business,business,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,12.50,USD,yes,,0,no,yes,,PN,4 October 2024
+business,business,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,12.50,USD,yes,,0,no,yes,,PN,4 October 2024
+business,business,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,12.50,USD,yes,,0,no,yes,,PN,4 October 2024
+business,business,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cab,cab,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cab,cab,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cab,cab,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cab,cab,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cafe,cafe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cafe,cafe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cafe,cafe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cafe,cafe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+camp,camp,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+camp,camp,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+camp,camp,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+camp,camp,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+capital,capital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+capital,capital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+capital,capital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+capital,capital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cards,cards,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cards,cards,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cards,cards,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cards,cards,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+care,care,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+care,care,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+care,care,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+care,care,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+careers,careers,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+careers,careers,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+careers,careers,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+careers,careers,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cash,cash,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cash,cash,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cash,cash,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cash,cash,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+casino,casino,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,118.00,USD,yes,,0,no,yes,,PN,4 October 2024
+casino,casino,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,118.00,USD,yes,,0,no,yes,,PN,4 October 2024
+casino,casino,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,118.00,USD,yes,,0,no,yes,,PN,4 October 2024
+casino,casino,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+catering,catering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+catering,catering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+catering,catering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+catering,catering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+center,center,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+center,center,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+center,center,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+center,center,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+chat,chat,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+chat,chat,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+chat,chat,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+chat,chat,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cheap,cheap,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cheap,cheap,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cheap,cheap,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cheap,cheap,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+church,church,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+church,church,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+church,church,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+church,church,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+city,city,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+city,city,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+city,city,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+city,city,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cleaning,cleaning,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,52.50,USD,yes,,0,no,yes,,PN,4 October 2024
+cleaning,cleaning,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,52.50,USD,yes,,0,no,yes,,PN,4 October 2024
+cleaning,cleaning,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,52.50,USD,yes,,0,no,yes,,PN,4 October 2024
+cleaning,cleaning,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+clinic,clinic,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+clinic,clinic,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+clinic,clinic,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+clinic,clinic,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+clothing,clothing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+clothing,clothing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+clothing,clothing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+clothing,clothing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+coach,coach,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+coach,coach,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+coach,coach,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+coach,coach,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+codes,codes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+codes,codes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+codes,codes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+codes,codes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+coffee,coffee,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+coffee,coffee,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+coffee,coffee,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+coffee,coffee,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+community,community,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+community,community,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+community,community,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+community,community,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+company,company,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,12.50,USD,yes,,0,no,yes,,PN,4 October 2024
+company,company,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,12.50,USD,yes,,0,no,yes,,PN,4 October 2024
+company,company,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,12.50,USD,yes,,0,no,yes,,PN,4 October 2024
+company,company,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+computer,computer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+computer,computer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+computer,computer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+computer,computer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+condos,condos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+condos,condos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+condos,condos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+condos,condos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+construction,construction,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+construction,construction,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+construction,construction,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+construction,construction,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+consulting,consulting,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,36.00,USD,yes,,0,no,yes,,PN,4 October 2024
+consulting,consulting,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,36.00,USD,yes,,0,no,yes,,PN,4 October 2024
+consulting,consulting,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,36.00,USD,yes,,0,no,yes,,PN,4 October 2024
+consulting,consulting,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+contact,contact,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,11.00,USD,yes,,0,no,yes,,PN,4 October 2024
+contact,contact,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,11.00,USD,yes,,0,no,yes,,PN,4 October 2024
+contact,contact,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,11.00,USD,yes,,0,no,yes,,PN,4 October 2024
+contact,contact,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cool,cool,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cool,cool,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cool,cool,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cool,cool,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+cruises,cruises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cruises,cruises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cruises,cruises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+cruises,cruises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+dance,dance,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dance,dance,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dance,dance,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dance,dance,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+dating,dating,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dating,dating,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dating,dating,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dating,dating,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+deals,deals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+deals,deals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+deals,deals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+deals,deals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+degree,degree,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,34.00,USD,yes,,0,no,yes,,PN,4 October 2024
+degree,degree,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,34.00,USD,yes,,0,no,yes,,PN,4 October 2024
+degree,degree,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,34.00,USD,yes,,0,no,yes,,PN,4 October 2024
+degree,degree,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+delivery,delivery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+delivery,delivery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+delivery,delivery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+delivery,delivery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+dental,dental,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dental,dental,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dental,dental,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dental,dental,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+dentist,dentist,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dentist,dentist,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dentist,dentist,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dentist,dentist,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+digital,digital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+digital,digital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+digital,digital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+digital,digital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+direct,direct,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+direct,direct,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+direct,direct,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+direct,direct,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+directory,directory,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+directory,directory,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+directory,directory,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+directory,directory,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+discount,discount,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+discount,discount,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+discount,discount,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+discount,discount,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+dog,dog,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dog,dog,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dog,dog,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+dog,dog,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+domains,domains,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+domains,domains,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+domains,domains,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+domains,domains,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+education,education,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+education,education,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+education,education,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+education,education,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+email,email,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+email,email,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+email,email,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+email,email,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+energy,energy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,81.00,USD,yes,,0,no,yes,,PN,4 October 2024
+energy,energy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,81.00,USD,yes,,0,no,yes,,PN,4 October 2024
+energy,energy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,81.00,USD,yes,,0,no,yes,,PN,4 October 2024
+energy,energy,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+engineer,engineer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+engineer,engineer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+engineer,engineer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+engineer,engineer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+engineering,engineering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+engineering,engineering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+engineering,engineering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+engineering,engineering,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+enterprises,enterprises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+enterprises,enterprises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+enterprises,enterprises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+enterprises,enterprises,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+equipment,equipment,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+equipment,equipment,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+equipment,equipment,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+equipment,equipment,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+estate,estate,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+estate,estate,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+estate,estate,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+estate,estate,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+events,events,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+events,events,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+events,events,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+events,events,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+exchange,exchange,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+exchange,exchange,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+exchange,exchange,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+exchange,exchange,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+exposed,exposed,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+exposed,exposed,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+exposed,exposed,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+exposed,exposed,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+express,express,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+express,express,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+express,express,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+express,express,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+family,family,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+family,family,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+family,family,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+family,family,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+fan,fan,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,38.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fan,fan,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,38.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fan,fan,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,38.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fan,fan,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+farm,farm,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+farm,farm,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+farm,farm,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+farm,farm,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+finance,finance,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+finance,finance,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+finance,finance,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+finance,finance,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+financial,financial,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+financial,financial,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+financial,financial,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+financial,financial,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+fish,fish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fish,fish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fish,fish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fish,fish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+fitness,fitness,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fitness,fitness,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fitness,fitness,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fitness,fitness,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+flights,flights,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+flights,flights,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+flights,flights,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,40.00,USD,yes,,0,no,yes,,PN,4 October 2024
+flights,flights,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+florist,florist,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+florist,florist,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+florist,florist,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+florist,florist,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+football,football,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+football,football,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+football,football,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+football,football,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+forsale,forsale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+forsale,forsale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+forsale,forsale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+forsale,forsale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+fund,fund,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fund,fund,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fund,fund,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+fund,fund,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+futbol,futbol,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,13.00,USD,yes,,0,no,yes,,PN,4 October 2024
+futbol,futbol,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,13.00,USD,yes,,0,no,yes,,PN,4 October 2024
+futbol,futbol,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,13.00,USD,yes,,0,no,yes,,PN,4 October 2024
+futbol,futbol,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+gallery,gallery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gallery,gallery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gallery,gallery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gallery,gallery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+games,games,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+games,games,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+games,games,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+games,games,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+gifts,gifts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gifts,gifts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gifts,gifts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gifts,gifts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+glass,glass,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+glass,glass,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+glass,glass,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+glass,glass,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+global,global,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,64.00,USD,yes,,0,no,yes,,PN,4 October 2024
+global,global,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,64.00,USD,yes,,0,no,yes,,PN,4 October 2024
+global,global,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,64.00,USD,yes,,0,no,yes,,PN,4 October 2024
+global,global,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+gmbh,gmbh,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gmbh,gmbh,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gmbh,gmbh,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gmbh,gmbh,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+golf,golf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+golf,golf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+golf,golf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+golf,golf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+graphics,graphics,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+graphics,graphics,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+graphics,graphics,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+graphics,graphics,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+gratis,gratis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gratis,gratis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gratis,gratis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gratis,gratis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+green,green,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,57.00,USD,yes,,0,no,yes,,PN,4 October 2024
+green,green,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,57.00,USD,yes,,0,no,yes,,PN,4 October 2024
+green,green,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,57.00,USD,yes,,0,no,yes,,PN,4 October 2024
+green,green,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+gripe,gripe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gripe,gripe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gripe,gripe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+gripe,gripe,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+group,group,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+group,group,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+group,group,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+group,group,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+guide,guide,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+guide,guide,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+guide,guide,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+guide,guide,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+guru,guru,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+guru,guru,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+guru,guru,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+guru,guru,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+haus,haus,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+haus,haus,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+haus,haus,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+haus,haus,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+healthcare,healthcare,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,60.00,USD,yes,,0,no,yes,,PN,4 October 2024
+healthcare,healthcare,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,60.00,USD,yes,,0,no,yes,,PN,4 October 2024
+healthcare,healthcare,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,60.00,USD,yes,,0,no,yes,,PN,4 October 2024
+healthcare,healthcare,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+hockey,hockey,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+hockey,hockey,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+hockey,hockey,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+hockey,hockey,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+holdings,holdings,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+holdings,holdings,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+holdings,holdings,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+holdings,holdings,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+holiday,holiday,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+holiday,holiday,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+holiday,holiday,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+holiday,holiday,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+hospital,hospital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+hospital,hospital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+hospital,hospital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+hospital,hospital,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+house,house,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+house,house,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+house,house,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+house,house,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+immo,immo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+immo,immo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+immo,immo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+immo,immo,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+immobilien,immobilien,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+immobilien,immobilien,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+immobilien,immobilien,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+immobilien,immobilien,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+industries,industries,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+industries,industries,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+industries,industries,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+industries,industries,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+institute,institute,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+institute,institute,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+institute,institute,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+institute,institute,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+insure,insure,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+insure,insure,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+insure,insure,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+insure,insure,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+international,international,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+international,international,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+international,international,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+international,international,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+investments,investments,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,90.00,USD,yes,,0,no,yes,,PN,4 October 2024
+investments,investments,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,90.00,USD,yes,,0,no,yes,,PN,4 October 2024
+investments,investments,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,90.00,USD,yes,,0,no,yes,,PN,4 October 2024
+investments,investments,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+irish,irish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+irish,irish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+irish,irish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+irish,irish,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+jetzt,jetzt,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+jetzt,jetzt,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+jetzt,jetzt,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+jetzt,jetzt,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+jewelry,jewelry,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+jewelry,jewelry,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+jewelry,jewelry,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+jewelry,jewelry,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+kitchen,kitchen,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+kitchen,kitchen,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+kitchen,kitchen,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+kitchen,kitchen,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+land,land,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+land,land,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+land,land,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+land,land,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+lawyer,lawyer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lawyer,lawyer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lawyer,lawyer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lawyer,lawyer,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+legal,legal,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+legal,legal,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+legal,legal,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+legal,legal,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+lgbt,lgbt,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,56.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lgbt,lgbt,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,56.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lgbt,lgbt,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,56.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lgbt,lgbt,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+life,life,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+life,life,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+life,life,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+life,life,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+lighting,lighting,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lighting,lighting,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lighting,lighting,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+lighting,lighting,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+limited,limited,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+limited,limited,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+limited,limited,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+limited,limited,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+live,live,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+live,live,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+live,live,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+live,live,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+loans,loans,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,80.00,USD,yes,,0,no,yes,,PN,4 October 2024
+loans,loans,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,80.00,USD,yes,,0,no,yes,,PN,4 October 2024
+loans,loans,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,80.00,USD,yes,,0,no,yes,,PN,4 October 2024
+loans,loans,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+ltd,ltd,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ltd,ltd,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ltd,ltd,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,21.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ltd,ltd,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+maison,maison,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+maison,maison,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+maison,maison,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+maison,maison,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+management,management,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+management,management,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+management,management,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+management,management,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+market,market,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+market,market,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+market,market,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+market,market,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+markets,markets,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,12.00,USD,yes,,0,no,yes,,PN,4 October 2024
+markets,markets,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,12.00,USD,yes,,0,no,yes,,PN,4 October 2024
+markets,markets,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,12.00,USD,yes,,0,no,yes,,PN,4 October 2024
+markets,markets,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+mba,mba,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+mba,mba,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+mba,mba,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+mba,mba,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+media,media,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+media,media,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+media,media,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+media,media,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+moda,moda,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+moda,moda,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+moda,moda,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+moda,moda,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+money,money,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+money,money,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+money,money,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+money,money,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+mortgage,mortgage,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+mortgage,mortgage,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+mortgage,mortgage,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+mortgage,mortgage,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+movie,movie,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,230.00,USD,yes,,0,no,yes,,PN,4 October 2024
+movie,movie,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,230.00,USD,yes,,0,no,yes,,PN,4 October 2024
+movie,movie,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,230.00,USD,yes,,0,no,yes,,PN,4 October 2024
+movie,movie,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+navy,navy,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+navy,navy,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+navy,navy,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+navy,navy,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+network,network,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+network,network,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+network,network,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+network,network,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+news,news,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+news,news,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+news,news,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+news,news,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+partners,partners,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+partners,partners,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+partners,partners,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+partners,partners,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+parts,parts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+parts,parts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+parts,parts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+parts,parts,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+pet,pet,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,17.50,USD,yes,,0,no,yes,,PN,4 October 2024
+pet,pet,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,17.50,USD,yes,,0,no,yes,,PN,4 October 2024
+pet,pet,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,17.50,USD,yes,,0,no,yes,,PN,4 October 2024
+pet,pet,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+photography,photography,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+photography,photography,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+photography,photography,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+photography,photography,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+photos,photos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+photos,photos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+photos,photos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+photos,photos,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+pictures,pictures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,10.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pictures,pictures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,10.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pictures,pictures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,10.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pictures,pictures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+pink,pink,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,17.50,USD,yes,,0,no,yes,,PN,4 October 2024
+pink,pink,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,17.50,USD,yes,,0,no,yes,,PN,4 October 2024
+pink,pink,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,17.50,USD,yes,,0,no,yes,,PN,4 October 2024
+pink,pink,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+pizza,pizza,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pizza,pizza,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pizza,pizza,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pizza,pizza,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+place,place,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+place,place,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+place,place,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+place,place,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+plumbing,plumbing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+plumbing,plumbing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+plumbing,plumbing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,50.00,USD,yes,,0,no,yes,,PN,4 October 2024
+plumbing,plumbing,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+plus,plus,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+plus,plus,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+plus,plus,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,32.00,USD,yes,,0,no,yes,,PN,4 October 2024
+plus,plus,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+poker,poker,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+poker,poker,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+poker,poker,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+poker,poker,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+productions,productions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+productions,productions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+productions,productions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+productions,productions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+promo,promo,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+promo,promo,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+promo,promo,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+promo,promo,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+properties,properties,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+properties,properties,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+properties,properties,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+properties,properties,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+pub,pub,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pub,pub,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pub,pub,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+pub,pub,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+recipes,recipes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,55.00,USD,yes,,0,no,yes,,PN,4 October 2024
+recipes,recipes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,55.00,USD,yes,,0,no,yes,,PN,4 October 2024
+recipes,recipes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,55.00,USD,yes,,0,no,yes,,PN,4 October 2024
+recipes,recipes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+red,red,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+red,red,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+red,red,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+red,red,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+rentals,rentals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rentals,rentals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rentals,rentals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rentals,rentals,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+report,report,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+report,report,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+report,report,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+report,report,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+restaurant,restaurant,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+restaurant,restaurant,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+restaurant,restaurant,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+restaurant,restaurant,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+reviews,reviews,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+reviews,reviews,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+reviews,reviews,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+reviews,reviews,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+rip,rip,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rip,rip,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rip,rip,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,16.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rip,rip,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+rocks,rocks,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rocks,rocks,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rocks,rocks,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,15.00,USD,yes,,0,no,yes,,PN,4 October 2024
+rocks,rocks,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+run,run,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+run,run,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+run,run,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+run,run,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+sale,sale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+sale,sale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+sale,sale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+sale,sale,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+salon,salon,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+salon,salon,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+salon,salon,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+salon,salon,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+sarl,sarl,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+sarl,sarl,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+sarl,sarl,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,23.00,USD,yes,,0,no,yes,,PN,4 October 2024
+sarl,sarl,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+schule,schule,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,20.00,USD,yes,,0,no,yes,,PN,4 October 2024
+schule,schule,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,20.00,USD,yes,,0,no,yes,,PN,4 October 2024
+schule,schule,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,20.00,USD,yes,,0,no,yes,,PN,4 October 2024
+schule,schule,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+services,services,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+services,services,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+services,services,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+services,services,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+shoes,shoes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+shoes,shoes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+shoes,shoes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+shoes,shoes,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+show,show,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+show,show,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+show,show,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+show,show,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+ski,ski,gTLD,Identity Digital Limited,Identity Digital Limited,Register,1-10,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ski,ski,gTLD,Identity Digital Limited,Identity Digital Limited,Renew,1-9,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ski,ski,gTLD,Identity Digital Limited,Identity Digital Limited,Transfer,1,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ski,ski,gTLD,Identity Digital Limited,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+soccer,soccer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+soccer,soccer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+soccer,soccer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+soccer,soccer,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+social,social,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+social,social,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+social,social,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+social,social,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+software,software,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+software,software,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+software,software,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+software,software,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+solar,solar,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+solar,solar,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+solar,solar,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+solar,solar,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+solutions,solutions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+solutions,solutions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+solutions,solutions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,22.00,USD,yes,,0,no,yes,,PN,4 October 2024
+solutions,solutions,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+studio,studio,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+studio,studio,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+studio,studio,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,31.00,USD,yes,,0,no,yes,,PN,4 October 2024
+studio,studio,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+style,style,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+style,style,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+style,style,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+style,style,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+supplies,supplies,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+supplies,supplies,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+supplies,supplies,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,17.00,USD,yes,,0,no,yes,,PN,4 October 2024
+supplies,supplies,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+supply,supply,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+supply,supply,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+supply,supply,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,18.00,USD,yes,,0,no,yes,,PN,4 October 2024
+supply,supply,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+support,support,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+support,support,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+support,support,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,19.00,USD,yes,,0,no,yes,,PN,4 October 2024
+support,support,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+surgery,surgery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,38.00,USD,yes,,0,no,yes,,PN,4 October 2024
+surgery,surgery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,38.00,USD,yes,,0,no,yes,,PN,4 October 2024
+surgery,surgery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,38.00,USD,yes,,0,no,yes,,PN,4 October 2024
+surgery,surgery,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+systems,systems,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+systems,systems,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+systems,systems,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,24.00,USD,yes,,0,no,yes,,PN,4 October 2024
+systems,systems,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+tax,tax,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tax,tax,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tax,tax,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,49.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tax,tax,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+taxi,taxi,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+taxi,taxi,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+taxi,taxi,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+taxi,taxi,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+team,team,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+team,team,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+team,team,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+team,team,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+tennis,tennis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tennis,tennis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tennis,tennis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,46.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tennis,tennis,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+theater,theater,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+theater,theater,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+theater,theater,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+theater,theater,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+today,today,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,20.00,USD,yes,,0,no,yes,,PN,4 October 2024
+today,today,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,20.00,USD,yes,,0,no,yes,,PN,4 October 2024
+today,today,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,20.00,USD,yes,,0,no,yes,,PN,4 October 2024
+today,today,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+tools,tools,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tools,tools,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tools,tools,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tools,tools,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+tours,tours,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tours,tours,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tours,tours,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,44.00,USD,yes,,0,no,yes,,PN,4 October 2024
+tours,tours,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+town,town,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+town,town,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+town,town,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,26.00,USD,yes,,0,no,yes,,PN,4 October 2024
+town,town,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+toys,toys,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+toys,toys,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+toys,toys,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,45.00,USD,yes,,0,no,yes,,PN,4 October 2024
+toys,toys,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+trading,trading,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,14.00,USD,yes,,0,no,yes,,PN,4 October 2024
+trading,trading,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,14.00,USD,yes,,0,no,yes,,PN,4 October 2024
+trading,trading,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,14.00,USD,yes,,0,no,yes,,PN,4 October 2024
+trading,trading,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+training,training,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+training,training,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+training,training,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,28.00,USD,yes,,0,no,yes,,PN,4 October 2024
+training,training,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+travel,travel,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,100.00,USD,yes,,0,no,yes,,PN,4 October 2024
+travel,travel,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,100.00,USD,yes,,0,no,yes,,PN,4 October 2024
+travel,travel,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,100.00,USD,yes,,0,no,yes,,PN,4 October 2024
+travel,travel,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+university,university,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+university,university,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+university,university,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,43.00,USD,yes,,0,no,yes,,PN,4 October 2024
+university,university,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+vacations,vacations,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vacations,vacations,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vacations,vacations,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vacations,vacations,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+ventures,ventures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ventures,ventures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ventures,ventures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+ventures,ventures,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+vet,vet,gTLD,"Dog Beach, LLC",Identity Digital Limited,Register,1-10,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vet,vet,gTLD,"Dog Beach, LLC",Identity Digital Limited,Renew,1-9,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vet,vet,gTLD,"Dog Beach, LLC",Identity Digital Limited,Transfer,1,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vet,vet,gTLD,"Dog Beach, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+villas,villas,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,42.50,USD,yes,,0,no,yes,,PN,4 October 2024
+villas,villas,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,42.50,USD,yes,,0,no,yes,,PN,4 October 2024
+villas,villas,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,42.50,USD,yes,,0,no,yes,,PN,4 October 2024
+villas,villas,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+vision,vision,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vision,vision,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vision,vision,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vision,vision,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+vote,vote,gTLD,Monolith Registry LLC,Identity Digital Limited,Register,1-10,64.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vote,vote,gTLD,Monolith Registry LLC,Identity Digital Limited,Renew,1-9,64.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vote,vote,gTLD,Monolith Registry LLC,Identity Digital Limited,Transfer,1,64.00,USD,yes,,0,no,yes,,PN,4 October 2024
+vote,vote,gTLD,Monolith Registry LLC,Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+voyage,voyage,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+voyage,voyage,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+voyage,voyage,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+voyage,voyage,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+watch,watch,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+watch,watch,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+watch,watch,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,30.00,USD,yes,,0,no,yes,,PN,4 October 2024
+watch,watch,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+wine,wine,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+wine,wine,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+wine,wine,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,41.00,USD,yes,,0,no,yes,,PN,4 October 2024
+wine,wine,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+works,works,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+works,works,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+works,works,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+works,works,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+world,world,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+world,world,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+world,world,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,29.00,USD,yes,,0,no,yes,,PN,4 October 2024
+world,world,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+wtf,wtf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+wtf,wtf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+wtf,wtf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,25.00,USD,yes,,0,no,yes,,PN,4 October 2024
+wtf,wtf,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+zone,zone,gTLD,"Binky Moon, LLC",Identity Digital Limited,Register,1-10,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+zone,zone,gTLD,"Binky Moon, LLC",Identity Digital Limited,Renew,1-9,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+zone,zone,gTLD,"Binky Moon, LLC",Identity Digital Limited,Transfer,1,27.00,USD,yes,,0,no,yes,,PN,4 October 2024
+zone,zone,gTLD,"Binky Moon, LLC",Identity Digital Limited,Restore (RGP),0,40.00,USD,no,,0,no,yes,,PN,4 October 2024
+qpon,qpon,gTLD,DOTQPON LLC.,CentralNIC,Register,1-10,8.88,USD,yes,,0,no,yes,,PN,25 August 2024
+qpon,qpon,gTLD,DOTQPON LLC.,CentralNIC,Renew,1-9,8.88,USD,yes,,0,no,yes,,PN,25 August 2024
+qpon,qpon,gTLD,DOTQPON LLC.,CentralNIC,Transfer,1,8.88,USD,yes,,0,no,yes,,PN,25 August 2024
+qpon,qpon,gTLD,DOTQPON LLC.,CentralNIC,Restore (RGP),0,40,USD,no,,0,no,yes,,PN,25 August 2024
+eco,eco,gTLD,Big Room Inc,Fury (Cira),Register,1-10,55,USD,yes,,0,no,yes,,MB,
+eco,eco,gTLD,Big Room Inc,Fury (Cira),Renew,1-9,55,USD,yes,,0,no,yes,,MB,
+eco,eco,gTLD,Big Room Inc,Fury (Cira),Transfer,1,55,USD,yes,,0,no,yes,,MB,
+eco,eco,gTLD,Big Room Inc,Fury (Cira),Restore (RGP),0,0,USD,no,,0,no,yes,,MB,
+okinawa,okinawa,gTLD,BR Registry,GMO Registry,Register,1-10,1800,JPY,yes,,0,no,yes,,PN,1 February 2025
+okinawa,okinawa,gTLD,BR Registry,GMO Registry,Renew,1-9,1800,JPY,yes,,0,no,yes,,PN,1 February 2025
+okinawa,okinawa,gTLD,BR Registry,GMO Registry,Transfer,1,1800,JPY,yes,,0,no,yes,,PN,1 February 2025
+okinawa,okinawa,gTLD,BR Registry,GMO Registry,Restore (RGP),1,TBC,JPY,no,,0,no,yes,,PN,1 February 2025
+ryukyu,ryukyu,gTLD,BR Registry,GMO Registry,Register,1-10,1800,JPY,yes,,0,no,yes,,PN,1 February 2025
+ryukyu,ryukyu,gTLD,BR Registry,GMO Registry,Renew,1-9,1800,JPY,yes,,0,no,yes,,PN,1 February 2025
+ryukyu,ryukyu,gTLD,BR Registry,GMO Registry,Transfer,1,1800,JPY,yes,,0,no,yes,,PN,1 February 2025
+ryukyu,ryukyu,gTLD,BR Registry,GMO Registry,Restore (RGP),1,TBC,JPY,no,,0,no,yes,,PN,1 February 2025
+website,website,gTLD,Waterford Limited,Tucows Registry Services,Register,1-10,20,USD,yes,,0,no,yes,,PT,4 October 2024
+website,website,gTLD,Waterford Limited,Tucows Registry Services,Renew,1-9,20,USD,yes,,0,no,yes,,PT,4 October 2024
+website,website,gTLD,Waterford Limited,Tucows Registry Services,Transfer,1,20,USD,yes,,0,no,yes,,PT,4 October 2024
+website,website,gTLD,Waterford Limited,Tucows Registry Services,Restore (RGP),0,90,USD,no,,0,no,yes,,PT,4 October 2024
+site,site,gTLD,Waterford Limited,Tucows Registry Services,Register,1-10,20,USD,yes,,0,no,yes,,PT,4 October 2024
+site,site,gTLD,Waterford Limited,Tucows Registry Services,Renew,1-9,20,USD,yes,,0,no,yes,,PT,4 October 2024
+site,site,gTLD,Waterford Limited,Tucows Registry Services,Transfer,1,20,USD,yes,,0,no,yes,,PT,4 October 2024
+site,site,gTLD,Waterford Limited,Tucows Registry Services,Restore (RGP),0,90,USD,no,,0,no,yes,,PT,4 October 2024
+au,au,ccTLD,auDA,OpenSRS,Register,1-10,8.87,AUD,no,,0,yes,no,,PT,4 October 2024
+au,au,ccTLD,auDA,OpenSRS,Renew,1-10,8.87,AUD,no,,0,yes,no,,PT,4 October 2024
+au,au,ccTLD,auDA,OpenSRS,Transfer,0,0,AUD,no,,0,yes,no,,PT,4 October 2024
+au,au,ccTLD,auDA,OpenSRS,Restore (RGP),1,8.87,AUD,no,,0,yes,no,,PT,4 October 2024
+online,online,gTLD,Waterford Limited,Tucows Registry Services,Register,1-10,25,USD,yes,,0,no,yes,,PT,4 October 2024
+online,online,gTLD,Waterford Limited,Tucows Registry Services,Renew,1-9,25,USD,yes,,0,no,yes,,PT,4 October 2024
+online,online,gTLD,Waterford Limited,Tucows Registry Services,Transfer,1,25,USD,yes,,0,no,yes,,PT,4 October 2024
+online,online,gTLD,Waterford Limited,Tucows Registry Services,Restore (RGP),0,90,USD,no,,0,no,yes,,PT,4 October 2024
+io,io,ccTLD,NIC.IO,CentralNic,Register,1-10,45,USD,no,,0,yes,no,,PT, 4 October 2024
+io,io,ccTLD,NIC.IO,CentralNic,Renew,1-9,45,USD,no,,0,yes,no,,PT,4 October 2024
+io,io,ccTLD,NIC.IO,CentralNic,Transfer,1,45,USD,no,,0, es,no,,PT,4 October 2024
+io,io,ccTLD,NIC.IO,CentralNic,Restore (RGP),0,90,USD,no,,0,yes,no,,PT,4 October 2024
+eu,eu,ccTLD,NIC.IO,CentralNic,Register,1-10,10,EUR,no,,0,yes,no,,PT, 4 October 2024
+eu,eu,ccTLD,NIC.IO,CentralNic,Renew,1-9,10,EUR,no,,0,yes,no,,PT,4 October 2024
+eu,eu,ccTLD,NIC.IO,CentralNic,Transfer,1,10,EUR,no,,0, es,no,,PT,4 October 2024
+eu,eu,ccTLD,NIC.IO,CentralNic,Restore (RGP),0,80,EUR,no,,0,yes,no,,PT,4 October 2024
+me,me,ccTLD,NIC.IO,CentralNic,Register,1-10,10,EUR,no,,0,yes,no,,PT, 4 October 2024
+me,me,ccTLD,NIC.IO,CentralNic,Renew,1-9,10,EUR,no,,0,yes,no,,PT,4 October 2024
+me,me,ccTLD,NIC.IO,CentralNic,Transfer,1,10,EUR,no,,0, es,no,,PT,4 October 2024
+me,me,ccTLD,NIC.IO,CentralNic,Restore (RGP),0,80,EUR,no,,0,yes,no,,PT,4 October 2024

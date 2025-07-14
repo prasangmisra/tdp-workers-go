@@ -1,0 +1,93 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('job');
+SELECT has_table('job_type');
+SELECT has_table('job_status');
+
+
+-- Test Case for failing parent job when one of the children fail and is_hard_fail not set
+
+-- create a parent job
+WITH parent_j AS (
+    INSERT INTO "job"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM job_type WHERE name='provision_contact_update')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _parent_job FROM parent_j;
+
+
+-- create a child job #1
+WITH child_j AS (
+    INSERT INTO "job"(
+        tenant_customer_id,
+        type_id,
+        parent_id,
+        is_hard_fail
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM job_type WHERE name='provision_domain_contact_update'),
+        (SELECT id FROM _parent_job),
+        FALSE
+    ) RETURNING *
+)
+SELECT * INTO TEMP _child_job_1 FROM child_j;
+
+-- create a child job #2
+WITH child_j AS (
+    INSERT INTO "job"(
+        tenant_customer_id,
+        type_id,
+        parent_id,
+        is_hard_fail
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM job_type WHERE name='provision_domain_contact_update'),
+        (SELECT id FROM _parent_job),
+        FALSE
+    ) RETURNING *
+)
+SELECT * INTO TEMP _child_job_2 FROM child_j;
+
+-- finish child job #1
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE id = (SELECT id FROM _child_job_1)
+$$);
+
+-- parent job should still be created
+SELECT is(
+    (SELECT job_status_name FROM v_job WHERE job_id=(SELECT id FROM _parent_job)),
+    'created',
+    'parent job status is still ''created'' as not all children had finished'
+);
+
+-- fail child job #2
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','failed')
+        WHERE id = (SELECT id FROM _child_job_2)
+$$);
+
+-- parent job should be completed now as parent is noop type job
+SELECT is(
+    (SELECT job_status_name FROM v_job WHERE job_id=(SELECT id FROM _parent_job)),
+    'completed',
+    'parent job status is ''completed'' as one child failed but is_hard_fail not set and parent is noop'
+);
+
+
+SELECT * FROM finish(true);
+
+-- COMMIT;
+ROLLBACK;

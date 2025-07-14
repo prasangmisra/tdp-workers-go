@@ -1,0 +1,202 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('subscription');
+SELECT has_table('subscription_channel');
+SELECT has_table('subscription_poll_channel');
+SELECT has_table('subscription_email_channel');
+SELECT has_table('subscription_webhook_channel');
+
+
+-- CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+-- create a subscription entry for testing
+WITH test_sub AS (
+  INSERT INTO subscription(
+    notification_email,
+    tenant_id,
+    tenant_customer_id
+  ) VALUES (
+    'test@tucows.net',
+    '678b93b4-8d2f-4a34-86d1-36d568bbb043',
+    'd50ff47e-2a80-4528-b455-6dc5d200ecbe'
+  ) RETURNING *
+)
+SELECT * INTO TEMP _test_sub FROM test_sub;
+
+-- check if metadata defaults to '{}'
+SELECT cmp_ok(
+    (SELECT metadata FROM subscription WHERE id = (SELECT id FROM _test_sub)),
+    '=',
+    '{}'::JSONB,
+    'metadata defaults to an empty JSON object when not provided'
+);
+
+-- create a subscription entry with valid metadata
+WITH test_sub_with_metadata AS (
+  INSERT INTO subscription(
+    notification_email,
+    tenant_id,
+    tenant_customer_id,
+    metadata
+  ) VALUES (
+    'test_metadata@tucows.net',
+    '678b93b4-8d2f-4a34-86d1-36d568bbb043',
+    'd50ff47e-2a80-4528-b455-6dc5d200ecbe',
+    '{"key": "value"}'::JSONB
+  ) RETURNING *
+)
+SELECT * INTO TEMP _test_sub_with_metadata FROM test_sub_with_metadata;
+
+-- check if metadata stores valid JSON values
+SELECT cmp_ok(
+    (SELECT metadata FROM subscription WHERE id = (SELECT id FROM _test_sub_with_metadata)),
+    '=',
+    '{"key": "value"}'::JSONB,
+    'metadata stores valid JSON values correctly'
+);
+
+INSERT INTO subscription_notification_type (subscription_id, type_id)
+    VALUES
+    ((SELECT id FROM _test_sub), tc_id_from_name('notification_type', 'contact.created')),
+    ((SELECT id FROM _test_sub), tc_id_from_name('notification_type', 'domain.created'));
+
+SELECT throws_ok($$
+    INSERT INTO subscription_poll_channel (type_id, subscription_id)
+    VALUES
+    (tc_id_from_name('subscription_channel_type', 'poll'), (SELECT id FROM _test_sub));
+    $$,
+    'P0001',
+    'poll channel is allowed only for tenant subscriptions',
+    'verify the international postal does not accept a non-ascii first_name'
+);
+
+INSERT INTO subscription_email_channel (type_id, subscription_id)
+    VALUES
+    (tc_id_from_name('subscription_channel_type', 'email'), (SELECT id FROM _test_sub));
+
+-- check status was set
+SELECT cmp_ok(
+    (SELECT status FROM v_subscription vs WHERE vs.id = (SELECT id FROM _test_sub)),
+    '=',
+    'active'
+);
+
+-- check v_subscription for update
+UPDATE v_subscription
+  SET
+  status = 'paused',
+  description = 'test description',
+  notification_email = 'sample@email.com',
+  tags = ARRAY['test-tag'],
+  metadata = '{"key": "value"}'::JSONB,
+  tenant_id = '00000000-0000-0000-0000-000000000000',
+  tenant_customer_id = '00000000-0000-0000-0000-000000000000',
+  deleted_date = '2025-01-01 00:00:00'
+WHERE id = (SELECT id FROM _test_sub);
+
+
+-- check v_subscription can update only few subscription fields
+SELECT results_eq(
+    'SELECT status, description, notification_email, tags, metadata, tenant_id, deleted_date FROM v_subscription vs WHERE vs.id = (SELECT id FROM _test_sub)',
+    $$VALUES
+    ('paused', 'test description', 'sample@email.com'::Mbox, ARRAY['test-tag'], '{"key": "value"}'::JSONB, '678b93b4-8d2f-4a34-86d1-36d568bbb043'::UUID, '2025-01-01 00:00:00'::TIMESTAMPTZ)
+    $$
+);
+
+-- check v_subscription cannot update certain subscription fields
+SELECT results_ne(
+    'SELECT tenant_id, tenant_customer_id FROM v_subscription vs WHERE vs.id = (SELECT id FROM _test_sub)',
+    $$VALUES
+    ('00000000-0000-0000-0000-000000000000'::UUID, '00000000-0000-0000-0000-000000000000'::UUID)
+    $$
+);
+
+-- restore soft-deleted subscription
+UPDATE v_subscription
+  SET deleted_date = NULL
+  WHERE id = (SELECT id FROM _test_sub);
+
+-- check other subscription fields are not updated
+SELECT results_eq(
+    'SELECT status, description, notification_email, tags, metadata, tenant_id FROM v_subscription vs WHERE vs.id = (SELECT id FROM _test_sub)',
+    $$VALUES
+    ('paused', 'test description', 'sample@email.com'::Mbox, ARRAY['test-tag'], '{"key": "value"}'::JSONB, '678b93b4-8d2f-4a34-86d1-36d568bbb043'::UUID)
+    $$
+);
+
+-- check subscription deleted_date is NULL
+SELECT is(
+    (SELECT deleted_date FROM v_subscription vs WHERE vs.id = (SELECT id FROM _test_sub)),
+    NULL
+);
+
+-- check v_subscription handles non-existing subscription
+WITH updated_records AS (
+  UPDATE v_subscription
+    SET status = 'active'
+    WHERE id = '00000000-0000-0000-0000-000000000000'
+    RETURNING *
+)
+SELECT cmp_ok(
+    (SELECT COUNT(*) FROM updated_records),
+    '=',
+    '0'
+);
+
+-- check subscription has 2 notification types
+SELECT cmp_ok(
+    (SELECT notifications FROM v_subscription vs WHERE vs.id = (SELECT id FROM _test_sub)),
+    '=',
+    '{contact.created,domain.created}'
+);
+
+-- create test notification
+WITH test_not AS (
+  INSERT INTO notification(
+    type_id,
+    tenant_id,
+    tenant_customer_id,
+    payload
+  ) VALUES (
+    tc_id_from_name('notification_type', 'contact.created'),
+    '678b93b4-8d2f-4a34-86d1-36d568bbb043',
+    'd50ff47e-2a80-4528-b455-6dc5d200ecbe',
+    '{"key": "value"}'::JSONB
+  ) RETURNING *
+)
+SELECT * INTO TEMP _test_not FROM test_not;
+
+-- Unpause the subscription
+UPDATE v_subscription
+    SET status = 'active'
+    WHERE id = (SELECT id FROM _test_sub);  
+
+SELECT cmp_ok(
+    (SELECT COUNT(*) FROM v_notification WHERE notification_id = (SELECT id FROM _test_not))::TEXT,
+    '=',
+    '1',
+    'check whether 1 notification delivery instances were created'
+);
+
+-- Test updating status_reason on v_notification
+UPDATE v_notification
+  SET status_reason = 'network error'
+  WHERE notification_id = (SELECT id from _test_not);
+
+SELECT cmp_ok(
+  (SELECT status_reason from v_notification where notification_id = (SELECT id from _test_not))::TEXT,
+  '=',
+  'network error',
+  'check whether status_reason column was properly added to v_notification'
+);
+
+SELECT * FROM finish(true);
+
+--COMMIT;
+
+ROLLBACK;

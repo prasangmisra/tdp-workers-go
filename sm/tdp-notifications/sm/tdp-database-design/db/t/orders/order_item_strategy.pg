@@ -1,0 +1,57 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+SELECT 
+    ok(is_default,'it should have the default setting')
+    FROM v_provider_instance_order_item_strategy 
+    WHERE 
+        provider_instance_name = 'trs-uniregistry' 
+        AND object_name ='domain'
+        AND order_type_name='create'
+        ;
+
+SELECT 
+    cmp_ok(provision_order,'=',2,'provision order is the default setting')
+    FROM v_provider_instance_order_item_strategy 
+    WHERE 
+        provider_instance_name = 'trs-uniregistry' 
+        AND object_name ='domain'
+        AND order_type_name='create'
+        ;
+
+
+INSERT INTO order_item_strategy(provider_instance_id,object_id,order_type_id,provision_order)
+    VALUES
+        (
+            tc_id_from_name('provider_instance','trs-uniregistry'),
+            tc_id_from_name('order_item_object','domain'),
+            (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create'),
+            5
+        );
+
+SELECT 
+    ok(NOT is_default,'the default value was overwritten')
+    FROM v_provider_instance_order_item_strategy 
+    WHERE 
+        provider_instance_name = 'trs-uniregistry' 
+        AND object_name ='domain'
+        AND order_type_name='create'
+        ;
+
+
+SELECT 
+    cmp_ok(provision_order,'=',5,'provision order is the new value for the instance')
+    FROM v_provider_instance_order_item_strategy 
+    WHERE 
+        provider_instance_name = 'trs-uniregistry' 
+        AND object_name ='domain'
+        AND order_type_name='create'
+;
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

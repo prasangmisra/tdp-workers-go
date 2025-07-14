@@ -1,0 +1,102 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+WITH tables AS (
+    SELECT table_name FROM (
+        VALUES
+        ('validation_rule'),
+        ('validation_association')
+    ) AS t (table_name)
+)
+SELECT has_table(table_name) FROM tables;
+
+WITH views AS (
+    SELECT view_name FROM (
+        VALUES
+        ('v_validation_rule'),
+        ('v_validation_association')
+    ) AS t (view_name)
+)
+SELECT has_view(view_name) FROM views;
+
+-- Insert a validation_rule and use its id for association tests
+
+WITH test_validation_rule AS (
+    INSERT INTO validation_rule(name, rule)
+    VALUES ('test_rule', 'some_rule')
+    RETURNING *
+)
+SELECT * INTO TEMP _validation_rule FROM test_validation_rule;
+
+-- Test 1: validity constraint on validation_association (should not allow past lower bound)
+PREPARE validation_association_invalid_validity AS
+    INSERT INTO validation_association(validation_rule_id, validity)
+    VALUES ((SELECT id FROM _validation_rule LIMIT 1), '[1900-01-01 00:00, infinity)');
+SELECT throws_ok('validation_association_invalid_validity');
+
+-- Test 2: validity constraint on validation_association (should allow current/future lower bound)
+PREPARE validation_association_valid_validity AS
+    INSERT INTO validation_association(validation_rule_id, validity)
+    VALUES ((SELECT id FROM _validation_rule LIMIT 1), TSTZRANGE(CURRENT_DATE, CURRENT_DATE + INTERVAL '1 day'));
+SELECT lives_ok('validation_association_valid_validity');
+
+-- Test 3: validation_rule_id must exist in validation_rule (should fail)
+PREPARE validation_association_invalid_rule AS
+    INSERT INTO validation_association(validation_rule_id, validity)
+    VALUES (gen_random_uuid(), TSTZRANGE(CURRENT_DATE, CURRENT_DATE + INTERVAL '1 day'));
+SELECT throws_ok('validation_association_invalid_rule');
+
+-- Test 4: Only one specific association per unique combination
+PREPARE specific1 AS
+    INSERT INTO validation_association(validation_rule_id, tld_id, product_id, order_type_id)
+    VALUES
+        ((SELECT id FROM _validation_rule LIMIT 1),
+        (SELECT id FROM tld WHERE name='click' LIMIT 1),
+        NULL,
+        NULL);
+SELECT lives_ok('specific1');
+
+-- Test 5: Duplicate specific association (should fail)
+PREPARE dup_specific1 AS
+    INSERT INTO validation_association(validation_rule_id, tld_id, product_id, order_type_id)
+    VALUES
+        ((SELECT id FROM _validation_rule LIMIT 1),
+        (SELECT tld_id FROM validation_association WHERE tld_id IS NOT NULL LIMIT 1),
+        NULL,
+        NULL);
+SELECT throws_ok('dup_specific1');
+
+-- Test 6: Uniqueness with COALESCE (NULL treated as value)
+PREPARE coalesce1 AS
+    INSERT INTO validation_association(validation_rule_id, tld_id, product_id, order_type_id)
+    VALUES
+        ((SELECT id FROM _validation_rule LIMIT 1),
+        NULL,
+        NULL,
+        NULL);
+SELECT throws_ok('coalesce1'); -- Should fail due to global already present
+
+-- Test 7: Valid COALESCE with non-NULL values
+PREPARE coalesce2 AS
+    INSERT INTO validation_association(validation_rule_id, tld_id, product_id, order_type_id)
+    VALUES
+        ((SELECT id FROM _validation_rule LIMIT 1),
+        (SELECT id FROM tld WHERE name='click' LIMIT 1),
+        (SELECT id FROM product WHERE name='domain' LIMIT 1),
+        NULL);
+SELECT lives_ok('coalesce2');
+
+-- Test 8: Duplicate COALESCE (should fail)
+PREPARE dup_coalesce2 AS
+    INSERT INTO validation_association(validation_rule_id, tld_id, product_id, order_type_id)
+    VALUES
+        ((SELECT id FROM _validation_rule LIMIT 1),
+        (SELECT tld_id FROM validation_association WHERE product_id IS NOT NULL LIMIT 1),
+        (SELECT product_id FROM validation_association WHERE product_id IS NOT NULL LIMIT 1),
+        NULL);
+SELECT throws_ok('dup_coalesce2');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

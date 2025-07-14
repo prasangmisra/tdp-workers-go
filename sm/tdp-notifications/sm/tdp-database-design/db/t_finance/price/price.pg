@@ -1,0 +1,356 @@
+ROLLBACK; BEGIN;
+-- start testing
+SELECT * FROM no_plan();
+-- schema 
+
+WITH tables AS ( 
+    SELECT table_name FROM (
+        VALUES
+		('promo_type'), 
+		('price_type'),
+		('product_cost_range'),
+		('domain_premium_margin'),
+		('product_tier_type'),
+		('product_customer_tier'),
+		('product_price_strategy'),
+		('domain_price_tier'),
+		('domain_price_custom'),
+		('domain_price_tenant_promo'),
+		('domain_price_customer_promo'),
+		('repeating_charge_type'),
+		('domain_price_repeating_charge')
+    ) AS t (table_name)
+)SELECT has_table(table_name) FROM tables;
+
+-- functions 
+
+WITH functions AS ( 
+    SELECT function_name FROM (
+        VALUES
+        ('roundup'),
+		('convert_currency_with_detail'),
+		('signup_for_promotion'),
+		('show_domain_price_tier'),
+		('get_domain_price_tier'),	
+		('get_domain_price_custom'),
+		('get_domain_price_premium'),
+		('get_domain_price_promo') ,
+		('get_domain_price')
+	) AS f (function_name)
+)SELECT has_function(function_name) FROM functions;
+
+-- function: roundup
+SELECT * INTO _r1 FROM roundup(1341,  CAST(get_finance_setting('general.round_up_premium') AS INTEGER)/10 ); 
+	SELECT ok((SELECT roundup = 1400 FROM _r1), 'IS TRUE!');
+SELECT * INTO _r2 FROM roundup(134100,  1000 ); SELECT ok((SELECT roundup = 135000 FROM _r2), 'IS TRUE!');
+SELECT * INTO _r3 FROM roundup(134800,  1000 ); SELECT ok((SELECT roundup = 135000FROM _r3), 'IS TRUE!');
+SELECT * INTO _r4 FROM roundup(134100,  500 );SELECT ok((SELECT roundup = 134500 FROM _r4), 'IS TRUE!');
+SELECT * INTO _r5 FROM roundup(134800,  500 ); SELECT ok((SELECT roundup = 135000 FROM _r5), 'IS TRUE!');
+SELECT * INTO _r6 FROM roundup(1348,  10 );SELECT ok((SELECT roundup = 1350 FROM _r6), 'IS TRUE!');
+SELECT * INTO _r7 FROM roundup(1341,  10 );SELECT ok((SELECT roundup = 1350 FROM _r7), 'IS TRUE!');
+SELECT * INTO _r8 FROM roundup(1341,  5 );SELECT ok((SELECT roundup = 1345 FROM _r8), 'IS TRUE!');
+SELECT * INTO _r9 FROM roundup(1348,  5 );SELECT ok((SELECT roundup = 1350 FROM _r9), 'IS TRUE!');
+
+SELECT * INTO _r10 FROM roundup(134100,CAST(get_finance_setting('general.round_up_non_premium') AS INTEGER));
+	SELECT ok((SELECT roundup = 134500 FROM _r10), 'IS TRUE!');
+
+-- function: convert_currency_with_detail
+SELECT * INTO _c1 
+FROM convert_currency_with_detail (
+                        _amount:= 1000, 
+                        _from_currency_type_id:= tc_id_from_name('currency_type', 'EUR'),
+                        _to_currency_type_id:= tc_id_from_name('currency_type', 'USD')); 
+SELECT ok((SELECT value = 1092.4 FROM _c1), 'IS TRUE!');
+
+SELECT * INTO _c2 
+FROM convert_currency_with_detail (
+                        _amount:= 1000, 
+                        _from_currency_type_id:= tc_id_from_name('currency_type', 'EUR'),
+                        _to_currency_type_id:= tc_id_from_name('currency_type', 'CAD')); 
+SELECT ok((SELECT value = 1439.4518381868493873 FROM _c2), 'IS TRUE!');
+
+-- function: show_domain_price_tier
+SELECT * 
+	INTO _tier_price00
+	FROM show_domain_price_tier(
+		_tenant_customer_id:= get_tenant_customer_id('enom','21 Company'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','accountants'),
+		_order_type_id:= get_order_type_id('create','domain'));
+SELECT ok((SELECT _tier_price00."enterprise_tier" = 9500 FROM _tier_price00),'IS TRUE!');
+SELECT ok((SELECT currency = 'USD' FROM _tier_price00),'IS TRUE!');
+
+SELECT * 
+	INTO _tier_price01
+	FROM show_domain_price_tier(
+		_tenant_customer_id:= get_tenant_customer_id('enom','21 Company'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','accountants'),
+		_order_type_id:= get_order_type_id('create','domain'),
+		_period:= 5);
+SELECT ok((SELECT _tier_price01."enterprise_tier" = 47500 FROM _tier_price01),'IS TRUE!');
+SELECT ok((SELECT currency = 'USD' FROM _tier_price00),'IS TRUE!');
+
+SELECT * 
+	INTO _tier_price02
+	FROM show_domain_price_tier(	
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','accountants'),
+		_order_type_id:= get_order_type_id('create','domain'));
+SELECT ok((SELECT _tier_price02."essential_tier" = 10700 
+	AND _tier_price02."advanced_tier" = 10300 
+	AND _tier_price02."premium_tier" = 9900 
+	AND _tier_price02."enterprise_tier" = 9500 
+FROM _tier_price02),'IS TRUE!');
+
+-- function: get_finance_setting
+SELECT get_finance_setting( --USD
+		p_name:= 'tenant_customer.provider_instance_tld.specific_currency',
+        p_tenant_customer_id:= get_tenant_customer_id('enom', 'Arvixe'), -- _tenant_customer_id:=
+        p_provider_instance_tld_id:= acc.provider_instance_tld_id)  -- DEFAULT customer_currency USD
+    INTO _get_tenant_currency1
+    FROM accreditation_tld acc 
+    WHERE acc.id = get_accreditation_tld_id('enom','online');
+SELECT ok((SELECT _get_tenant_currency1."get_finance_setting" = 'USD' 
+	FROM _get_tenant_currency1),'IS TRUE!');
+
+SELECT  get_finance_setting ( --AUD
+		p_name := 'tenant_customer.provider_instance_tld.specific_currency',
+		p_tenant_customer_id:= get_tenant_customer_id('enom', 'Arvixe'),
+		p_provider_instance_tld_id := acc.provider_instance_tld_id)
+	INTO _get_tenant_currency2	
+	FROM accreditation_tld acc 
+    WHERE acc.id = get_accreditation_tld_id('enom', 'au'); 
+SELECT ok((SELECT _get_tenant_currency2."get_finance_setting" = 'AUD' 
+	FROM _get_tenant_currency2),'IS TRUE!');
+
+
+--function: signup_for_signup_promotion
+
+SELECT dp.id
+	INTO _signup1
+    FROM domain_price_tenant_promo dp
+    WHERE  dp.price_type_id =  tc_id_from_name('price_type','promo - signup')
+		AND dp.currency_type_id = tc_id_from_name('currency_type','USD')
+    LIMIT 1;
+   
+SELECT * 
+FROM signup_for_promotion(get_tenant_customer_id('enom', 'Arvixe'), 
+	(SELECT id FROM _signup1)); 
+
+WITH sel AS(
+	SELECT value FROM domain_price_tenant_promo dp
+	WHERE id = (SELECT id FROM _signup1)
+)
+SELECT OK((SELECT count(dp.value) > 0 FROM "domain_price_customer_promo" dp JOIN sel 
+ON dp.tenant_customer_id = get_tenant_customer_id('enom', 'Arvixe') 
+AND dp.price_type_id =  tc_id_from_name('price_type','promo - signup')),'is TRUE!');
+
+WITH sel AS(
+	SELECT value FROM domain_price_tenant_promo dp
+	WHERE id = (SELECT id FROM _signup1)
+)
+SELECT OK((SELECT count(dp.value) > 0 
+FROM "domain_price_customer_promo" dp JOIN sel 
+ON dp.tenant_customer_id = get_tenant_customer_id('enom', 'Arvixe') 
+AND dp.price_type_id =  tc_id_from_name('price_type','promo - signup')),'is TRUE!');
+
+-- function: 1.get_domain_price_tier
+
+SELECT *
+INTO _p1
+FROM get_domain_price_tier(
+    	_accreditation_tld_id:=  get_accreditation_tld_id('enom','accountants'),
+		_order_type_id:= get_order_type_id('create','domain'),
+    	_tenant_customer_id := get_tenant_customer_id('enom', 'Arvixe') 
+    ); 
+	SELECT ok((SELECT _p1.total_price = 9500
+		AND _p1.currency = 'USD'
+		AND _p1.price_type = 'tier'
+		FROM _p1),'IS TRUE!');
+
+SELECT *
+INTO _p2
+FROM get_domain_price_tier(
+    	_accreditation_tld_id:=  get_accreditation_tld_id('enom','accountants'),
+		_order_type_id:= get_order_type_id('create','domain'),
+    	_tenant_customer_id := get_tenant_customer_id('enom', 'Arvixe') ,
+    	_period:= 3
+    ); 
+	SELECT ok((SELECT _p2.total_price = 28500
+		AND _p2.currency = 'USD'
+		AND _p2.price_type = 'tier'
+		FROM _p2),'IS TRUE!');
+ 
+-- function: 2. get_domain_price_custom -- custom & custom - cost+ 
+-- _tenant_customer_id UUID, _accreditation_tld_id UUID, _order_type_id UUID,  _period_type_id UUID, _period INTEGER
+
+SELECT * 
+	INTO _get_total_cost2 
+	FROM get_domain_price_custom(
+		_tenant_customer_id:= get_tenant_customer_id('enom', 'fl0539651'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','auto'), 
+		_order_type_id:= get_order_type_id('create','domain'), 
+		_period:= 1); 
+SELECT ok((SELECT _get_total_cost2.total_price = 210000
+	AND _get_total_cost2.price_type = 'custom'
+	FROM _get_total_cost2),'IS TRUE!');
+
+/*SELECT * 
+	--INTO _get_total_cost3 
+	FROM get_domain_price_custom(
+		_tenant_customer_id:= get_tenant_customer_id('enom', 'hostmonsternet'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','cloud'), 
+		_order_type_id:= get_order_type_id('create','domain'), 
+		_period:= 3); 
+SELECT ok((SELECT _get_total_cost3.total_price = 600.0000 AND _get_total_cost3.currency = 'USD' --4654 AND _get_total_cost3.currency = 'USD'
+	FROM _get_total_cost3),'IS TRUE!');
+
+SELECT * 
+	INTO _get_total_cost31 
+	FROM get_domain_price_custom(
+		_tenant_customer_id:= get_tenant_customer_id('enom', 'hostmonsternet'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','cloud'), 
+		_order_type_id:= get_order_type_id('create','domain'), 
+		_period:= 1); 
+SELECT ok((SELECT _get_total_cost31.total_price = 200.0000 -- 1218 
+	FROM _get_total_cost31),'IS TRUE!');
+
+SELECT * 
+	INTO _get_total_cost4 
+	FROM get_domain_price_custom(
+		_tenant_customer_id:= get_tenant_customer_id('enom', 'hostmonsternet'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','cloud'), 
+		_order_type_id:= get_order_type_id('create','domain'), 
+		_period_type_id:=tc_id_from_name('period_type','year'), 
+		_period:= 5); 
+SELECT ok((SELECT _get_total_cost4.total_price = 1000.0000 -- 8090 
+	FROM _get_total_cost4),'IS TRUE!'); */ 
+
+SELECT * -- NULL
+	INTO _get_total_cost1 
+	FROM get_domain_price_custom(
+		_tenant_customer_id:= get_tenant_customer_id('enom', 'Aletia'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','com'), 
+		_order_type_id:= get_order_type_id('create','domain') ); 
+SELECT ok((SELECT COUNT(*) = 0 FROM _get_total_cost1 WHERE total_price IS NOT NULL), 'IS TRUE!');
+
+-- function: 3. get_domain_price_premium (_tenant_customer_id UUID, _accreditation_tld_id UUID, reg_fee INTEGER, reg_cur TEXT)
+
+SELECT *
+INTO _get_domain_price_premium1
+FROM  get_domain_price_premium (
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Arvixe'),
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','au'), 
+	_reg_fee:= 10000, 
+	_reg_currency:= 'AUD');
+SELECT ok((SELECT _get_domain_price_premium1.total_price = '13000'
+	FROM _get_domain_price_premium1),'IS TRUE!'); 
+	
+	
+SELECT *
+INTO _get_domain_price_premium2
+FROM get_domain_price_premium (
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Aletia'),
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','au'), 
+	_reg_fee:= 100000, 
+	_reg_currency:= 'AUD'); 
+SELECT ok((SELECT _get_domain_price_premium2.total_price = '83000'
+	FROM _get_domain_price_premium2),'IS TRUE!'); 
+	
+SELECT * -- premium_cap
+INTO _get_domain_price_premium3
+FROM get_domain_price_premium (
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Aletia'),
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','help'), 
+	_reg_fee:= 2000000, 
+	_reg_currency:= 'USD'); 
+SELECT ok((SELECT _get_domain_price_premium3.total_price = '2100000'
+	FROM _get_domain_price_premium3),'IS TRUE!'); 
+
+SELECT * 
+INTO _get_domain_price_premium4
+FROM get_domain_price_premium (
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Aletia'),
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','help')); 
+SELECT ok((SELECT COUNT(*) = 0 FROM _get_domain_price_premium4 WHERE total_price IS NOT NULL), 'IS TRUE!');
+
+
+--function: 4. get_domain_price_promo(...) 
+/*
+SELECT * -- promo is_lin TRUE: tier_price: 19>38>57>76>95; 12 promo_1st-Y_only 
+INTO _get_domain_price_promo00
+	FROM get_domain_price_promo (
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Arvixe')  ,
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','cloud'),
+	_order_type_id:= get_order_type_id('create','domain'),
+	_period:= 1);
+SELECT ok((SELECT _get_domain_price_promo00.total_price = 1200
+	FROM _get_domain_price_promo00),'IS TRUE!'); 
+
+
+SELECT * -- promo is_lin TRUE: tier_price: 38/lin; 12 promo_1st-Y_only 
+INTO _get_domain_price_promo01
+	FROM get_domain_price_promo (
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Arvixe')  ,
+	_order_type_id:= get_order_type_id('create','domain'),  
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','cloud'),
+	_period:= 2);
+SELECT ok((SELECT _get_domain_price_promo01.total_price = 3100
+	FROM _get_domain_price_promo01),'IS TRUE!'); 
+*/ 
+
+-- NULL
+SELECT * 
+INTO _get_domain_price_promo2
+FROM get_domain_price_promo ( 
+	_tenant_customer_id:=get_tenant_customer_id('enom', 'Arvixe'), 
+	_order_type_id:= get_order_type_id('create','domain'), 
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','accountants'),
+	_period:= 5);
+SELECT ok((SELECT COUNT(*) = 0 FROM _get_domain_price_promo2 WHERE total_price IS NOT NULL), 'IS TRUE!');
+
+--- get_domain_price 
+
+SELECT * 
+INTO _get_domain_price0
+FROM get_domain_price(
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Aletia'),
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','help'), 
+	_order_type_id:= get_order_type_id('create','domain'),
+	_period:= 1,  
+	_reg_fee:= 800000, 
+	_reg_currency:= 'USD');
+SELECT ok((SELECT  _get_domain_price0.total_price = 900000 AND _get_domain_price0.price_type = 'premium'
+	FROM  _get_domain_price0),'IS TRUE!'); 
+
+/* SELECT * 
+INTO _get_domain_price1
+FROM get_domain_price(
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'Arvixe')  ,
+	_order_type_id:= get_order_type_id('create','domain'),  
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','cloud'),
+	_period:= 2);
+SELECT ok((SELECT  _get_domain_price1.total_price = 3100 AND _get_domain_price1.price_type = 'promo - all'
+	FROM  _get_domain_price1),'IS TRUE!'); */
+
+SELECT * 
+INTO _get_domain_price2
+FROM get_domain_price(
+	_tenant_customer_id:= get_tenant_customer_id('enom', 'fl0539651'),
+		_accreditation_tld_id:= get_accreditation_tld_id('enom','auto'), 
+		_order_type_id:= get_order_type_id('create','domain'), 
+		_period:= 1);
+SELECT ok((SELECT  _get_domain_price2.total_price = 210000 AND _get_domain_price2.price_type = 'custom'
+	FROM  _get_domain_price2),'IS TRUE!');
+
+SELECT * 
+INTO _get_domain_price3
+FROM get_domain_price(
+	_accreditation_tld_id:=  get_accreditation_tld_id('enom','accountants'),
+		_order_type_id:= get_order_type_id('create','domain'),
+    	_tenant_customer_id := get_tenant_customer_id('enom', 'Arvixe'));
+SELECT ok((SELECT  _get_domain_price3.total_price = 9500 AND _get_domain_price3.price_type = 'tier'
+	FROM  _get_domain_price3),'IS TRUE!');
+
+-- finish testing
+SELECT * FROM finish(TRUE);
+
+ROLLBACK;

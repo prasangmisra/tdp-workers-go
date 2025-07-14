@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX ON hosting(domain_name) WHERE is_deleted = FALSE;

@@ -1,0 +1,101 @@
+erDiagram
+    business_entity {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        text name 
+        text descr 
+        uuid parent_id FK
+    }
+
+    tenant {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid business_entity_id FK
+        text name 
+        text descr 
+    }
+
+    customer {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid business_entity_id FK
+        uuid parent_customer_id FK
+        text name 
+        text descr 
+    }
+
+    user {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        text email 
+        text name 
+    }
+
+    tenant_customer {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid tenant_id FK
+        uuid customer_id FK
+        text customer_number 
+    }
+
+    customer_user {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid customer_id FK
+        uuid user_id FK
+    }
+
+    business_entity }o--|| business_entity : "parent_id"
+    tenant }o--|| business_entity : "business_entity_id"
+    customer }o--|| business_entity : "business_entity_id"
+    registry }o--|| business_entity : "business_entity_id"
+    provider }o--|| business_entity : "business_entity_id"
+    tenant_customer }o--|| tenant : "tenant_id"
+    accreditation }o--|| tenant : "tenant_id"
+    attr_value }o--|| tenant : "tenant_id"
+    customer }o--|| customer : "parent_customer_id"
+    tenant_customer }o--|| customer : "customer_id"
+    customer_user }o--|| customer : "customer_id"
+    customer_user }o--|| user : "user_id"
+    job }o--|| tenant_customer : "tenant_customer_id"
+    contact }o--|| tenant_customer : "tenant_customer_id"
+    domain }o--|| tenant_customer : "tenant_customer_id"
+    host }o--|| tenant_customer : "tenant_customer_id"
+    order }o--|| tenant_customer : "tenant_customer_id"
+    provision }o--|| tenant_customer : "tenant_customer_id"
+    provision_host }o--|| tenant_customer : "tenant_customer_id"
+    provision_contact }o--|| tenant_customer : "tenant_customer_id"
+    provision_domain }o--|| tenant_customer : "tenant_customer_id"
+    provision_domain_renew }o--|| tenant_customer : "tenant_customer_id"
+    order }o--|| customer_user : "customer_user_id"

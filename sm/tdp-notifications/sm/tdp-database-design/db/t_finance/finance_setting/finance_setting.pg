@@ -1,0 +1,146 @@
+ROLLBACK; BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- tables
+SELECT has_table('finance_setting');
+
+-- functions 
+WITH functions AS ( 
+    SELECT function_name FROM (
+        VALUES
+		('get_finance_setting'),
+		('finance_setting_insert'),
+		('check_finance_setting_constraints')
+	) AS f (function_name)
+)SELECT has_function(function_name) FROM functions;
+
+-- work of function get_finance_setting
+SELECT * INTO _get_finance_setting0
+	FROM get_finance_setting(p_name:= 'general.margin_cap');  -- 100000
+SELECT ok((SELECT _get_finance_setting0.get_finance_setting = '100000' FROM _get_finance_setting0), 'IS TRUE!');
+
+SELECT * INTO _get_finance_setting3
+	FROM get_finance_setting(p_name:= 'general.margin_c'); -- NULL 
+SELECT ok((SELECT _get_finance_setting3.get_finance_setting IS NULL FROM _get_finance_setting3), 'IS TRUE!');
+
+SELECT * INTO _get_finance_setting4
+	FROM get_finance_setting(p_name:= 'tenant.accepts_currencies', p_tenant_id:= tc_id_from_name('tenant','ascio')); 
+SELECT ok((SELECT _get_finance_setting4.get_finance_setting = '{USD,EUR}' FROM _get_finance_setting4), 'IS TRUE!');
+
+SELECT * INTO _get_finance_setting5
+	FROM get_finance_setting(p_name:= 'tenant.accepts_currencies'); --usd
+SELECT ok((SELECT _get_finance_setting5.get_finance_setting = '{USD}' FROM _get_finance_setting5), 'IS TRUE!');
+
+SELECT * INTO _get_finance_setting6
+	FROM get_finance_setting(p_name:='tenant.accepts_currencies', p_tenant_id:= tc_id_from_name('tenant','enom')); --usd
+SELECT ok((SELECT _get_finance_setting6.get_finance_setting = '{USD}' FROM _get_finance_setting6), 'IS TRUE!');
+
+SELECT * INTO _get_finance_setting7
+	FROM get_finance_setting(p_name := 'tenant.accepts_currencies', p_tenant_id:= tc_id_from_name('tenant','ascio'));
+SELECT ok((SELECT _get_finance_setting7.get_finance_setting = '{USD,EUR}' FROM _get_finance_setting7), 'IS TRUE!');
+
+SELECT * INTO _get_finance_setting8
+	FROM get_finance_setting(
+		p_name := 'provider_instance_tld.tax_fee', 
+		p_provider_instance_tld_id := get_provider_instance_tld_id(get_accreditation_tld_id('enom', 'wtf')));
+SELECT ok((SELECT _get_finance_setting8.get_finance_setting = '17.8000' FROM _get_finance_setting8), 'IS TRUE!');
+
+-- insert test values
+
+WITH p AS (
+	INSERT INTO finance_setting_type (name, descr)
+	VALUES
+	    ('general.test_boolean', 'Test Bool'),
+	    ('general.test_integer', 'Test Integer'),
+	    ('general.test_decimal', 'Test Decimal'),
+	    ('general.test_text', 'Test Text'),
+	    ('general.test_uuid', 'Test UUID'),
+	    ('general.test_text_list', 'Test Text List')
+	RETURNING *
+	)SELECT * INTO TEMP _finance_setting_type1 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 6 FROM "finance_setting_type" WHERE id in (SELECT id FROM  _finance_setting_type1 )),'is TRUE!');
+ 
+WITH p AS (
+	INSERT INTO finance_setting (type_id, value_boolean, validity)
+	VALUES
+	    (tc_id_from_name('finance_setting_type','general.test_boolean'), TRUE, tstzrange('2024-01-01 UTC', 'infinity'))
+	RETURNING *
+	)SELECT * INTO TEMP _finance_setting1 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "finance_setting" WHERE id in (SELECT id FROM  _finance_setting1 )),'is TRUE!');
+ 
+SELECT * INTO _get_finance_setting9
+	FROM get_finance_setting(
+		p_name := 'general.test_boolean');
+SELECT ok((SELECT _get_finance_setting9.get_finance_setting = 'true' FROM _get_finance_setting9), 'IS TRUE!');
+
+WITH p AS (	    
+	INSERT INTO finance_setting (type_id, value_integer, validity)
+	VALUES
+	    (tc_id_from_name('finance_setting_type','general.test_integer'), 7777, tstzrange('2024-01-01 UTC', 'infinity'))
+	RETURNING *
+	)SELECT * INTO TEMP _finance_setting2 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "finance_setting" WHERE id in (SELECT id FROM  _finance_setting2 )),'is TRUE!');
+ 
+SELECT * INTO _get_finance_setting10
+	FROM get_finance_setting(
+		p_name := 'general.test_integer');
+SELECT ok((SELECT _get_finance_setting10.get_finance_setting = '7777' FROM _get_finance_setting10), 'IS TRUE!');
+
+WITH p AS (	    
+	INSERT INTO finance_setting (type_id, value_decimal, validity)
+	VALUES
+	    (tc_id_from_name('finance_setting_type','general.test_decimal'), 199.50, tstzrange('2024-01-01 UTC', 'infinity'))
+	RETURNING *
+	)SELECT * INTO TEMP _finance_setting3 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "finance_setting" WHERE id in (SELECT id FROM  _finance_setting3 )),'is TRUE!');
+ 
+SELECT * INTO _get_finance_setting11
+	FROM get_finance_setting(
+		p_name := 'general.test_decimal');
+SELECT ok((SELECT _get_finance_setting11.get_finance_setting = '199.5000' FROM _get_finance_setting11), 'IS TRUE!');
+
+WITH p AS (	    
+	INSERT INTO finance_setting (type_id, value_text, validity)
+	VALUES
+	    (tc_id_from_name('finance_setting_type','general.test_text'), 'TestTestTest', tstzrange('2024-01-01 UTC', 'infinity'))
+	RETURNING *
+	)SELECT * INTO TEMP _finance_setting4 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "finance_setting" WHERE id in (SELECT id FROM  _finance_setting4 )),'is TRUE!');
+ 
+SELECT * INTO _get_finance_setting12
+	FROM get_finance_setting(
+		p_name := 'general.test_text');
+SELECT ok((SELECT _get_finance_setting12.get_finance_setting = 'TestTestTest' FROM _get_finance_setting12), 'IS TRUE!');
+
+WITH p AS (	
+	INSERT INTO finance_setting (type_id, value_uuid, validity)
+	VALUES
+	    (tc_id_from_name('finance_setting_type','general.test_uuid'), '2997347e-2e98-4ef3-a3ce-9cadae05ba62', tstzrange('2024-01-01 UTC', 'infinity'))
+	RETURNING *
+	)SELECT * INTO TEMP _finance_setting5 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "finance_setting" WHERE id in (SELECT id FROM  _finance_setting5 )),'is TRUE!');
+ 
+SELECT * INTO _get_finance_setting13
+	FROM get_finance_setting(
+		p_name := 'general.test_uuid');
+SELECT ok((SELECT _get_finance_setting13.get_finance_setting = '2997347e-2e98-4ef3-a3ce-9cadae05ba62' FROM _get_finance_setting13), 'IS TRUE!');
+
+WITH p AS (	    
+	INSERT INTO finance_setting (type_id, value_text_list, validity)
+	VALUES
+	    (tc_id_from_name('finance_setting_type','general.test_text_list'), ARRAY['some','test','here'], tstzrange('2024-01-01 UTC', 'infinity'))
+	RETURNING *
+	)SELECT * INTO TEMP _finance_setting6 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "finance_setting" WHERE id in (SELECT id FROM  _finance_setting6 )),'is TRUE!');
+ 
+SELECT * INTO _get_finance_setting14
+	FROM get_finance_setting(
+		p_name := 'general.test_text_list');
+SELECT ok((SELECT _get_finance_setting14.get_finance_setting = '{some,test,here}' FROM _get_finance_setting14), 'IS TRUE!');
+
+-- finish testing
+SELECT * FROM finish(TRUE);
+
+ROLLBACK; 

@@ -1,0 +1,120 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('language');
+SELECT has_table('template_engine');
+SELECT has_table('template_type');
+SELECT has_table('template_status');
+SELECT has_table('template');
+SELECT has_table('section');
+SELECT has_table('template_section');
+SELECT has_table('notification_template_type');
+
+
+-- create a template type for testing
+WITH test_template_type AS (
+  INSERT INTO template_type (name, descr) 
+    VALUES 
+      ('Test Template Section Type', 'Template for testing sections')
+    RETURNING *
+),
+test_notification_type AS (
+  INSERT INTO notification_type (name, descr) VALUES ('test.notification', 'Test Notification')
+  RETURNING *
+),
+test_notification_template_type AS (
+  INSERT INTO notification_template_type (notification_type_id, template_type_id) VALUES (
+    (SELECT id FROM test_notification_type),
+    (SELECT id FROM test_template_type)
+  )
+)
+SELECT * INTO TEMP _test_template_type FROM test_template_type;
+
+
+-- create test template
+WITH test_template AS (
+  INSERT INTO template (subject, type_id, engine_id, status_id, content)
+    VALUES
+      (
+        'TEST SUBJECT',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'published'),
+        '<p>TEST TEMPLATE BODY</p>'
+      )
+    RETURNING id
+)
+SELECT * INTO TEMP _test_template FROM test_template;
+
+
+-- create test sections
+SELECT lives_ok($$
+  INSERT INTO section (name, type_id, content)
+    VALUES
+      (
+        'test_header', 
+        tc_id_from_name('section_type', 'header'), 
+        '<p>TEST HEADER</p>'
+      ),
+      (
+        'test_body', 
+        tc_id_from_name('section_type', 'body'), 
+        '<p>TEST EXTRA BODY</p>'
+      ),
+      (
+        'test_footer', 
+        tc_id_from_name('section_type', 'footer'), 
+        '<p>TEST FOOTER</p>'
+      );
+$$, 'inserted tests sections');
+
+-- link test sections to template
+SELECT lives_ok($$
+  INSERT INTO template_section (template_id, section_id, position)
+    VALUES
+      (
+        (SELECT id FROM _test_template),
+        tc_id_from_name('section', 'test_header'),
+        1
+      ),
+      (
+        (SELECT id FROM _test_template),
+        tc_id_from_name('section', 'test_body'),
+        1
+      ),
+      (
+        (SELECT id FROM _test_template),
+        tc_id_from_name('section', 'test_footer'),
+        1
+      );
+$$, 'link sections to template');
+
+
+-- check view now returns all template sections including template content itself
+SELECT cmp_ok(
+  (SELECT COUNT(*) FROM v_template_section vts WHERE vts.template_type_id = (SELECT id FROM _test_template_type))::TEXT,
+  '=',
+  '4',
+  'check all sections are returned'
+);
+
+-- check view now returns all template sections including template content itself
+SELECT cmp_ok(
+  (SELECT content FROM v_notification_template vnt WHERE vnt.notification_type_id = tc_id_from_name('notification_type', 'test.notification')),
+  '=',
+  '<p>TEST HEADER</p>
+<p>TEST TEMPLATE BODY</p>
+<p>TEST EXTRA BODY</p>
+<p>TEST FOOTER</p>',
+  'check combined template content'
+);
+
+
+SELECT * FROM finish(true);
+
+
+ROLLBACK;

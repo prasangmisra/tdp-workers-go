@@ -1,0 +1,748 @@
+ROLLBACK; BEGIN;
+
+SELECT * FROM no_plan();
+
+WITH functions AS ( 
+    SELECT function_name FROM (
+        VALUES
+        ('delete_domain_with_reason')
+    ) AS f (function_name)
+)SELECT has_function(function_name) FROM FUNCTIONS;
+
+WITH p AS(
+	INSERT INTO business_entity(name,descr) 
+	    (VALUES
+	        ('sasha','Sasha Inc.')
+	)RETURNING *
+	)SELECT * INTO TEMP _p1 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "business_entity" 
+	WHERE id IN (SELECT id FROM _p1)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO customer(business_entity_id,name,descr)
+	    VALUES(tc_id_from_name('business_entity','sasha'),'sasha-reseller','Sasha.com'
+	)RETURNING *
+	)SELECT * INTO TEMP _p2 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "customer" 
+	WHERE id IN (SELECT id FROM _p2)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO tenant_customer(tenant_id,customer_id,customer_number)
+	    VALUES
+	    	(tc_id_from_name('tenant','opensrs'),tc_id_from_name('customer','sasha-reseller'),'0000001' 
+	)RETURNING *
+	)SELECT * INTO TEMP _p3 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "tenant_customer" 
+	WHERE id IN (SELECT id FROM _p3)),'IS TRUE!'); 
+	
+WITH p AS(
+	INSERT INTO "user"(email,name)
+	    VALUES(
+	        'user1@sasha.com','Jane Roe Sasha'
+	)RETURNING *
+	)SELECT * INTO TEMP _p4 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "user" 
+	WHERE id IN (SELECT id FROM _p4)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO "user"(email,name)
+	    VALUES(
+	        'user2@sasha.com','John Doe Sasha'
+	)RETURNING *
+	)SELECT * INTO TEMP _p5 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "user" 
+	WHERE id IN (SELECT id FROM _p5)),'IS TRUE!'); 
+	
+WITH p AS(
+	INSERT INTO customer_user(customer_id,user_id)
+	    VALUES
+	        (tc_id_from_name('customer','sasha-reseller'),tc_id_from_name('"user"','John Doe Sasha')
+	)RETURNING *
+	)SELECT * INTO TEMP _p6 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "customer_user" 
+	WHERE id IN (SELECT id FROM _p6)),'IS TRUE!'); 
+	        
+WITH p AS(
+	INSERT INTO customer_user(customer_id,user_id)
+	    VALUES	        
+	        (tc_id_from_name('customer','sasha-reseller'),tc_id_from_name('"user"','Jane Roe Sasha')
+	)RETURNING *
+	)SELECT * INTO TEMP _p7 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "customer_user" 
+	WHERE id IN (SELECT id FROM _p7)),'IS TRUE!'); 
+	
+WITH p AS(
+	INSERT INTO domain(
+		tenant_customer_id,
+		accreditation_tld_id,
+		name,
+		ry_created_date,
+		ry_expiry_date,
+		expiry_date
+		) VALUES(
+		    (SELECT id FROM tenant_customer WHERE customer_number = '0000001'),
+		    (SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name='lol' LIMIT 1),
+		    'example-to-be-deleted1.lol',
+		    NOW(),
+		    NOW() + '1 year'::INTERVAL,
+		    NOW() + '1 year'::INTERVAL
+		),
+		(
+		    (SELECT id FROM tenant_customer WHERE customer_number = '0000001'),
+		    (SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name='lol' LIMIT 1),
+		    'example-to-be-deleted2.lol',
+		    NOW(),
+		    NOW() + '1 year'::INTERVAL,
+		    NOW() + '1 year'::INTERVAL
+		), 
+		(
+		    (SELECT id FROM tenant_customer WHERE customer_number = '0000001'),
+		    (SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name='lol' LIMIT 1),
+		    'example-to-be-deleted3.lol',
+		    NOW(),
+		    NOW() + '1 year'::INTERVAL,
+		    NOW() + '1 year'::INTERVAL
+		),(
+		    (SELECT id FROM tenant_customer WHERE customer_number = '0000001'),
+		    (SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name='lol' LIMIT 1),
+		    'example-to-be-deleted4.lol',
+		    NOW(),
+		    NOW() + '1 year'::INTERVAL,
+		    NOW() + '1 year'::INTERVAL
+		),(
+		    (SELECT id FROM tenant_customer WHERE customer_number = '0000001'),
+		    (SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name='lol' LIMIT 1),
+		    'example-to-be-deleted5.lol',
+		    NOW(),
+		    NOW() + '1 year'::INTERVAL,
+		    NOW() + '1 year'::INTERVAL
+		),(
+		    (SELECT id FROM tenant_customer WHERE customer_number = '0000001'),
+		    (SELECT accreditation_tld_id FROM v_accreditation_tld WHERE tld_name='lol' LIMIT 1),
+		    'example-to-be-deleted6.lol',
+		    NOW(),
+		    NOW() + '1 year'::INTERVAL,
+		    NOW() + '1 year'::INTERVAL
+		)   
+	RETURNING *
+	)SELECT * INTO TEMP _p8 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 6 FROM "domain" 
+	WHERE id IN (SELECT id FROM _p8)),'IS TRUE!');    
+
+WITH basic_contact AS (
+    INSERT INTO contact(
+                        type_id,
+                        title,
+                        org_reg,
+                        org_vat,
+                        org_duns,
+                        tenant_customer_id,
+                        email,
+                        phone,
+                        fax,
+                        country,
+                        language,                        
+                        tags,
+                        documentation
+        )
+        VALUES(
+                  tc_id_from_name('contact_type','individual'),
+                  'CFO',
+                  'reg123456789',
+                  'vat000000000',
+                  'duns000000000',
+                  (SELECT id FROM v_tenant_customer WHERE customer_number = '0000001'),
+                  'sasha.rudnitskaya@some.domain.com',
+                  '+1.6174477021',
+                  '+1.6177385279',
+                  'US',
+                  'en',                  
+                  '{"tag-11","tag-12"}',
+                  '{"doc-A", "doc-B"}'
+              ) RETURNING *
+)
+SELECT * INTO TEMP _contact FROM basic_contact;
+
+WITH p AS(
+	INSERT INTO contact_postal(
+	    contact_id,
+	    is_international,
+	    first_name,
+	    last_name,
+	    org_name,
+	    address1,
+	    address2,
+	    address3,
+	    city,
+	    postal_code,
+	    state
+	)
+       SELECT id,
+          TRUE,  
+          'Sasha',
+          'Rudnitskaya',
+          'Some-Comp_test',
+          '11 Monmouth Ct',
+          NULL,
+          NULL,
+          'Brookline',
+          '02446',
+          'MA'
+       FROM _contact
+    RETURNING *
+	)SELECT * INTO TEMP _p11 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "contact_postal" 
+	WHERE id IN (SELECT id FROM _p11)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO contact_attribute(
+	    attribute_id,
+	    contact_id,
+	    value
+	)
+	VALUES(
+	          tc_id_from_name('attribute','birth_country'),
+	          (SELECT id FROM _contact),
+	          'RU'
+	      ),(
+	          tc_id_from_name('attribute','birth_date'),
+	          (SELECT id FROM _contact),
+	          '1983-02-10'
+	      ),(
+	
+	          tc_id_from_name('attribute','identity_card_number'),
+	          (SELECT id FROM _contact),
+	          'SD3459182345'
+	      ),(
+	          tc_id_from_name('attribute','tld_de_type'),
+	          (SELECT id FROM _contact),
+	          '.de-type'
+	      )
+	 RETURNING *
+	)SELECT * INTO TEMP _p12 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 4 FROM "contact_attribute" 
+	WHERE id IN (SELECT id FROM _p12)),'IS TRUE!'); 
+	          
+-- select * from domain_contact_type     
+	          
+WITH p AS(
+	INSERT INTO domain_contact 
+		(domain_id
+		,contact_id
+		,domain_contact_type_id
+		,is_local_presence
+		,is_privacy_proxy
+		,handle)
+	SELECT DISTINCT 
+		UNNEST(ARRAY[tc_id_from_name('domain','example-to-be-deleted1.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted2.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted3.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted4.lol'),
+					tc_id_from_name('domain','example-to-be-deleted5.lol'),
+					tc_id_from_name('domain','example-to-be-deleted6.lol')]),
+		c.id, 
+		tc_id_from_name('domain_contact_type','registrant'),
+		FALSE, 
+		FALSE, 
+		'somth'
+		FROM contact c 
+		WHERE title = 'CFO'
+	RETURNING *
+	)SELECT * INTO TEMP _p15 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 6 FROM "domain_contact" 
+	WHERE id IN (SELECT id FROM _p15)),'IS TRUE!'); 
+
+WITH p AS(	
+	INSERT INTO domain_contact 
+		(domain_id
+		,contact_id
+		,domain_contact_type_id
+		,is_local_presence
+		,is_privacy_proxy
+		,handle)
+	SELECT DISTINCT 
+		UNNEST(ARRAY[tc_id_from_name('domain','example-to-be-deleted1.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted2.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted3.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted4.lol'),
+					tc_id_from_name('domain','example-to-be-deleted5.lol'),
+					tc_id_from_name('domain','example-to-be-deleted6.lol')]),
+		c.id, 
+		tc_id_from_name('domain_contact_type','admin'),
+		FALSE, 
+		FALSE, 
+		'smth'
+		FROM contact c 
+		WHERE title = 'CFO' 
+	RETURNING *
+	)SELECT * INTO TEMP _p161 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 6 FROM "domain_contact" 
+	WHERE id IN (SELECT id FROM _p161)),'IS TRUE!'); 
+
+WITH p AS(	
+	INSERT INTO domain_contact 
+		(domain_id
+		,contact_id
+		,domain_contact_type_id
+		,is_local_presence
+		,is_privacy_proxy
+		,handle)
+	SELECT DISTINCT 
+		UNNEST(ARRAY[tc_id_from_name('domain','example-to-be-deleted1.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted2.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted3.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted4.lol'),
+					tc_id_from_name('domain','example-to-be-deleted5.lol'),
+					tc_id_from_name('domain','example-to-be-deleted6.lol')]),
+		c.id, 
+		tc_id_from_name('domain_contact_type','tech'),
+		FALSE, 
+		FALSE, 
+		'smth'
+		FROM contact c 
+		WHERE title = 'CFO' 
+	RETURNING *
+	)SELECT * INTO TEMP _p162 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 6 FROM "domain_contact" 
+	WHERE id IN (SELECT id FROM _p162)),'IS TRUE!'); 
+
+WITH p AS(	
+	INSERT INTO domain_contact 
+		(domain_id
+		,contact_id
+		,domain_contact_type_id
+		,is_local_presence
+		,is_privacy_proxy
+		,handle)
+	SELECT DISTINCT 
+		UNNEST(ARRAY[tc_id_from_name('domain','example-to-be-deleted1.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted2.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted3.lol'), 
+					tc_id_from_name('domain','example-to-be-deleted4.lol'),
+					tc_id_from_name('domain','example-to-be-deleted5.lol'),
+					tc_id_from_name('domain','example-to-be-deleted6.lol')]),
+		c.id, 
+		tc_id_from_name('domain_contact_type','billing'),
+		FALSE, 
+		FALSE, 
+		'smth'
+		FROM contact c 
+		WHERE title = 'CFO' 
+	RETURNING *
+	)SELECT * INTO TEMP _p163 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 6 FROM "domain_contact" 
+	WHERE id IN (SELECT id FROM _p163)),'IS TRUE!'); 
+
+-- host
+WITH p AS(
+	INSERT INTO host(tenant_customer_id,name,domain_id)
+		SELECT id,
+			'ns2ab3bca7e.example-to-be-deleted1.lol',
+			NULL
+		FROM tenant_customer tc 
+		WHERE tc.customer_number = '0000001'
+		RETURNING *
+	)SELECT * INTO TEMP _p17 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "host" 
+	WHERE id IN (SELECT id FROM _p17)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO host(tenant_customer_id,name,domain_id)
+		SELECT id,
+			'ns2ab3bca7e.example-to-be-deleted2.lol',
+			NULL
+		FROM tenant_customer tc 
+		WHERE tc.customer_number = '0000001'
+		RETURNING *
+	)SELECT * INTO TEMP _p18 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "host" 
+	WHERE id IN (SELECT id FROM _p18)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO host(tenant_customer_id,name,domain_id)
+		SELECT id,
+			'ns2ab3bca7e.example-to-be-deleted3.lol',
+			null
+		FROM tenant_customer tc 
+		WHERE tc.customer_number = '0000001'
+		RETURNING *
+	)SELECT * INTO TEMP _p171 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "host" 
+	WHERE id IN (SELECT id FROM _p171)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO host(tenant_customer_id,name,domain_id)
+		SELECT id,
+			'ns2ab3bca7e.example-to-be-deleted4.lol',
+			null
+		FROM tenant_customer tc 
+		WHERE tc.customer_number = '0000001'
+		RETURNING *
+	)SELECT * INTO TEMP _p174 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "host" 
+	WHERE id IN (SELECT id FROM _p174)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO host(tenant_customer_id,name,domain_id)
+		SELECT id,
+			'ns2ab3bca7e.example-to-be-deleted5.lol',
+			null
+		FROM tenant_customer tc 
+		WHERE tc.customer_number = '0000001'
+		RETURNING *
+	)SELECT * INTO TEMP _p175 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "host" 
+	WHERE id IN (SELECT id FROM _p175)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO host(tenant_customer_id,name,domain_id)
+		SELECT id,
+			'ns2ab3bca7e.example-to-be-deleted6.lol',
+			null
+		FROM tenant_customer tc 
+		WHERE tc.customer_number = '0000001'
+		RETURNING *
+	)SELECT * INTO TEMP _p176 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "host" 
+	WHERE id IN (SELECT id FROM _p176)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO host_addr(host_id,address) 
+		SELECT tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted1.lol'),
+			UNNEST(ARRAY['93.0.0.4'::inet, '93.0.0.5'::inet, '93.0.0.6'::inet,'93.0.0.7'::inet])
+		RETURNING *
+	)SELECT * INTO TEMP _p19 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 4 FROM "host_addr" 
+	WHERE id IN (SELECT id FROM _p19)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO host_addr(host_id,address) 
+		SELECT tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted2.lol'),
+			UNNEST(ARRAY['93.0.0.4'::inet, '93.0.0.5'::inet, '93.0.0.6'::inet,'93.0.0.7'::inet])
+		RETURNING *
+	)SELECT * INTO TEMP _p20 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 4 FROM "host_addr" 
+	WHERE id IN (SELECT id FROM _p20)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO host_addr(host_id,address) 
+		SELECT tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted3.lol'),
+			UNNEST(ARRAY['93.0.0.4'::inet, '93.0.0.5'::inet, '93.0.0.6'::inet,'93.0.0.7'::inet])
+		RETURNING *
+	)SELECT * INTO TEMP _p201 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 4 FROM "host_addr" 
+	WHERE id IN (SELECT id FROM _p201)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO host_addr(host_id,address) 
+		SELECT tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted4.lol'),
+			UNNEST(ARRAY['93.0.0.4'::inet, '93.0.0.5'::inet, '93.0.0.6'::inet,'93.0.0.7'::inet])
+		RETURNING *
+	)SELECT * INTO TEMP _p202 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 4 FROM "host_addr" 
+	WHERE id IN (SELECT id FROM _p202)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO host_addr(host_id,address) 
+		SELECT tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted5.lol'),
+			UNNEST(ARRAY['93.0.0.4'::inet, '93.0.0.5'::inet, '93.0.0.6'::inet,'93.0.0.7'::inet])
+		RETURNING *
+	)SELECT * INTO TEMP _p203 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 4 FROM "host_addr" 
+	WHERE id IN (SELECT id FROM _p203)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO host_addr(host_id,address) 
+		SELECT tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted6.lol'),
+			UNNEST(ARRAY['93.0.0.4'::inet, '93.0.0.5'::inet, '93.0.0.6'::inet,'93.0.0.7'::inet])
+		RETURNING *
+	)SELECT * INTO TEMP _p204 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 4 FROM "host_addr" 
+	WHERE id IN (SELECT id FROM _p204)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO domain_host(domain_id,host_id)
+		SELECT tc_id_from_name('domain','example-to-be-deleted1.lol'), 
+			tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted1.lol')
+		RETURNING *
+	)SELECT * INTO TEMP _p21 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_host" 
+	WHERE id IN (SELECT id FROM _p21)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO domain_host(domain_id,host_id)
+		SELECT tc_id_from_name('domain','example-to-be-deleted2.lol'), 
+			tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted2.lol')
+		RETURNING *
+	)SELECT * INTO TEMP _p211 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_host" 
+	WHERE id IN (SELECT id FROM _p211)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO domain_host(domain_id,host_id)
+		SELECT tc_id_from_name('domain','example-to-be-deleted3.lol'), 
+			tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted3.lol')
+		RETURNING *
+	)SELECT * INTO TEMP _p221 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_host" 
+	WHERE id IN (SELECT id FROM _p221)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO domain_host(domain_id,host_id)
+		SELECT tc_id_from_name('domain','example-to-be-deleted4.lol'), 
+			tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted4.lol')
+		RETURNING *
+	)SELECT * INTO TEMP _p231 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_host" 
+	WHERE id IN (SELECT id FROM _p231)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO domain_host(domain_id,host_id)
+		SELECT tc_id_from_name('domain','example-to-be-deleted5.lol'), 
+			tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted5.lol')
+		RETURNING *
+	)SELECT * INTO TEMP _p251 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_host" 
+	WHERE id IN (SELECT id FROM _p251)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO domain_host(domain_id,host_id)
+		SELECT tc_id_from_name('domain','example-to-be-deleted6.lol'), 
+			tc_id_from_name('host','ns2ab3bca7e.example-to-be-deleted6.lol')
+		RETURNING *
+	)SELECT * INTO TEMP _p261 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_host" 
+	WHERE id IN (SELECT id FROM _p261)),'IS TRUE!'); 
+
+-- dns key
+
+WITH p AS(
+	INSERT INTO secdns_key_data(
+	    flags,
+	    protocol,
+	    algorithm,
+	    public_key)
+	    VALUES (0, 12, 3, 'test-public-key1')
+		RETURNING *
+	)SELECT * INTO TEMP _p22 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_key_data" 
+	WHERE id IN (SELECT id FROM _p22)),'IS TRUE!'); -- SELECT * FROM secdns_key_data
+
+WITH p AS(    
+	INSERT INTO secdns_key_data(
+	    flags,
+	    protocol,
+	    algorithm,
+	    public_key)
+	    VALUES (0, 12, 3, 'test-public-key2')
+		RETURNING *
+	)SELECT * INTO TEMP _p23 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_key_data" 
+	WHERE id IN (SELECT id FROM _p23)),'IS TRUE!'); 
+
+WITH p AS(     
+	INSERT INTO secdns_key_data(
+	    flags,
+	    protocol,
+	    algorithm,
+	    public_key)
+	    VALUES (0, 12, 3, 'test-public-key3')
+		RETURNING *
+	)SELECT * INTO TEMP _p24 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_key_data" 
+	WHERE id IN (SELECT id FROM _p24)),'IS TRUE!'); 
+
+WITH p AS(     
+	INSERT INTO secdns_key_data(
+	    flags,
+	    protocol,
+	    algorithm,
+	    public_key)
+	    VALUES (0, 12, 3, 'test-public-key-combo')
+		RETURNING *
+	)SELECT * INTO TEMP _p242 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_key_data" 
+	WHERE id IN (SELECT id FROM _p242)),'IS TRUE!'); 
+
+-- domain_secdns
+
+WITH p AS(
+	INSERT INTO domain_secdns(domain_id, ds_data_id, key_data_id) 
+		SELECT  
+			tc_id_from_name('domain','example-to-be-deleted1.lol'), 
+			NULL, 
+			s.id
+		FROM secdns_key_data s
+		WHERE s.public_key = 'test-public-key1'
+		RETURNING *
+	)SELECT * INTO TEMP _p28 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_secdns" 
+	WHERE id IN (SELECT id FROM _p28)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO domain_secdns(domain_id, ds_data_id, key_data_id) 
+		SELECT  
+			tc_id_from_name('domain','example-to-be-deleted2.lol'), 
+			NULL, 
+			s.id
+		FROM secdns_key_data s
+		WHERE s.public_key = 'test-public-key2' OR  s.public_key = 'test-public-key3'
+		RETURNING *
+	)SELECT * INTO TEMP _p282 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 2 FROM "domain_secdns" 
+	WHERE id IN (SELECT id FROM _p282)),'IS TRUE!'); 
+
+--- dns ds
+
+WITH p AS(  
+	INSERT INTO secdns_ds_data (key_tag, algorithm, digest)
+		VALUES (1, 3, '111')
+		RETURNING *
+	)SELECT * INTO TEMP _p25 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_ds_data" 
+	WHERE id IN (SELECT id FROM _p25)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO secdns_ds_data (key_tag, algorithm, digest)
+		VALUES (2, 3, '112')
+		RETURNING *
+	)SELECT * INTO TEMP _p26 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_ds_data" 
+	WHERE id IN (SELECT id FROM _p26)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO secdns_ds_data (key_tag, algorithm, digest)
+		VALUES (2, 3, '113')
+		RETURNING *
+	)SELECT * INTO TEMP _p263 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_ds_data" 
+	WHERE id IN (SELECT id FROM _p263)),'IS TRUE!'); 
+
+WITH p AS(
+	INSERT INTO secdns_ds_data (key_tag, algorithm, digest, key_data_id)
+		SELECT 
+			3, 
+			3, 
+			'114', 
+			s.id 
+		FROM secdns_key_data s
+		WHERE s.public_key = 'test-public-key-combo'
+		RETURNING *
+	)SELECT * INTO TEMP _p273 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "secdns_ds_data" 
+	WHERE id IN (SELECT id FROM _p273)),'IS TRUE!'); 
+
+-- domain_secdns  select * from secdns_ds_data
+
+WITH p AS(
+	INSERT INTO domain_secdns(domain_id, ds_data_id) 
+		SELECT  
+			tc_id_from_name('domain','example-to-be-deleted3.lol'), 
+			s.id
+		FROM secdns_ds_data s
+		WHERE s.digest = '111' OR s.digest = '112' OR s.digest = '113' 
+		RETURNING *
+	)SELECT * INTO TEMP _p283 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 3 FROM "domain_secdns" 
+	WHERE id IN (SELECT id FROM _p283)),'IS TRUE!'); 
+
+WITH p AS( 
+	INSERT INTO domain_secdns(domain_id, ds_data_id) 
+		SELECT  
+			tc_id_from_name('domain','example-to-be-deleted4.lol'), 
+			s.id 
+		FROM secdns_ds_data s
+		WHERE s.digest = '114'
+		RETURNING *
+	)SELECT * INTO TEMP _p29 FROM p;
+	SELECT OK((SELECT count(id::TEXT) = 1 FROM "domain_secdns" 
+	WHERE id IN (SELECT id FROM _p29)),'IS TRUE!'); 
+
+
+-------------------------------------
+SELECT ok((SELECT count(*) = 0 FROM history.domain), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 0 FROM history.contact), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 0 FROM history.contact_postal), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 0 FROM history.contact_attribute), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 0 FROM history.host), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 0 FROM history.host_addr), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 0 FROM history.secdns_key_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 0 FROM history.secdns_ds_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 0 FROM history.domain_secdns), 'IS TRUE!');
+
+-- select tc_id_from_name('domain','example-to-be-deleted1.lol')
+
+SELECT * FROM delete_domain_with_reason(
+	tc_id_from_name('domain','example-to-be-deleted1.lol'),
+	'delete');
+
+SELECT ok((SELECT count(*) = 1 FROM history.domain), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 1 FROM history.contact), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 1 FROM history.contact_postal), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 4 FROM history.contact_attribute), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 1 FROM history.host), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 4 FROM history.host_addr), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 1 FROM history.secdns_key_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 0 FROM history.secdns_ds_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 1 FROM history.domain_secdns), 'IS TRUE!');
+
+SELECT * FROM delete_domain_with_reason(
+	tc_id_from_name('domain','example-to-be-deleted2.lol'),
+	'delete');
+
+SELECT ok((SELECT count(*) = 2 FROM history.domain), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 2 FROM history.contact), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 2 FROM history.contact_postal), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 8 FROM history.contact_attribute), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 2 FROM history.host), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 8 FROM history.host_addr), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 3 FROM history.secdns_key_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 0 FROM history.secdns_ds_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 3 FROM history.domain_secdns), 'IS TRUE!');
+
+SELECT * FROM delete_domain_with_reason(
+	tc_id_from_name('domain','example-to-be-deleted3.lol'),
+	'delete');
+
+SELECT ok((SELECT count(*) = 3 FROM history.domain), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 3 FROM history.contact), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 3 FROM history.contact_postal), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 12 FROM history.contact_attribute), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 3 FROM history.host), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 12 FROM history.host_addr), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 3 FROM history.secdns_key_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 3 FROM history.secdns_ds_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 6 FROM history.domain_secdns), 'IS TRUE!');
+
+SELECT * FROM delete_domain_with_reason(
+	tc_id_from_name('domain','example-to-be-deleted4.lol'),
+	'delete');
+
+SELECT ok((SELECT count(*) = 4 FROM history.domain), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 4 FROM history.contact), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 4 FROM history.contact_postal), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 16 FROM history.contact_attribute), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 4 FROM history.host), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 16 FROM history.host_addr), 'IS TRUE!');
+
+SELECT ok((SELECT count(*) = 4 FROM history.secdns_key_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 4 FROM history.secdns_ds_data), 'IS TRUE!');
+SELECT ok((SELECT count(*) = 7 FROM history.domain_secdns), 'IS TRUE!');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

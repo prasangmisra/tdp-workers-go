@@ -1,0 +1,160 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_host');
+SELECT has_table('order_host_addr');
+SELECT has_table('order_item_update_host');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- set host_object_supported to false
+Update v_attribute
+SET value=false 
+WHERE key='tld.order.host_object_supported'
+  AND tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer);
+
+-- create a domain entry for testing
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM _tenant_customer),
+        FORMAT('tdp-test-%s.help', EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _domain FROM test_domain;
+
+-- create a host
+WITH basic_host AS (
+    INSERT INTO host(
+        tenant_customer_id,
+        "name"
+    ) VALUES(
+        (SELECT id FROM _tenant_customer),
+        'ns1.' || (SELECT name from _domain)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _test_host FROM basic_host;
+
+-- add the host address 
+INSERT INTO host_addr(
+    host_id,
+    address
+) VALUES 
+    ((SELECT id FROM _test_host),'192.166.1.101'::INET),
+    ((SELECT id FROM _test_host),'192.166.1.102'::INET);
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    ) VALUES(
+        (SELECT id FROM _tenant_customer),
+        (SELECT id FROM v_order_type WHERE product_name='host' AND name='update')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+-- create a order host
+WITH basic_host AS (
+    INSERT INTO order_host(
+        tenant_customer_id,
+        "name"
+    ) VALUES(
+        (SELECT id FROM _tenant_customer),
+        (SELECT name FROM _test_host)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_host FROM basic_host;
+
+-- add the order host address 
+INSERT INTO order_host_addr(
+    host_id,
+    address
+) VALUES
+    ((SELECT id FROM _order_host),'192.166.1.102'::INET),
+    ((SELECT id FROM _order_host),'192.166.1.103'::INET);
+
+SELECT lives_ok($$
+    INSERT INTO order_item_update_host (
+        order_id,
+        host_id,
+        new_host_id
+    ) VALUES (
+        (SELECT id FROM _order),
+        (SELECT id FROM _test_host),
+        (SELECT id FROM _order_host)
+    );
+    $$,
+'create a update host order');
+
+-- move order status from pending to processing
+SELECT lives_ok($$
+    UPDATE "order" SET
+        status_id = order_next_status((SELECT id FROM _order), TRUE)
+    WHERE id = (SELECT id FROM _order);
+$$,'move order status from pending to processing');
+
+
+-- check host was created locally
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'successful'
+);
+
+-- check whether the host addr count is expected
+SELECT cmp_ok(
+    (SELECT COUNT(*) FROM ONLY host_addr WHERE host_id=(SELECT id FROM _test_host))::TEXT,
+    '=',
+    '2',
+    'check whether the host addr count is expected'
+);
+
+-- check whether the host address have updated
+SELECT is(
+    (SELECT 1 FROM ONLY host_addr WHERE host_id=(SELECT id FROM _test_host) AND address = '192.166.1.102'),
+    1,
+    'check whether the host address have updated'
+);
+
+-- check whether the host address have updated
+SELECT is(
+    (SELECT 1 FROM ONLY host_addr WHERE host_id=(SELECT id FROM _test_host) AND address = '192.166.1.103'),
+    1,
+    'check whether the host address have updated'
+);
+
+-- check parent domain id populated
+SELECT is(
+    (SELECT 1 FROM ONLY host WHERE id=(SELECT id FROM _test_host) AND domain_id = (SELECT id FROM _domain)),
+    1,
+    'check whether the host was updated with parent domain id'
+);
+
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

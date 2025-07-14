@@ -1,0 +1,158 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('language');
+SELECT has_table('template_engine');
+SELECT has_table('template_type');
+SELECT has_table('template_status');
+SELECT has_table('template');
+
+
+-- create a template type for testing
+WITH test_template_type AS (
+  INSERT INTO template_type (name, descr) 
+    VALUES 
+      ('Test Template Type', 'Template for testing')
+    RETURNING *
+)
+SELECT * INTO TEMP _test_template_type FROM test_template_type;
+
+
+-- create test template
+WITH test_template AS (
+  INSERT INTO template (subject, type_id, engine_id, status_id, content)
+    VALUES
+      (
+        'TEST SUBJECT',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'published'),
+        '<p>TESTING</p>'
+      )
+    RETURNING id
+)
+SELECT * INTO TEMP _test_template FROM test_template;
+
+
+-- check view returns just added template
+SELECT cmp_ok(
+    (SELECT template_id FROM v_template vt WHERE vt.template_type_id = (SELECT id FROM _test_template_type)),
+    '=',
+    (SELECT id FROM _test_template)
+);
+
+-- create new test template for same type in draft status
+WITH test_template_new AS (
+  INSERT INTO template (subject, type_id, engine_id, status_id, content, created_date)
+    VALUES
+      (
+        'TEST SUBJECT NEW',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'draft'),
+        '<p>TESTING NEW</p>',
+        NOW() + INTERVAL '1 second' -- make sure template is most recent
+      )
+    RETURNING id
+)
+SELECT * INTO TEMP _test_template_new FROM test_template_new;
+
+
+-- check view still returns same template
+SELECT cmp_ok(
+    (SELECT vt.template_id FROM v_template vt WHERE vt.template_type_id = (SELECT id FROM _test_template_type)),
+    '=',
+    (SELECT id FROM _test_template)
+);
+
+-- mark new template as published
+SELECT lives_ok($$
+  UPDATE template SET status_id = tc_id_from_name('template_status' ,'published') WHERE id = (SELECT id FROM _test_template_new);
+$$, 'updating new template status');
+
+-- check view does not return old template
+SELECT cmp_ok(
+  (SELECT vt.template_id FROM v_template vt WHERE vt.template_id = (SELECT id FROM _test_template)) IS NULL,
+  '=',
+  TRUE
+);
+
+-- check view now returns new template as it is ready for use
+SELECT cmp_ok(
+  (SELECT vt.template_id FROM v_template vt WHERE vt.template_id = (SELECT id FROM _test_template_new)),
+  '=',
+  (SELECT id FROM _test_template_new)
+);
+
+
+-- create not yet valid test template for same type in published status
+WITH test_template_validity AS (
+  INSERT INTO template (subject, type_id, engine_id, status_id, content, validity, created_date)
+    VALUES
+      (
+        'TEST SUBJECT FOR VALIDITY TEST',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'published'),
+        '<p>TESTING VALIDITY</p>',
+        TSTZRANGE(NOW() + INTERVAL '2 days', NULL),
+        NOW() + INTERVAL '2 second' -- make sure template is most recent
+      )
+    RETURNING id
+)
+SELECT * INTO TEMP _test_template_validity FROM test_template_validity;
+
+-- check view still returns same template as just added is not yet valid
+SELECT cmp_ok(
+  (SELECT vt.template_id FROM v_template vt WHERE vt.template_id = (SELECT id FROM _test_template_new)),
+  '=',
+  (SELECT id FROM _test_template_new)
+);
+
+-- update validity of template to make it ready for use
+SELECT lives_ok($$
+  UPDATE template SET validity = TSTZRANGE(NOW(), 'infinity') WHERE id = (SELECT id FROM _test_template_validity);
+$$, 'updating template validity');
+
+
+-- check view does not return previous template
+SELECT cmp_ok(
+  (SELECT vt.template_id FROM v_template vt WHERE vt.template_id = (SELECT id FROM _test_template_new)) IS NULL,
+  '=',
+  TRUE
+);
+
+-- check view now returns new template as it is ready for use
+SELECT cmp_ok(
+  (SELECT vt.template_id FROM v_template vt WHERE vt.template_id = (SELECT id FROM _test_template_validity)),
+  '=',
+  (SELECT id FROM _test_template_validity)
+);
+
+
+-- create test template with invalid validity
+SELECT throws_ok ($$
+  INSERT INTO template (subject, type_id, engine_id, status_id, content, validity)
+    VALUES
+      (
+        'TEST SUBJECT INVALID',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'published'),
+        '<p>TESTING VALIDITY</p>',
+        TSTZRANGE(NOW() - INTERVAL '2 days', NULL)
+      );
+  $$,
+  '23514',
+  'new row for relation "template" violates check constraint "template_validity_check"',
+  'lower boundary of validity cannot start in past'
+);
+
+SELECT * FROM finish(true);
+
+
+ROLLBACK;

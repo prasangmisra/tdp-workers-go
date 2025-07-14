@@ -1,0 +1,390 @@
+# Use postgres/example user/password credentials
+
+x-app_config: &app_config
+  depends_on:
+    - "rabbitmq"
+    - "domainsdb"
+    - "subdb"
+  env_file:
+    - ../.env
+  restart: unless-stopped
+  networks:
+    - tdp-worker
+    # - tdpdomainsnetwork
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    hostname: rabbitmq-local
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: domains
+      RABBITMQ_DEFAULT_PASS: tucows
+    volumes:
+      - ../etc/rabbitmq:/etc/rabbitmq/
+      - ../etc/certs/server:/etc/certs/
+    networks:
+      - tdp-worker
+
+  domainsdb:
+    build:
+      context: ../sm/tdp-database-design
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=tucows
+      - POSTGRES_PASSWORD=tucows1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../sm/tdp-database-design/etc/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ../sm/tdp-database-design/db/t:/tests/db/t
+      - ../sm/tdp-database-design/db:/db
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    networks:
+      - tdp-worker
+
+  subdb:
+    build:
+      context: ../sm/tdp-notifications/database
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=tucows
+      - POSTGRES_PASSWORD=tucows1234
+    ports:
+      - "5433:5432"
+    volumes:
+      - ../sm/tdp-notifications/database/etc/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ../sm/tdp-notifications/database/db/t:/tests/subscriptiondb/t
+      - ../sm/tdp-notifications/database/db:/subscriptiondb
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    networks:
+      - tdp-worker
+
+  unbound_resolver:
+    image: mvance/unbound:1.12.0
+    hostname: unbound-local
+    ports:
+      - "5053:53/udp"
+      - "5053:53/tcp"
+    volumes:
+      - ../etc/unbound:/opt/unbound/etc/unbound/
+    networks:
+      - tdp-worker
+
+  job_scheduler:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: job_scheduler
+    volumes:
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8070:8082" # healthcheck port
+    environment:
+      LOG_LEVEL: DEBUG
+      MESSAGEBUS_READERS_COUNT: 0
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+
+  contact_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: contact
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerJobContactProvision
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../contact:/app/contact
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8071:8082" # healthcheck port
+
+  contact_updater_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: contact_updater
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerJobContactProvisionUpdate
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../contact_updater:/app/contact_updater
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8072:8082" # healthcheck port
+
+  certificate_updater_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: certificate_updater
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerJobHostingCertificateProvisionUpdate
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+      # RABBITMQ_CERT_FILE: /etc/certs/cert.pem
+      # RABBITMQ_KEY_FILE: /etc/certs/key.pem
+      # RABBITMQ_CA_FILE: /etc/certs/cacert.pem
+      # RABBITMQ_VERIFY_SERVER_NAME: localhost
+    volumes:
+      - ../certificate_updater:/app/certificate_updater
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8073:8082" # healthcheck port
+
+  domain_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: domain
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerJobDomainProvision
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../domain:/app/domain
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8074:8082" # healthcheck port
+
+  domain_updater_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: domain_updater
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerJobDomainProvisionUpdate
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../domain_updater:/app/domain_updater
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8075:8082" # healthcheck port
+
+  host_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: host
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerJobHostProvision
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../host:/app/host
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8076:8082" # healthcheck port
+
+  host_updater_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: host_updater
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerJobHostProvisionUpdate
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../host_updater:/app/host_updater
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8077:8082" # healthcheck port
+
+  hosting_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: hosting
+    env_file:
+      - generated_env/.secrets
+    environment:
+      LOG_LEVEL: DEBUG
+      #AWS_HOSTING_API_BASE_ENDPOINT: https://ecit6t8fye.execute-api.us-east-1.amazonaws.com/qa
+      AWS_HOSTING_API_BASE_ENDPOINT: https://mtw17onlkf.execute-api.us-east-1.amazonaws.com/dev
+      AWS_REGION: us-east-1
+      RABBITMQ_QUEUE: WorkerJobHostingProvision
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../hosting:/app/hosting
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8078:8082" # healthcheck port
+
+  hosting_updater_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: hosting_updater
+    env_file:
+      - generated_env/.secrets
+    environment:
+      LOG_LEVEL: INFO
+      AWS_SQS_QUEUE_NAME: final-state-order.fifo
+      AWS_SQS_QUEUE_ACCOUNT_ID: "626166875315"
+      #AWS_SSO_PROFILE_NAME: ""
+      AWS_REGION: us-east-1
+      # AWS_ACCESS_KEY_ID: ""
+      # AWS_SECRET_ACCESS_KEY: ""
+      # AWS_SESSION_TOKEN: ""
+      AWS_ROLES: "[{\"arn\":\"arn:aws:iam::626166875315:role/bot-domains-webhosting-saas-dev-iamrol-cicd-sqs\", \"session_name\":\"hosting-role-their\"}]"
+    volumes:
+      - ../hosting_updater:/app/hosting_updater
+      - ../pkg:/app/pkg
+      - ../cmd:/app/cmd
+      #- ../../.aws:/root/.aws:ro
+    ports:
+      - "8079:8082" # healthcheck port
+
+  ry_poll_message_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: poll_worker
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: messages-poller-worker-queue
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../poll_worker:/app/poll_worker
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8080:8082" # healthcheck port
+
+  poll_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: poll_worker
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerPollMessages
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+      NOTIFICATION_QUEUE: WorkerNotifications
+    volumes:
+      - ../poll_worker:/app/poll_worker
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8081:8082" # healthcheck port
+
+  poll_enqueuer:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: poll_enqueuer
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerPollMessages
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+    volumes:
+      - ../poll_enqueuer:/app/poll_enqueuer
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+
+  notification_worker:
+    <<: *app_config
+    build:
+      context: ${DOCKERFILE_CONTEXT:-..}
+      dockerfile: ${DOCKERFILE_PATH:-build/Dockerfile}
+      target: app-local
+      args:
+        SERVICE_TYPE: notification_worker
+    environment:
+      LOG_LEVEL: DEBUG
+      RABBITMQ_QUEUE: WorkerNotifications
+      RABBITMQ_TLS_ENABLED: 'true'
+      RABBITMQ_TLS_SKIP_VERIFY: 'true'
+      RABBITMQ_PORT: 5671
+      DBHOST: subdb
+      DBNAME: subtdpdb
+    volumes:
+      - ../notification_worker:/app/notification_worker
+      - ../pkg:/app/pkg
+      - ../etc/certs/client:/etc/certs/
+    ports:
+      - "8082:8082" # healthcheck port
+
+networks:
+  tdp-worker:
+    name: tdp-worker
+  # tdpdomainsnetwork:
+  #   external: true
+  #   name: tdpdomainsnetwork

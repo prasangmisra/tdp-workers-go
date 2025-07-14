@@ -1,0 +1,3 @@
+ALTER TABLE provision_host DROP CONSTRAINT IF EXISTS provision_host_domain_id_fkey;
+ALTER TABLE provision_host_delete DROP CONSTRAINT IF EXISTS provision_host_delete_domain_id_fkey;
+ALTER TABLE provision_host_update DROP CONSTRAINT IF EXISTS provision_host_update_domain_id_fkey;

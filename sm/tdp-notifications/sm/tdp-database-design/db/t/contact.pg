@@ -1,0 +1,203 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('contact');
+SELECT has_table('contact_postal');
+SELECT has_table('contact_attribute');
+
+
+-- We insert the contacts using the appropriate table,
+-- either persons or organisations.
+
+WITH ins AS (
+INSERT INTO contact
+( type_id, email, phone, fax, country )
+VALUES( 
+    tc_id_from_name('contact_type','individual'),
+    'person@test.example', 
+    '+555.5555551212',
+    '+555.5555551213',
+    'US'
+) RETURNING * )
+SELECT * INTO TEMP _person_contact FROM ins;
+
+
+INSERT INTO contact_postal
+(
+    contact_id,
+    is_international,
+    first_name,
+    last_name,
+    address1,
+    city,
+    postal_code,
+    state 
+)
+VALUES(
+    (SELECT id FROM _person_contact),
+    TRUE,
+    'John',
+    'Smith',
+    '555 Adress line',
+    'Los Angeles',
+    '90210',
+    'California'
+);
+
+WITH ins AS (
+    INSERT INTO contact
+    (
+        type_id,
+        org_reg,
+        org_vat,
+        org_duns,
+        email,
+        phone,
+        fax,
+        country
+    )
+    VALUES( 
+        tc_id_from_name('contact_type','organization'),
+        '123456-reg',
+        '654321-vat',
+        '789123-duns',
+        'org@test.example', 
+        '+555.5555551212',
+        '+555.5555551213',
+        'US'
+    ) RETURNING *
+)
+SELECT * INTO _organization_contact FROM ins;
+
+
+SELECT lives_ok (
+    $$
+        INSERT INTO contact_postal
+        (
+            contact_id,
+            is_international,
+            first_name,
+            last_name,
+            org_name,
+            address1,
+            city,
+            postal_code,
+            state 
+        )
+        VALUES(
+            (SELECT id FROM _organization_contact),
+            TRUE,
+            'John',
+            'Smith',
+            'Tucows Inc',
+            '555 Adress line',
+            'Los Angeles',
+            '90210',
+            'California'
+        )
+    $$,
+    'add an org contact''s postal info'
+);
+
+-- Make sure we cannot insert non-contact attributes
+
+INSERT INTO attribute
+(
+    name,
+    descr,
+    type_id
+)
+VALUES(
+    'non_contact_attribute',
+    'Non-Contact Attribute',
+    tc_id_from_name('attribute_type','domain')
+);
+
+SELECT throws_matching (
+    $$
+        INSERT INTO contact_attribute
+        (
+            attribute_id,
+            contact_id,
+            value
+        )
+        VALUES(
+            tc_id_from_name('attribute','non_contact_attribute'),
+            (SELECT id FROM _person_contact),
+            '42'
+        )
+    $$,
+    'insert or update on table "contact_attribute" violates foreign key constraint "contact_attribute_attribute_id_attribute_type_id_fkey"',
+    'do not accept non-contact attributes'
+);
+
+-- Make sure we can't  insert non-unique organisation values
+
+-- SELECT throws_matching (
+--     $$
+--         INSERT INTO contact_p_organisation
+--         ( email, phone, fax, country_id, reg_number, vat_number,
+--           duns_number )
+--         SELECT 'org2@test.example', '+555.5555551312',
+--                '+555.5555551313', c.id, 'reg1', 'vat2', 'duns2'
+--         FROM country c
+--         WHERE alpha2_code = 'ZZ'
+--     $$,
+--     'duplicate key value violates unique constraint',
+--     'do not accept orgs with duplicated reg_number'
+-- );
+
+-- SELECT throws_matching (
+--     $$
+--         INSERT INTO contact_p_organisation
+--         ( email, phone, fax, country_id, reg_number, vat_number,
+--           duns_number )
+--         SELECT 'org2@test.example', '+555.5555551312',
+--                '+555.5555551313', c.id, 'reg2', 'vat1', 'duns2'
+--         FROM country c
+--         WHERE alpha2_code = 'ZZ'
+--     $$,
+--     'duplicate key value violates unique constraint',
+--     'do not accept orgs with duplicated vat_number'
+-- );
+
+-- SELECT throws_matching (
+--     $$
+--         INSERT INTO contact_p_organisation
+--         ( email, phone, fax, country_id, reg_number, vat_number,
+--           duns_number )
+--         SELECT 'org2@test.example', '+555.5555551312',
+--                '+555.5555551313', c.id, 'reg2', 'vat2', 'duns1'
+--         FROM country c
+--         WHERE alpha2_code = 'ZZ'
+--     $$,
+--     'duplicate key value violates unique constraint',
+--     'do not accept orgs with duplicated duns_number'
+-- );
+
+
+
+
+INSERT INTO contact_attribute(contact_id,attribute_id,value)
+    VALUES( 
+        (SELECT id FROM _person_contact),
+        (SELECT id FROM attribute WHERE parent_id=tc_id_from_name('attribute','xxx') AND name='membership_id'),
+        '123456'
+    );
+
+SELECT 
+    is( 
+        (SELECT attributes->>'xxx.membership_id' FROM v_contact_attribute WHERE contact_id=(SELECT id FROM _person_contact)), 
+        '123456',
+        'got xxx.membership_id'
+    );
+
+
+
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

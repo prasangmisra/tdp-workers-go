@@ -1,0 +1,43 @@
+erDiagram
+    job_status {
+        uuid id PK
+        text name 
+        text descr 
+        boolean is_final 
+        boolean is_success 
+    }
+
+    job_type {
+        uuid id PK
+        text name 
+        text descr 
+        text reference_table 
+        text reference_status_table 
+        text reference_status_column 
+        text routing_key 
+    }
+
+    job {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        uuid type_id FK
+        uuid status_id FK
+        timestamp_with_time_zone start_date 
+        timestamp_with_time_zone end_date 
+        timestamp_with_time_zone retry_date 
+        integer retry_count 
+        uuid reference_id 
+        jsonb data 
+        text result_msg 
+        jsonb result_data 
+        text event_id 
+    }
+
+    job }o--|| job_status : "status_id"
+    job }o--|| job_type : "type_id"
+    job }o--|| tenant_customer : "tenant_customer_id"
+    provision }o--|| job : "job_id"

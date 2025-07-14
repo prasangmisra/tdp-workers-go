@@ -1,0 +1,366 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+-- create a host parent domain entry for testing
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- set fee_check_allowed to true to create two validation jobs
+UPDATE v_attribute
+SET value = FORMAT('[%s, %s)', NOW() - INTERVAL '6 months', NOW() + INTERVAL '6 months')
+WHERE key = 'tld.lifecycle.claims_period'
+  AND tld_name = 'help'
+  AND tenant_id = (SELECT tenant_id FROM _tenant_customer);
+
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        FORMAT('host-parent-domain-%s-1.help',EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _host_parent_domain FROM test_domain;
+
+-- Validate v_claims_period scenarios
+-- Case 1: NOW() is within v_claims_period
+SELECT ok(
+    EXISTS(
+        SELECT 1
+        FROM v_attribute
+        WHERE key = 'tld.lifecycle.claims_period'
+          AND value::TSTZRANGE @> NOW()
+    ),
+    'NOW() falls within v_claims_period'
+);
+
+-- Case 2: NOW() is outside v_claims_period
+UPDATE v_attribute
+SET value = FORMAT('[%s, %s)', NOW() - INTERVAL '1 year', NOW() - INTERVAL '6 months')
+WHERE key = 'tld.lifecycle.claims_period'
+  AND tld_name = 'help'
+  AND tenant_id = (SELECT tenant_id FROM _tenant_customer);
+
+SELECT ok(
+    NOT EXISTS(
+        SELECT 1
+        FROM v_attribute
+        WHERE key = 'tld.lifecycle.claims_period'
+          AND value::TSTZRANGE @> NOW()
+    ),
+    'NOW() falls outside v_claims_period'
+);
+
+-- Reset v_claims_period for subsequent tests
+UPDATE v_attribute
+SET value = FORMAT('[%s, %s)', NOW() - INTERVAL '6 months', NOW() + INTERVAL '6 months')
+WHERE key = 'tld.lifecycle.claims_period'
+  AND tld_name = 'help'
+  AND tenant_id = (SELECT tenant_id FROM _tenant_customer);
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+
+-- now we add the order item (order_item_create_domain)
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+WITH cd AS (
+    INSERT INTO order_item_create_domain(order_id,name,launch_data)
+        VALUES((SELECT id FROM _order),FORMAT('tdp-test-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),jsonb_build_object('testfield1', 'testval1')) RETURNING *
+)
+SELECT * INTO TEMP _oi_create_domain FROM cd;
+
+
+-- create a contact (personal)
+WITH oc AS (
+    INSERT INTO order_contact (
+        order_id,
+        type_id,
+        email,
+        phone,
+        fax,
+        country,
+        tenant_customer_id
+    )
+    VALUES( 
+        (SELECT id FROM _order),
+        tc_id_from_name('contact_type','individual'),
+        'person@test.example', 
+        '+555.5555551212',
+        '+555.5555551213',
+        'US',
+        (SELECT id FROM v_tenant_customer LIMIT 1)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_contact FROM oc;
+
+
+-- postal data as well
+WITH cp AS (
+    INSERT INTO order_contact_postal
+    (
+        contact_id,
+        is_international,
+        first_name,
+        last_name,
+        address1,
+        city,
+        postal_code,
+        state 
+    )
+    VALUES(
+        (SELECT id FROM _order_contact),
+        TRUE,
+        'John',
+        'Smith',
+        '555 Adress line',
+        'Los Angeles',
+        '90210',
+        'California'
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_contact_postal FROM cp;
+
+
+-- create a host
+WITH oh AS (
+    INSERT INTO order_host (
+        "name",
+         tenant_customer_id        
+    )
+    VALUES(    
+       'ns1.' || (SELECT name FROM _host_parent_domain),
+       (SELECT id FROM v_tenant_customer LIMIT 1)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_host FROM oh;
+
+-- add the host address 
+SELECT lives_ok($$
+    INSERT INTO order_host_addr(
+        host_id,
+        address
+    )
+    (
+           SELECT 
+             (SELECT id FROM _order_host),
+             a.addr 
+        FROM ( SELECT addr FROM (
+                        VALUES
+                            ('192.168.1.100'::INET),
+                            ('192.168.1.101'::INET)
+                        ) AS t (addr)
+            )a
+    )
+$$,'insert record in order_host_addr');
+
+
+-- add the domain contacts 
+SELECT lives_ok($$
+    INSERT INTO create_domain_contact(
+        create_domain_id,
+        domain_contact_type_id,
+        order_contact_id
+    )
+    VALUES
+    (
+        (SELECT id FROM _oi_create_domain),
+        tc_id_from_name('domain_contact_type','registrant'),
+        (SELECT id FROM _order_contact)
+    );
+$$,'insert record in create_domain_contact');
+
+
+-- add the domain nameservers 
+SELECT lives_ok($$
+    INSERT INTO create_domain_nameserver(
+        create_domain_id,        
+        host_id
+    )
+    VALUES(
+        (SELECT id FROM _oi_create_domain),
+        (SELECT id FROM _order_host)
+    );
+$$,'insert record in create_domain_nameserver');
+
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- order must be in status processing
+SELECT cmp_ok( 
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+-- order item must be in status 'ready' now
+SELECT cmp_ok( 
+    (SELECT s.name FROM order_item oi JOIN order_item_status s ON s.id=oi.status_id WHERE oi.order_id = (SELECT id FROM _order)),
+    '=',
+    'ready'
+);
+
+-- there should be 3 items plans
+SELECT cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_create_domain)) WHERE plan_status_name = 'new'),
+  '=',
+  3::INT
+);
+
+-- there should be 2 items pending validation (domain and host)
+SELECT cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_create_domain)) WHERE plan_validation_status_name = 'started'),
+  '=',
+  2::INT
+);
+
+-- there should be 1 job created to validate domain
+SELECT cmp_ok((
+    SELECT COUNT(*)::INT
+    FROM v_job vj 
+    JOIN create_domain_plan cdp ON cdp.id = vj.reference_id
+    WHERE cdp.order_item_id = (SELECT id FROM _oi_create_domain)
+        AND vj.job_type_name = 'validate_domain_claims'),
+  '=',
+  1::INT
+);
+
+-- there should be 1 job created to validate host
+SELECT cmp_ok((
+    SELECT COUNT(*)::INT
+    FROM v_job vj 
+    JOIN create_domain_plan cdp ON cdp.id = vj.reference_id
+    WHERE cdp.order_item_id = (SELECT id FROM _oi_create_domain)
+        AND vj.job_type_name = 'validate_host_available'),
+  '=',
+  1::INT
+);
+
+-- let's update the validate_domain_claims job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = ( 
+        SELECT job_id
+        FROM v_job vj 
+        JOIN create_domain_plan cdp ON cdp.id = vj.reference_id
+        WHERE cdp.order_item_id = (SELECT id FROM _oi_create_domain)
+            AND vj.job_type_name = 'validate_domain_claims'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+-- let's update the validate_host_available job and corresponding order item plan to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE order_item_plan
+    SET validation_status_id = tc_id_from_name('order_item_plan_validation_status','completed')
+    WHERE id = ( 
+        SELECT vj.reference_id
+        FROM v_job vj 
+        JOIN create_domain_plan cdp ON cdp.id = vj.reference_id
+        WHERE cdp.order_item_id = (SELECT id FROM _oi_create_domain)
+            AND vj.job_type_name = 'validate_host_available'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = ( 
+        SELECT job_id
+        FROM v_job vj 
+        JOIN create_domain_plan cdp ON cdp.id = vj.reference_id
+        WHERE cdp.order_item_id = (SELECT id FROM _oi_create_domain)
+            AND vj.job_type_name = 'validate_host_available'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+-- let's grab that provision_host entry
+WITH ph AS (
+    SELECT h.*,ps.name AS status_name 
+    FROM provision_host h
+        JOIN provision_status ps ON ps.id = h.status_id
+    WHERE (
+        SELECT id FROM f_order_item_plan((SELECT id FROM _oi_create_domain)) 
+            WHERE object_name='host'
+    ) = ANY(order_item_plan_ids) 
+    AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_host FROM ph;
+
+-- processing is started for host provisioning plan 
+SELECT ok(
+    EXISTS(
+        SELECT * FROM _prov_host
+    ) 
+);
+
+-- let's grab that provision_contact entry
+WITH pc AS (
+    SELECT pc.*,ps.name AS status_name 
+    FROM provision_contact pc
+        JOIN provision_status ps ON ps.id = pc.status_id
+    WHERE (
+        SELECT id FROM f_order_item_plan((SELECT id FROM _oi_create_domain))
+            WHERE object_name='contact'
+    ) = ANY(order_item_plan_ids) 
+    AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_contact FROM pc;
+
+-- processing is started for contact provisioning plan 
+SELECT ok(
+    EXISTS(
+        SELECT * FROM _prov_contact
+    ) 
+);
+
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

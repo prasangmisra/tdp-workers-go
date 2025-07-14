@@ -1,0 +1,66 @@
+.test-data
+.test-data-cost
+.test-data-price
+/t/00-extension.pg
+.vscode
+!Build/
+.last_cover_stats
+/META.yml
+/META.json
+/MYMETA.*
+*.o
+*.pm.tdy
+*.bs
+
+
+local/
+
+# Devel::Cover
+cover_db/
+
+# Devel::NYTProf
+nytprof.out
+
+# Dizt::Zilla
+/.build/
+
+# Module::Build
+_build/
+Build
+Build.bat
+
+# Module::Install
+inc/
+
+# ExtUtils::MakeMaker
+/blib/
+/_eumm/
+/*.gz
+/Makefile.old
+/MANIFEST.bak
+/pm_to_blib
+/*.zip
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/tdp-database-design.iml
+.idea/sqldialects.xml
+.idea/modules.xml
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/tdpdb.fsyRBg/schema/public.abK9xQ.zip
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/tdpdb.fsyRBg/schema/public.abK9xQ.meta
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/tdpdb.fsyRBg/schema/pg_catalog.0S1ZNQ.meta
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/tdpdb.fsyRBg/schema/information_schema.FNRwLQ.meta
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/tdpdb.fsyRBg.meta
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/subscription_dev.8zVH4Q/schema/pg_catalog.0S1ZNQ.meta
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/subscription_dev.8zVH4Q/schema/information_schema.FNRwLQ.meta
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070/storage_v2/_src_/database/subscription_dev.8zVH4Q.meta
+.idea/dataSources/fe3ed56c-d670-442a-a51d-78ba35182070.xml
+.idea/dataSources/83fc5f6f-22b4-44a8-a987-925a2601111c/storage_v2/_src_/database/subscription_dev.8zVH4Q/schema/public.abK9xQ.zip
+.idea/dataSources/83fc5f6f-22b4-44a8-a987-925a2601111c/storage_v2/_src_/database/subscription_dev.8zVH4Q/schema/public.abK9xQ.meta
+.idea/dataSources/83fc5f6f-22b4-44a8-a987-925a2601111c/storage_v2/_src_/database/subscription_dev.8zVH4Q/schema/pg_catalog.0S1ZNQ.meta
+.idea/dataSources/83fc5f6f-22b4-44a8-a987-925a2601111c/storage_v2/_src_/database/subscription_dev.8zVH4Q/schema/information_schema.FNRwLQ.meta
+.idea/dataSources/83fc5f6f-22b4-44a8-a987-925a2601111c/storage_v2/_src_/database/subscription_dev.8zVH4Q/schema/class.eKmlBQ.meta
+.idea/dataSources/83fc5f6f-22b4-44a8-a987-925a2601111c/storage_v2/_src_/database/subscription_dev.8zVH4Q.meta
+.idea/dataSources/83fc5f6f-22b4-44a8-a987-925a2601111c.xml
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/aws.xml

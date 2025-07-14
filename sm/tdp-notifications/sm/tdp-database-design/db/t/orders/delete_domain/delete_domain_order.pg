@@ -1,0 +1,55 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='delete')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+SELECT lives_ok($$
+    INSERT INTO order_item_delete_domain(
+        order_id,
+        name
+    ) VALUES(
+        (SELECT id FROM _order),
+        'example-to-be-deleted.sexy'
+    )
+$$);
+
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+
+-- mark setup_domain_delete job as completed (Child Job)
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE status_id = tc_id_from_name('job_status','submitted') AND type_id = tc_id_from_name('job_type','setup_domain_delete');
+$$);
+
+-- mark provision_domain_delete job as completed (Parent Job)
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE status_id = tc_id_from_name('job_status','submitted') AND type_id = tc_id_from_name('job_type','provision_domain_delete');
+$$);
+
+SELECT ok((SELECT d.id FROM domain d WHERE name='example-to-be-deleted.sexy') IS NULL,'domain is deleted');
+
+
+-- end testing
+SELECT * FROM finish(true);
+
+
+ROLLBACK;

@@ -1,0 +1,863 @@
+ROLLBACK; BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- tables 
+
+WITH tables AS ( 
+    SELECT table_name FROM (
+        VALUES
+		('period_type'),
+		('order_type_period_type'),
+		('currency_exchange_rate'),
+		('cost_type'),
+		('cost_component_type'),
+		('cost_product_strategy'),
+		('cost_product_component'),
+		('cost_domain_component'),
+		('stock_keeping_unit'), 
+		('stock_keeping_unit_domain')
+	) AS f (table_name)
+)SELECT has_table(table_name) FROM tables;
+
+-- functions 
+
+WITH functions AS ( 
+    SELECT function_name FROM (
+        VALUES
+        ('generate_sku'), 
+        
+    	('get_order_type_id'), 
+    	('get_tenant_customer_id'), 
+    	('get_accreditation_tld_id'), 
+    	('get_nonpromo_cost'),
+    	('get_provider_instance_tld_id'),
+    
+    	('refresh_mv_cost_domain_component'),
+		('refresh_mv_currency_exchange_rate'), 
+		('refresh_mv_order_type_period_type'), 
+		('refresh_mv_cost_product_strategy'),
+
+    	('insert_rec_cost_domain_component'),
+		('seed_icannfee_cost_domain_component'),
+		('seed_bankfee_cost_domain_component'),
+		('seed_taxfee_cost_domain_component'),
+		-- ('cost_domain_component_interfee_onboavrding'),
+
+    	('autopopulate_sku'),
+
+    	('get_total_cost_domain_components'), 
+    	('get_total_cost_domain'), 
+		('get_finance_setting'),
+		('finance_setting_insert')
+		
+	) AS f (function_name)
+)SELECT has_function(function_name) FROM functions;
+
+
+WITH p AS (
+SELECT COUNT(*) AS numb FROM order_type WHERE order_type.product_id =  tc_id_from_name('product','domain')
+)
+SELECT ok((SELECT count(id::TEXT) = p.numb FROM "order_type_period_type" JOIN p ON TRUE GROUP BY p.numb ),'IS TRUE!');
+
+SELECT ok((SELECT count(id::TEXT) = 2 FROM "cost_type" ),'IS TRUE!');
+SELECT ok((SELECT count(id::TEXT) = 6 FROM "cost_component_type" ),'IS TRUE!');
+SELECT ok((SELECT count(id::TEXT) = 0 FROM ONLY "cost_product_component" ),'IS TRUE!');
+
+SELECT * 
+	INTO _get_nonpromo_cost1
+	FROM get_nonpromo_cost(
+		get_accreditation_tld_id('enom','casino'),
+		get_order_type_id('create','domain'),
+		1, 
+		tc_id_from_name('period_type','year'));  
+SELECT ok((SELECT get_nonpromo_cost = 11800.0000 FROM _get_nonpromo_cost1), 'IS TRUE!');
+
+-- TEST FOR (1/4) ICANN FEE INSERTION 
+WITH p AS (
+	SELECT COUNT(*) AS numb 
+	FROM accreditation_tld
+)
+SELECT ok((SELECT count(id::TEXT) > 0 FROM "cost_domain_component" JOIN p ON TRUE WHERE VALUE = 18 GROUP BY p.numb ),'IS TRUE!');
+
+-- 1. premium 
+SELECT *  
+	INTO _get_total_cost_academy_pr
+	FROM get_total_cost_domain_components(
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','academy'),
+	_order_type_id:= get_order_type_id('create','domain'), 
+	_reg_fee:= 10000,
+	_reg_fee_currency_type_id:= tc_id_from_name('currency_type','USD')
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_academy_pr), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_academy_pr01
+	FROM get_total_cost_domain(
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','academy'),
+	_order_type_id:= get_order_type_id('create','domain'), 
+	_reg_fee:= 10000,
+	_reg_fee_currency_type_id:= tc_id_from_name('currency_type','USD')
+); 
+SELECT ok((SELECT total_value = 10018 FROM _get_total_cost_academy_pr01), 'IS TRUE!');
+
+-- 1.2 premium 
+SELECT *  
+	INTO _get_total_cost_academy_pr2
+	FROM get_total_cost_domain_components(
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','academy'),
+	_order_type_id:= get_order_type_id('create','domain'),   
+	_reg_fee:= 10000,
+	_reg_fee_currency_type_id:= tc_id_from_name('currency_type','EUR')
+	); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_academy_pr2), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_academy_pr22
+	FROM get_total_cost_domain(
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','academy'),
+	_order_type_id:= get_order_type_id('create','domain'),   
+	_reg_fee:= 10000,
+	_reg_fee_currency_type_id:= tc_id_from_name('currency_type','EUR')
+	); 
+SELECT ok((SELECT total_value = 10942.0000 FROM _get_total_cost_academy_pr22), 'IS TRUE!');
+
+-- 2. non-premium
+-- (1/4) icann fee
+
+SELECT *  
+	INTO _get_total_cost_academy
+	FROM get_total_cost_domain_components(
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','academy'),
+	_order_type_id:= get_order_type_id('create','domain') 
+	); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_academy), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_academy01
+	FROM get_total_cost_domain(
+	_accreditation_tld_id:= get_accreditation_tld_id('enom','academy'),
+	_order_type_id:= get_order_type_id('create','domain') 
+	); 
+SELECT ok((SELECT total_value = 3318 FROM _get_total_cost_academy01), 'IS TRUE!');
+
+-- Test 1
+SELECT *  
+INTO _get_total_cost_wtf
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT count(*) =3 FROM _get_total_cost_wtf), 'Test 1: get_total_cost_domain_components for wtf with period 1');
+
+-- Test 2
+SELECT *  
+INTO _get_total_cost_io_promo
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_io_promo), 'Test 2: get_total_cost_domain_components for io promo with period 1');
+
+-- Test 3
+SELECT *  
+INTO _get_total_cost_io_future
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _date := '2026-01-01 12:00:00+00'
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_io_future), 'Test 3: get_total_cost_domain_components for io with future date');
+
+-- Test 4
+SELECT *  
+INTO _get_total_cost_me_promo
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'care'), -- 'me'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_me_promo), 'Test 4: get_total_cost_domain_components for me promo with period 1');
+
+-- Test 5
+SELECT *  
+INTO _get_total_cost_me_mix
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'care'), -- 'me'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_me_mix), 'Test 5: get_total_cost_domain_components for me with mixed promo and non-promo with period 2');
+
+-- Test 6
+SELECT *  
+INTO _get_total_cost_au
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'au'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_au), 'Test 6: get_total_cost_domain_components for au with period 1');
+
+-- Test 7
+SELECT *  
+INTO _get_total_cost_okinawa
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'okinawa'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_okinawa), 'Test 7: get_total_cost_domain_components for okinawa with period 1');
+
+-- Test 8
+SELECT *  
+INTO _get_total_cost_io_2
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_io_2), 'Test 8: get_total_cost_domain_components for io with period 2');
+
+-- Test 9
+SELECT *  
+INTO _get_total_cost_au_2
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'au'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_au_2), 'Test 9: get_total_cost_domain_components for au with period 2');
+
+-- Test 10
+SELECT *  
+INTO _get_total_cost_okinawa_2
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'okinawa'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_okinawa_2), 'Test 10: get_total_cost_domain_components for okinawa with period 2');
+
+-- Test 11
+SELECT *  
+INTO _get_total_cost_wtf_2
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_wtf_2), 'Test 11: get_total_cost_domain_components for wtf with period 2');
+
+-- Test 12
+SELECT *  
+INTO _get_total_cost_io_correct
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1,
+    _reg_fee := 10000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_io_correct), 'Test 12: get_total_cost_domain_components for io with correct reg fee and currency type');
+
+-- Test 13
+SELECT *  
+INTO _get_total_cost_io_correct_5
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 5,
+    _reg_fee := 10000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_io_correct_5), 'Test 13: get_total_cost_domain_components for io with correct reg fee and currency type for period 5');
+
+-- Test 14
+SELECT *  
+INTO _get_total_cost_wtf_correct
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1,
+    _reg_fee := 15000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_wtf_correct), 'Test 14: get_total_cost_domain_components for wtf with correct reg fee and currency type');
+
+-- Test 15
+SELECT *  
+INTO _get_total_cost_wtf_correct_2
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2,
+    _reg_fee := 15000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_wtf_correct_2), 'Test 15: get_total_cost_domain_components for wtf with correct reg fee and currency type for period 2');
+
+-- Test 16
+SELECT *  
+INTO _get_total_cost_okinawa_correct
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'okinawa'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2,
+    _reg_fee := 15000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'JPY')
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_okinawa_correct), 'Test 16: get_total_cost_domain_components for okinawa with correct reg fee and currency type');
+
+-- Tests for `get_total_cost_domain`
+
+-- Test 17
+SELECT *  
+INTO _get_total_cost_domain_wtf
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 2963 FROM _get_total_cost_domain_wtf), 'Test 17: get_total_cost_domain for wtf with period 1');
+
+-- Test 18
+SELECT *  
+INTO _get_total_cost_domain_io_promo
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT total_value  = 2718.0000 FROM _get_total_cost_domain_io_promo), 'Test 18: get_total_cost_domain for io promo with period 1');
+
+-- Test 19
+SELECT *  
+INTO _get_total_cost_domain_io_future
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _date := '2026-01-01 12:00:00+00'
+); 
+SELECT ok((SELECT total_value  = 2718.0000 FROM _get_total_cost_domain_io_future), 'Test 19: get_total_cost_domain for io with future date');
+
+-- Test 20
+SELECT *  
+INTO _get_total_cost_domain_me_promo
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'care'), -- 'me'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT total_value  = 3018.0000 FROM _get_total_cost_domain_me_promo), 'Test 20: get_total_cost_domain for me promo with period 1');
+
+-- Test 21
+SELECT *  
+INTO _get_total_cost_domain_me_mix
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'care'), -- 'me'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT total_value = 6036.0000 FROM _get_total_cost_domain_me_mix), 'Test 21: get_total_cost_domain for me with mixed promo and non-promo with period 2');
+
+-- Test 22
+SELECT *  
+INTO _get_total_cost_domain_au
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'au'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 596.1332 FROM _get_total_cost_domain_au), 'Test 22: get_total_cost_domain for au with period 1');
+
+-- Test 23
+SELECT *  
+INTO _get_total_cost_domain_okinawa
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'okinawa'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 1266.4800 FROM _get_total_cost_domain_okinawa), 'Test 23: get_total_cost_domain for okinawa with period 1');
+
+-- Test 24
+SELECT *  
+INTO _get_total_cost_domain_io_2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT total_value = 5436.0000 FROM _get_total_cost_domain_io_2), 'Test 24: get_total_cost_domain for io with period 2');
+
+-- Test 25
+SELECT *  
+INTO _get_total_cost_domain_au_2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'au'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT total_value = 1192.2664 FROM _get_total_cost_domain_au_2), 'Test 25: get_total_cost_domain for au with period 2');
+
+-- Test 26
+SELECT *  
+INTO _get_total_cost_domain_okinawa_2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'okinawa'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT total_value = 2532.9600 FROM _get_total_cost_domain_okinawa_2), 'Test 26: get_total_cost_domain for okinawa with period 2');
+
+-- Test 27
+SELECT *  
+INTO _get_total_cost_domain_wtf_2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2
+); 
+SELECT ok((SELECT total_value = 5926 FROM _get_total_cost_domain_wtf_2), 'Test 27: get_total_cost_domain for wtf with period 2');
+
+-- Test 28
+SELECT *  
+INTO _get_total_cost_domain_io_correct
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1,
+    _reg_fee := 10000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT total_value = 10018.0000 FROM _get_total_cost_domain_io_correct), 'Test 28: get_total_cost_domain for io with correct reg fee and currency type');
+
+-- Test 29
+SELECT *  
+INTO _get_total_cost_domain_io_correct_5
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'family'), -- 'io'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 5,
+    _reg_fee := 10000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT total_value = 10090.0000 FROM _get_total_cost_domain_io_correct_5), 'Test 29: get_total_cost_domain for io with correct reg fee and currency type for period 5');
+
+-- Test 30
+SELECT *  
+INTO _get_total_cost_domain_wtf_correct
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 1,
+    _reg_fee := 15000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT total_value = 17688 FROM _get_total_cost_domain_wtf_correct), 'Test 30: get_total_cost_domain for wtf with correct reg fee and currency type');
+
+-- Test 31
+SELECT *  
+INTO _get_total_cost_domain_wtf_correct_2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2,
+    _reg_fee := 15000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT total_value = 17706 FROM _get_total_cost_domain_wtf_correct_2), 'Test 31: get_total_cost_domain for wtf with correct reg fee and currency type for period 2');
+
+-- Test 32
+SELECT *  
+INTO _get_total_cost_domain_okinawa_correct
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'okinawa'),
+    _order_type_id := get_order_type_id('create', 'domain'),  
+    _period := 2,
+    _reg_fee := 15000, 
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'JPY')
+); 
+SELECT ok((SELECT total_value = 140.0400 FROM _get_total_cost_domain_okinawa_correct), 'Test 32: get_total_cost_domain for okinawa with correct reg fee and currency type');
+
+-- Test FUNCTION get_total_cost_domain_components for academy with create order type
+SELECT *
+INTO _get_total_cost_academy00
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'academy'),
+    _order_type_id := get_order_type_id('create', 'domain')
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_academy00), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost for academy with create order type
+SELECT *
+INTO _get_total_cost_academy001
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'academy'),
+    _order_type_id := get_order_type_id('create', 'domain')
+); 
+SELECT ok((SELECT total_value = 3318 FROM _get_total_cost_academy001), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost_domain_components for academy with redeem order type
+SELECT *
+INTO _get_total_cost_academy022
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'academy'),
+    _order_type_id := get_order_type_id('redeem', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT count(*) = 1 FROM _get_total_cost_academy022), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost for academy with create order type
+SELECT *
+INTO _get_total_cost_academy_short
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'academy'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 3318 FROM _get_total_cost_academy_short), 'IS TRUE!');
+
+-- Multi-year test FUNCTION get_total_cost_domain_components for academy
+SELECT *
+INTO _get_total_cost_academy2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'academy'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 2
+); 
+SELECT ok((SELECT total_value = 6636 FROM _get_total_cost_academy2), 'IS TRUE!');
+
+-- (2/4) bank fee 
+SELECT ok((SELECT count(*) = 5 FROM "cost_domain_component" WHERE value = 2), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost for au with redeem order type
+SELECT *
+INTO _get_total_cost_au001
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'au'),
+    _order_type_id := get_order_type_id('redeem', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 596.1332 FROM _get_total_cost_au001), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost_domain_components for au with create order type
+SELECT *
+INTO _get_total_cost_au_long
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'au'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT count(*) = 2 FROM _get_total_cost_au_long ), 'IS TRUE!');
+
+-- Multi-year test FUNCTION get_total_cost_domain_components for au
+SELECT *
+INTO _get_total_cost_au2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'au'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 2
+); 
+SELECT ok((SELECT total_value = 1192.2664 FROM _get_total_cost_au2), 'IS TRUE!');
+
+-- (3/4) tax fee
+SELECT ok((SELECT count(*) = 1 FROM "cost_domain_component" WHERE value = 17.8000), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost_domain_components for wtf with create order type
+SELECT *
+INTO _get_total_cost_wtf1
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 2963.0 FROM _get_total_cost_wtf1), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost for wtf with renew order type
+SELECT *
+INTO _get_total_cost_wtf2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('renew', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 2963 FROM _get_total_cost_wtf2), 'IS TRUE!');
+
+-- Multi-year test FUNCTION get_total_cost_domain_components for wtf
+SELECT *
+INTO _get_total_cost_wtf3
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'wtf'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 5
+); 
+SELECT ok((SELECT total_value = 14815.0 FROM _get_total_cost_wtf3), 'IS TRUE!');
+
+-- Inserts (4/4) intercomp fee 
+-- TODO: --
+
+-- Inserts (5/5) manual processing fee 
+WITH p AS (
+    INSERT INTO cost_domain_component
+        (cost_component_type_id,
+        order_type_id,  
+        accreditation_tld_id,
+        period,
+        value,
+        currency_type_id,
+        is_promo, 
+        validity) 
+    VALUES
+        (tc_id_from_name('cost_component_type','manual processing fee'), 
+        NULL, 
+        get_accreditation_tld_id('enom','archi'), 
+        1,
+        10000,
+        tc_id_from_name('currency_type', 'USD'),
+        FALSE, 
+        tstzrange(('2024-01-01 12:00:00')::timestamp AT TIME ZONE 'UTC', 'infinity')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _cost_domain_component_man_archi FROM p;
+SELECT ok((SELECT value = 10000 FROM "cost_domain_component" WHERE id = (SELECT id FROM _cost_domain_component_man_archi)), 'IS TRUE!');
+
+-- Test FUNCTION get_total_cost_domain_components for archi with create order type
+SELECT *
+INTO _get_total_cost_archi3
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'archi'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_archi3), 'IS TRUE!');
+
+SELECT *
+INTO _get_total_cost_archi31
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'archi'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1
+); 
+SELECT ok((SELECT total_value = 17218.0 FROM _get_total_cost_archi31), 'IS TRUE!');
+
+-- Premium 
+SELECT *
+INTO _get_total_cost_archipr
+FROM get_total_cost_domain_components(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'archi'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1,
+    _reg_fee := 20000,
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT count(*) = 3 FROM _get_total_cost_archipr), 'IS TRUE!');
+
+SELECT *
+INTO _get_total_cost_archipr00
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'archi'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1,
+    _reg_fee := 20000,
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT total_value = 30018.0 FROM _get_total_cost_archipr00), 'IS TRUE!');
+
+-- Premium multiple years 
+SELECT *
+INTO _get_total_cost_archipr2
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'archi'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 2,
+    _reg_fee := 20000,
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'USD')
+); 
+SELECT ok((SELECT total_value = 30036.0 FROM _get_total_cost_archipr2 ), 'IS TRUE!');
+
+-- Premium non-USD currency  
+SELECT *
+INTO _get_total_cost_archipr3
+FROM get_total_cost_domain(
+    _accreditation_tld_id := get_accreditation_tld_id('enom', 'archi'),
+    _order_type_id := get_order_type_id('create', 'domain'),
+    _period := 1,
+    _reg_fee := 20000,
+    _reg_fee_currency_type_id := tc_id_from_name('currency_type', 'EUR')
+); 
+SELECT ok((SELECT total_value = 31866.0 FROM _get_total_cost_archipr3), 'IS TRUE!');
+
+-- finish testing
+SELECT * FROM finish(TRUE);
+
+ROLLBACK; 
+
+------------- HRS test rewrite after accounts 
+/*
+
+ROLLBACK; BEGIN;
+SELECT * FROM no_plan();
+
+WITH p AS(
+	INSERT INTO tenant 
+		(business_entity_id, name, descr) 
+	(SELECT be.id , be.name || '_hrs', 'HRS'
+		FROM business_entity be
+		WHERE be.name IN ('jastouf','hodhost') 
+	)RETURNING *
+	)SELECT * INTO TEMP _tenant FROM p;
+SELECT ok((SELECT count(id::TEXT) = 2 FROM "tenant" WHERE id in (SELECT id FROM  _tenant )),'is TRUE!');
+
+INSERT INTO finance_setting (type_id, tenant_id, value_boolean, validity)
+SELECT 
+    tc_id_from_name('finance_setting_type','tenant.hrs'), 
+    t.id,
+	'TRUE', 
+	tstzrange('2025-01-01 UTC', 'infinity')
+	FROM tenant t 
+	WHERE t.name LIKE '%_hrs'; 
+
+INSERT INTO finance_setting (type_id, tenant_id, value_uuid, validity)
+SELECT   
+    tc_id_from_name('finance_setting_type','tenant.customer_of'),
+    UNNEST(ARRAY[tc_id_from_name('tenant','jastouf_hrs'), tc_id_from_name('tenant','hodhost_hrs')]), 
+    tc_id_from_name('tenant','enom'),
+	tstzrange('2025-01-01 UTC', 'infinity'); 
+
+WITH p AS(
+	INSERT INTO tenant_customer (tenant_id, customer_id, customer_number)
+	(SELECT tc_id_from_name('tenant', 'jastouf_hrs'),
+		tc_id_from_name('customer', 'Jastouf'),
+		FLOOR(RANDOM() * (9999999 - 1000000 + 1) + 1000000)::TEXT
+	)RETURNING *
+	)SELECT * INTO TEMP _tenant_customer1 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "tenant_customer" WHERE id in (SELECT id FROM  _tenant_customer1 )),'is TRUE!');
+
+WITH p AS(
+	INSERT INTO tenant_customer (tenant_id, customer_id, customer_number)
+	(SELECT tc_id_from_name('tenant', 'hodhost_hrs'),
+		tc_id_from_name('customer', 'Hodhost'),
+		FLOOR(RANDOM() * (9999999 - 1000000 + 1) + 1000000)::TEXT
+	)RETURNING *
+	)SELECT * INTO TEMP _tenant_customer2 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "tenant_customer" WHERE id in (SELECT id FROM  _tenant_customer2 )),'is TRUE!');
+
+WITH p AS(
+	INSERT INTO accreditation (name, tenant_id, provider_instance_id, registrar_id) 
+	(VALUES
+		('jastouf_hrs_enom', tc_id_from_name('tenant', 'jastouf_hrs'),tc_id_from_name('provider_instance','trs-uniregistry'),'testdata'), 
+		('hodhost_hrs_enom', tc_id_from_name('tenant', 'hodhost_hrs'),tc_id_from_name('provider_instance', 'trs-uniregistry'),'testdata')
+	)RETURNING *
+	)SELECT * INTO TEMP _accreditation1 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 2 FROM "accreditation" WHERE id in (SELECT id FROM  _accreditation1 )),'is TRUE!');
+	
+WITH p AS(		
+	INSERT INTO accreditation_tld (accreditation_id,provider_instance_tld_id)	
+	(SELECT  
+		tc_id_from_name('accreditation','jastouf_hrs_enom'), 
+		pit.id 
+	FROM provider_instance_tld pit 
+		WHERE pit.tld_id = tc_id_from_name('tld','blackfriday')
+	)RETURNING *
+	)SELECT * INTO TEMP _accreditation_tld1 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "accreditation_tld" WHERE id in (SELECT id FROM  _accreditation_tld1 )),'is TRUE!');
+
+WITH p AS(		
+	INSERT INTO accreditation_tld (accreditation_id,provider_instance_tld_id)	
+	(SELECT  
+		tc_id_from_name('accreditation','hodhost_hrs_enom'), 
+		pit.id 
+	FROM provider_instance_tld pit 
+		WHERE pit.tld_id = tc_id_from_name('tld','help')
+	)RETURNING *
+	)SELECT * INTO TEMP _accreditation_tld2 FROM p;
+SELECT ok((SELECT count(id::TEXT) = 1 FROM "accreditation_tld" WHERE id in (SELECT id FROM  _accreditation_tld2 )),'is TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_hrs1
+	FROM get_total_cost_domain_components(
+	get_accreditation_tld_id('jastouf_hrs','help'),
+	get_order_type_id('create','domain'), 
+	tc_id_from_name('cost_type','fee'), 
+	get_tenant_customer_id('jastouf_hrs','Jastouf'), 
+	1,
+	NULL,
+	NULL,
+	NULL); 
+SELECT ok((SELECT component_value = 0 FROM _get_total_cost_hrs1), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_hrs2
+	FROM get_total_cost_domain_components(
+	get_accreditation_tld_id('jastouf_hrs','help'),
+	get_order_type_id('renew','domain'), 
+	tc_id_from_name('cost_type','fee'), 
+	get_tenant_customer_id('jastouf_hrs','Jastouf'), 
+	5,
+	NULL,
+	NULL,
+	NULL); 
+SELECT ok((SELECT component_value = 0 FROM _get_total_cost_hrs2), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_hrs3
+	FROM get_total_cost_domain_components(
+	get_accreditation_tld_id('jastouf_hrs','help'),
+	get_order_type_id('redeem','domain'), 
+	tc_id_from_name('cost_type','fee'), 
+	get_tenant_customer_id('jastouf_hrs','Jastouf'), 
+	1,
+	NULL,
+	NULL,
+	NULL); 
+SELECT ok((SELECT component_value = 0 FROM _get_total_cost_hrs3), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_hrs4
+	FROM get_total_cost_domain_components(
+	get_accreditation_tld_id('hodhost_hrs','blackfriday'),
+	get_order_type_id('create','domain'), 
+	tc_id_from_name('cost_type','fee'), 
+	get_tenant_customer_id('hodhost_hrs','Hodhost'), 
+	1,
+	NULL,
+	NULL,
+	NULL); 
+SELECT ok((SELECT component_value = 0 FROM _get_total_cost_hrs4), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_hrs5
+	FROM get_total_cost_domain_components(
+	get_accreditation_tld_id('hodhost_hrs','blackfriday'),
+	get_order_type_id('renew','domain'), 
+	tc_id_from_name('cost_type','fee'), 
+	get_tenant_customer_id('hodhost_hrs','Hodhost'), 
+	4,
+	NULL,
+	NULL,
+	NULL); 
+SELECT ok((SELECT component_value = 0 FROM _get_total_cost_hrs5), 'IS TRUE!');
+
+SELECT *  
+	INTO _get_total_cost_hrs6
+	FROM get_total_cost_domain_components(
+	get_accreditation_tld_id('hodhost_hrs','blackfriday'),
+	get_order_type_id('redeem','domain'), 
+	tc_id_from_name('cost_type','fee'), 
+	get_tenant_customer_id('hodhost_hrs','Hodhost'), 
+	1,
+	NULL,
+	NULL,
+	NULL); 
+SELECT ok((SELECT component_value = 0 FROM _get_total_cost_hrs6), 'IS TRUE!');
+
+-- finish testing
+SELECT * FROM finish(TRUE);
+
+ROLLBACK;
+*/

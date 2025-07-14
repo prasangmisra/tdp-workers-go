@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# From ddl files of a module find lines which starts with 'create table' where the potentially quoted
+# table name does not start with a '_' and does not belong to a different schema (like schema.table_name),
+# the pattern part '([^_]\w+)' checks for these conditions.
+# Output a single line of matching table names, prepending '--selectedTables ' to each of them.
+
+sed -nE 's/^\s*create\s+table\s+("?)([^_]\w+)\1\s*\(/--selectedTables \2/Ip' $1/*.ddl | xargs

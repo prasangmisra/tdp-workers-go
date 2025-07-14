@@ -1,0 +1,127 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_transfer_away_domain');
+
+
+WITH d AS (SELECT * FROM domain LIMIT 1)
+SELECT * INTO TEMP _domain FROM d;
+
+SELECT * INTO TEMP _tenant_customer  FROM v_tenant_customer vtc WHERE vtc.id = (SELECT tenant_customer_id FROM _domain);
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+                        tenant_customer_id,
+                        type_id
+        )
+        VALUES(
+                  (SELECT id FROM v_tenant_customer LIMIT 1),
+                  (SELECT id FROM v_order_type WHERE product_name='domain' AND name='transfer_away')
+              ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+               (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+               'created',
+               'order status is ''created'' by default'
+       );
+
+-- now we add the order item (order_item_transfer_away_domain)
+WITH tad AS (
+    INSERT INTO order_item_transfer_away_domain(
+                                                name,
+                                                transfer_status_id,
+                                                requested_by,
+                                                requested_date,
+                                                action_by,
+                                                action_date,
+                                                expiry_date,
+                                                accreditation_tld_id,
+                                                order_id
+        ) VALUES(
+                    (SELECT name FROM _domain),
+                    (SELECT id FROM transfer_status WHERE name='pending'),
+                    'test',
+                    NOW(),
+                    (SELECT name FROM _tenant_customer),
+                    NOW(),
+                    NOW(),
+                    (SELECT accreditation_tld_id FROM _domain),
+                    (SELECT id FROM _order)
+                ) RETURNING *
+)
+SELECT * INTO TEMP _oi_transfer_away_domain FROM tad;
+
+-- approve transfer away
+SELECT lives_ok($$
+    UPDATE order_item_transfer_away_domain
+    SET
+        transfer_status_id = tc_id_from_name('transfer_status', 'serverApproved')
+    WHERE id=(SELECT id FROM _oi_transfer_away_domain)
+$$);
+
+SELECT ok(
+               EXISTS(
+                   SELECT 1
+                   FROM event
+                   WHERE payload->>'name' = (SELECT name FROM _domain)
+                     AND payload->>'status' = 'serverApproved'
+                     AND type_id = tc_id_from_name('event_type', 'domain_transfer')
+               ),
+               'event for domain transfer away request has been added'
+       );
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- order must be in status processing
+SELECT cmp_ok(
+   (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+   '=',
+   'successful'
+);
+
+
+
+
+-- there should be 2 items to be provisioned in the order_item_plan view
+SELECT cmp_ok(
+   (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_transfer_away_domain))),
+   '=',
+   2::INT
+);
+
+
+
+-- order must be in status successful
+SELECT cmp_ok(
+   (SELECT order_status_name FROM v_order WHERE order_id=(SELECT id FROM _order)),
+   '=',
+   'successful'
+);
+
+
+SELECT ok(
+    NOT EXISTS(
+        SELECT TRUE FROM domain d WHERE name=(SELECT name FROM _domain)
+    )
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

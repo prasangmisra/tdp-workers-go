@@ -1,0 +1,61 @@
+Data Element,Object,Collection / Generation,Transmission Registry,Transmission Escrow,Default Publication,Available for Consent,Database element name,DB data element path,collection,transmission (registry),transmission (escrow),publish_by_default,available_for_consent
+Registrant First Name,registrant,Required,Transmit,Transmit,Do not Publish,TRUE,first_name,registrant.first_name,must_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Last Name,registrant,Required,Transmit,Transmit,Do not Publish,TRUE,last_name,registrant.last_name,must_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Organization,registrant,Optional,Transmit,Transmit,Do not Publish,TRUE,org_name,registrant.org_name,may_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Street 1,registrant,Required,Transmit,Transmit,Do not Publish,TRUE,address1,registrant.address1,must_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Street 2,registrant,Optional,Transmit,Transmit,Do not Publish,TRUE,address2,registrant.address2,may_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Street 3,registrant,Optional,Transmit,Transmit,Do not Publish,TRUE,address3,registrant.address3,may_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant City,registrant,Required,Transmit,Transmit,Do not Publish,TRUE,city,registrant.city,must_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant State/Province,registrant,Optional,Transmit,Transmit,Publish,FALSE,state,registrant.state,may_collect,transmit_to_registry,transmit_to_escrow,publish_by_default,
+Registrant Postal Code,registrant,Optional,Transmit,Transmit,Do not Publish,TRUE,postal_code,registrant.postal_code,may_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Country,registrant,Required,Transmit,Transmit,Publish,FALSE,country,registrant.country,must_collect,transmit_to_registry,transmit_to_escrow,publish_by_default,
+Registrant Phone,registrant,Required,Transmit,Transmit,Do not Publish,TRUE,phone,registrant.phone,must_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Email,registrant,Required,Transmit,Transmit,Do not Publish,TRUE,email,registrant.email,must_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Phone Ext.,registrant,Optional,Transmit,Transmit,Do not Publish,TRUE,phone_ext,registrant.phone_ext,may_collect,transmit_to_registry,transmit_to_escrow,,available_for_consent
+Registrant Fax,registrant,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,TRUE,fax,registrant.fax,must_not_collect,,,,available_for_consent
+Registrant Fax Ext.,registrant,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,TRUE,fax_ext,registrant.fax_ext,must_not_collect,,,,available_for_consent
+Admin First Name,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,first_name,admin.first_name,must_not_collect,,,,
+Admin Last Name,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,last_name,admin.last_name,must_not_collect,,,,
+Admin Organization,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,org_name,admin.org_name,must_not_collect,,,,
+Admin Street 1,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address1,admin.address1,must_not_collect,,,,
+Admin Street 2,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address2,admin.address2,must_not_collect,,,,
+Admin Street 3,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address3,admin.address3,must_not_collect,,,,
+Admin City,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,city,admin.city,must_not_collect,,,,
+Admin State/Province,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,state,admin.state,must_not_collect,,,,
+Admin Postal Code,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,postal_code,admin.postal_code,must_not_collect,,,,
+Admin Country,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,country,admin.country,must_not_collect,,,,
+Admin Phone,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,phone,admin.phone,must_not_collect,,,,
+Admin Email,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,email,admin.email,must_not_collect,,,,
+Admin Phone Ext.,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,phone_ext,admin.phone_ext,must_not_collect,,,,
+Admin Fax,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,fax,admin.fax,must_not_collect,,,,
+Admin Fax Ext.,admin,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,fax_ext,admin.fax_ext,must_not_collect,,,,
+Tech First Name,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,first_name,tech.first_name,must_not_collect,,,,
+Tech Last Name,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,last_name,tech.last_name,must_not_collect,,,,
+Tech Organization,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,org_name,tech.org_name,must_not_collect,,,,
+Tech Street 1,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address1,tech.address1,must_not_collect,,,,
+Tech Street 2,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address2,tech.address2,must_not_collect,,,,
+Tech Street 3,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address3,tech.address3,must_not_collect,,,,
+Tech City,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,city,tech.city,must_not_collect,,,,
+Tech State/Province,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,state,tech.state,must_not_collect,,,,
+Tech Postal Code,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,postal_code,tech.postal_code,must_not_collect,,,,
+Tech Country,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,country,tech.country,must_not_collect,,,,
+Tech Phone,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,phone,tech.phone,must_not_collect,,,,
+Tech Email,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,email,tech.email,must_not_collect,,,,
+Tech Phone Ext.,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,phone_ext,tech.phone_ext,must_not_collect,,,,
+Tech Fax,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,fax,tech.fax,must_not_collect,,,,
+Tech Fax Ext.,tech,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,fax_ext,tech.fax_ext,must_not_collect,,,,
+Billing First Name,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,first_name,billing.first_name,must_not_collect,,,,
+Billing Last Name,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,last_name,billing.last_name,must_not_collect,,,,
+Billing Organization,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,org_name,billing.org_name,must_not_collect,,,,
+Billing Street 1,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address1,billing.address1,must_not_collect,,,,
+Billing Street 2,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address2,billing.address2,must_not_collect,,,,
+Billing Street 3,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,address3,billing.address3,must_not_collect,,,,
+Billing City,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,city,billing.city,must_not_collect,,,,
+Billing State/Province,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,state,billing.state,must_not_collect,,,,
+Billing Postal Code,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,postal_code,billing.postal_code,must_not_collect,,,,
+Billing Country,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,country,billing.country,must_not_collect,,,,
+Billing Phone,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,phone,billing.phone,must_not_collect,,,,
+Billing Email,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,email,billing.email,must_not_collect,,,,
+Billing Phone Ext.,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,phone_ext,billing.phone_ext,must_not_collect,,,,
+Billing Fax,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,fax,billing.fax,must_not_collect,,,,
+Billing Fax Ext.,billing,,Nothing to transmit,Nothing to transmit,Nothing to publish or redact,FALSE,fax_ext,billing.fax_ext,must_not_collect,,,,

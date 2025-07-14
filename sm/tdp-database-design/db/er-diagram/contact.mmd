@@ -1,0 +1,77 @@
+erDiagram
+    contact_type {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid type_id FK
+        text title 
+        text org_reg 
+        text org_vat 
+        text org_duns 
+        uuid tenant_customer_id FK
+        text email 
+        text phone 
+        text fax 
+        text country FK
+        text language FK       
+        ARRAY tags 
+        ARRAY documentation 
+    }
+
+    contact_postal {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid contact_id FK
+        boolean is_international 
+        text first_name 
+        text last_name 
+        text org_name 
+        text address1 
+        text address2 
+        text address3 
+        text city 
+        text postal_code 
+        text state 
+    }
+
+    contact_attribute {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid attribute_id FK
+        uuid attribute_type_id FK
+        uuid contact_id FK
+        text value 
+    }
+
+    contact }o--|| contact_type : "type_id"
+    contact_attribute }o--|| contact : "contact_id"
+    contact }o--|| tenant_customer : "tenant_customer_id"
+    contact }o--|| country : "country"
+    contact }o--|| language : "language"
+    contact_postal }o--|| contact : "contact_id"
+    domain_contact }o--|| contact : "contact_id"
+    provision_contact }o--|| contact : "contact_id"
+    provision_domain_contact }o--|| contact : "contact_id"
+    contact_attribute }o--|| attribute : "attribute_id"
+    contact_attribute }o--|| attribute : "attribute_id"
+    contact_attribute }o--|| attribute : "attribute_type_id"

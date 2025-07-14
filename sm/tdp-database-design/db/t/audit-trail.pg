@@ -1,0 +1,137 @@
+BEGIN;
+
+SET search_path TO public,class;
+
+SELECT * FROM no_plan();
+
+SELECT has_table('audit_trail_log');
+
+SELECT has_function('cron_partition_helper_by_month');
+SELECT has_function('partition_helper_by_month');
+
+SELECT has_inherited_tables('audit_trail');
+
+SELECT hasnt_table(FORMAT('audit_trail_log_%1$s', to_char(date_trunc('month', NOW())+'6 month'::INTERVAL, 'YYYYMM')));
+SELECT has_table(FORMAT('audit_trail_log_%1$s', to_char(date_trunc('month', NOW())+'1 month'::INTERVAL, 'YYYYMM')));
+
+SELECT lives_ok($E$
+    INSERT INTO business_entity ( name, descr )
+    VALUES ('bizent1', 'Moo, Inc.' );
+$E$,
+'add a test record');
+
+SELECT results_eq($E$
+    SELECT COUNT(*)
+    FROM business_entity be
+         JOIN audit_trail_log at
+              ON at.created_date = NOW()
+                AND be.created_date = NOW()
+                AND be.name = 'bizent1'
+                AND be.id = at.object_id
+                AND at.new_value->'name' = be.name
+                AND at.new_value->'descr' = be.descr
+                AND at.new_value->'created_date' = NOW()::TEXT
+                AND at.old_value IS NULL
+                AND at.table_name = 'business_entity'
+                AND at.operation = 'INSERT'
+$E$,
+$E$ SELECT 1::BIGINT AS count $E$,
+'expected audit trail for insert');
+
+SELECT lives_ok($E$
+    UPDATE business_entity
+    SET name = 'bizent2'
+    WHERE created_date = NOW()
+        AND name = 'bizent1'
+$E$,
+'update the test record');
+
+SELECT results_eq($E$
+    SELECT COUNT(*)
+    FROM business_entity be
+         JOIN audit_trail_log at
+              ON at.created_date = NOW()
+                AND be.created_date = NOW()
+                AND be.updated_date = NOW()
+                AND be.updated_by = current_user
+                AND be.name = 'bizent2'
+                AND be.id = at.object_id
+                AND at.old_value->'name' = 'bizent1'
+                AND at.new_value->'name' = be.name
+                AND at.new_value->'updated_by' = current_user
+                AND at.new_value->'updated_date' = NOW()::TEXT
+                AND at.table_name = 'business_entity'
+                AND at.operation = 'UPDATE'
+$E$,
+$E$ SELECT 1::BIGINT AS count $E$,
+'expected audit trail for update');
+
+SELECT lives_ok($E$
+    DELETE FROM business_entity
+    WHERE created_date = NOW()
+        AND name = 'bizent2'
+$E$,
+'soft delete the test record via trigger');
+
+SELECT results_eq($E$
+    SELECT COUNT(*)
+    FROM business_entity be
+         JOIN audit_trail_log at
+              ON at.created_date = NOW()
+                AND be.created_date = NOW()
+                AND be.name = 'bizent2'
+                AND be.id = at.object_id
+                AND at.old_value IS NOT NULL
+                AND at.new_value->'deleted_by' = current_user
+                AND at.new_value->'deleted_date' = NOW()::TEXT
+                AND at.table_name = 'business_entity'
+                AND at.operation = 'UPDATE'
+$E$,
+$E$ SELECT 1::BIGINT AS count $E$,
+'expected audit trail for soft delete');
+
+SELECT lives_ok($Q$
+ALTER TABLE business_entity DISABLE TRIGGER zz_50_sofdel_business_entity;
+$Q$,
+'disable audit log trigger');
+
+SELECT lives_ok($E$
+    DELETE FROM business_entity
+    WHERE created_date = NOW()
+        AND name = 'bizent2'
+$E$,
+'hard delete the test record');
+
+SELECT results_eq($E$
+    SELECT COUNT(*)
+    FROM audit_trail_log at
+    WHERE at.created_date = NOW()
+        AND at.new_value IS NULL
+        AND at.old_value->'name' = 'bizent2'
+        AND at.table_name = 'business_entity'
+        AND at.operation = 'DELETE'
+$E$,
+$E$ SELECT 1::BIGINT AS count $E$,
+'expected audit trail for hard delete');
+
+SELECT lives_ok($Q$
+ALTER TABLE business_entity ENABLE TRIGGER zz_50_sofdel_business_entity;
+$Q$,
+'re-enable audit log trigger');
+
+SELECT results_eq(FORMAT ($E$
+    SELECT COUNT(*)
+    FROM audit_trail_log_%1$s at
+    WHERE at.created_date = NOW()
+        AND at.new_value IS NULL
+        AND at.old_value->'name' = 'bizent2'
+        AND at.table_name = 'business_entity'
+        AND at.operation = 'DELETE'
+$E$, to_char(date_trunc('month', NOW())::DATE, 'YYYYMM')),
+$E$ SELECT 1::BIGINT AS count $E$,
+'all audit trails are in the partition');
+
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

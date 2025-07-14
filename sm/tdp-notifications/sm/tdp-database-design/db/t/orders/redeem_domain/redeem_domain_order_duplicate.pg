@@ -1,0 +1,81 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- Test 1: Verify specific index exists
+SELECT has_index('order_item_redeem_domain', 'order_item_redeem_domain_name_accreditation_tld_id_idx');
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- create a domain entry for testing
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM _tenant_customer),
+        FORMAT('test-duplicate-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+        ) RETURNING *
+), _ AS (
+    INSERT INTO domain_rgp_status(
+        domain_id,
+        status_id
+    )
+    VALUES(
+        (SELECT id FROM test_domain),
+        tc_id_from_name('rgp_status', 'redemption_grace_period')
+    )
+)
+SELECT * INTO TEMP _test_domain FROM test_domain;
+
+-- Test 2: Verify unique constraint prevents duplicate entries
+SELECT throws_ok($$
+    WITH test_order AS (
+        INSERT INTO "order"(
+            tenant_customer_id,
+            type_id
+        )
+        VALUES(
+            (SELECT id FROM _tenant_customer),
+            (SELECT id FROM v_order_type WHERE product_name='domain' AND name='redeem')
+        ) RETURNING id
+    )
+    INSERT INTO order_item_redeem_domain(
+        order_id,
+        name,
+        status_id
+    )
+    VALUES
+    (
+        (SELECT id FROM test_order),
+        (SELECT name FROM _test_domain),
+        tc_id_from_name('order_item_status', 'pending')
+    ),
+    (
+        (SELECT id FROM test_order),
+        (SELECT name FROM _test_domain),
+        tc_id_from_name('order_item_status', 'pending')
+    );
+$$, 23505);
+
+-- Finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

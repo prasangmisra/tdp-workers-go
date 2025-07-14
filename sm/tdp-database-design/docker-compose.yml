@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  sample-db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: postgres:14.5
+    environment:
+      - POSTGRES_USER=tucows
+      - POSTGRES_PASSWORD=tucows1234
+      # add the following lines pointing to a local directory if you need
+      # the database to be persistent
+      # volumes:
+      #   - ./data/db:/var/lib/postgresql/data
+    volumes:
+      - ./etc/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./db/t:/tests/db/t
+      - ./db/t_finance:/tests/db/t_finance
+      - ./db:/db
+    ports:
+      - "5432:5432"
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'

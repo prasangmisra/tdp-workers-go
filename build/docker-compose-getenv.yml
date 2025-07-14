@@ -1,0 +1,29 @@
+# Docker Compose file contains services commmon to
+# local and test environments (Kafka, Kafka Connect and etc)
+version: "3.7"
+
+services:
+  getenv:
+    stdin_open: true
+    tty: true
+    image: artifacts.cnco.tucows.systems/domains-docker-local/envy:18082023
+    volumes:
+      - ./generated_env:/envy_pwd
+    environment:
+      SSL_CERT_DIR: /envy/certs
+      VAULT_LOG_LEVEL: "debug"
+      VAULT_UI: "true"
+      VAULT_NAMESPACE: "dev-tucows-domains"
+      VAULT_ADDR: "https://vault.pre-hashicorp-ent.bra2.tucows.systems:8200"
+      VAULT_APPROLE_ROLE: "${VAULT_RY_ROLE_ID}"
+      VAULT_APPROLE_SECRET: "${VAULT_RY_SECRET_ID}"
+      ENVY_TEMPLATE: |
+        contents = <<EOH
+        AWS_HOSTING_API_KEY="{{ with secret "kv/workers/hosting" }}{{ .Data.data.aws_api_key }}{{ end }}"
+        AWS_ACCESS_KEY_ID="{{ with secret "kv/workers/hosting" }}{{ .Data.data.aws_access_key_id }}{{ end }}"
+        AWS_SECRET_ACCESS_KEY="{{ with secret "kv/workers/hosting" }}{{ .Data.data.aws_secret_access_key }}{{ end }}"
+        CERT_BOT_USERNAME="{{ with secret "kv/cert_api" }}{{ .Data.data.username }}{{ end }}"
+        CERT_BOT_TOKEN="{{ with secret "kv/cert_api" }}{{ .Data.data.token }}{{ end }}"
+        EOH
+        destination = "/envy_pwd/.secrets"
+

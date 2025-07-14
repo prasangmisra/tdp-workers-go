@@ -1,0 +1,233 @@
+-- contact not linked to domain, contact updated and order passes
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_update_contact');
+SELECT has_table('order_contact_postal');
+SELECT has_table('order_contact_attribute');
+SELECT has_table('update_contact_plan');
+SELECT has_table('provision_contact_update');
+SELECT has_table('provision_domain_contact_update');
+
+
+-- create a contact with two contact_postal entries and some tld specific attributes
+WITH basic_contact AS (
+    INSERT INTO contact(
+                        type_id,
+                        title,
+                        org_reg,
+                        org_vat,
+                        org_duns,
+                        tenant_customer_id,
+                        email,
+                        phone,
+                        fax,
+                        country,
+                        language,                        
+                        tags,
+                        documentation
+        )
+        VALUES(
+                  tc_id_from_name('contact_type','individual'),
+                  'CFO',
+                  'reg987654321',
+                  'vat123456789',
+                  'duns147258369',
+                  (SELECT id FROM v_tenant_customer LIMIT 1),
+                  'tomas.oesterbro@some.domain',
+                  '+1.234567890',
+                  '+1.234567899',
+                  'DK',
+                  'en',                 
+                  '{"tag-1","tag-2"}',
+                  '{"doc-A", "doc-B"}'
+              ) RETURNING *
+)
+SELECT * INTO TEMP _contact FROM basic_contact;
+
+INSERT INTO contact_postal(
+    contact_id,
+    is_international,
+    first_name,
+    last_name,
+    org_name,
+    address1,
+    address2,
+    address3,
+    city,
+    postal_code,
+    state
+)
+VALUES(
+          (SELECT id FROM _contact),
+          TRUE,
+          'Tomas',
+          'Oesterbro',
+          'Some-Company',
+          'Rosenvaengets Alley 42',
+          NULL,
+          NULL,
+          'Copenhagen',
+          '1234',
+          NULL
+      );
+
+INSERT INTO contact_attribute(
+    attribute_id,
+    contact_id,
+    value
+)
+VALUES(
+          tc_id_from_name('attribute','birth_country'),
+          (SELECT id FROM _contact),
+          'DK'
+      ),(
+          tc_id_from_name('attribute','birth_date'),
+          (SELECT id FROM _contact),
+          '1961-02-05'
+      ),(
+
+          tc_id_from_name('attribute','identity_card_number'),
+          (SELECT id FROM _contact),
+          'IDC123123123'
+      ),(
+          tc_id_from_name('attribute','tld_de_type'),
+          (SELECT id FROM _contact),
+          '.de-type'
+      );
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+                        tenant_customer_id,
+                        type_id
+        )
+        VALUES(
+                  (SELECT id FROM v_tenant_customer LIMIT 1),
+                  (SELECT id FROM v_order_type WHERE product_name='contact' AND name='update')
+              ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+-- create a contact with two contact_postal entries and some tld specific attributes
+WITH basic_contact AS (
+    INSERT INTO order_contact(
+                              order_id,
+                              type_id,
+                              country
+        )
+        VALUES(
+                  (SELECT id FROM _order),
+                  tc_id_from_name('contact_type','individual'),
+                  'US'
+              ) RETURNING *
+)
+SELECT * INTO TEMP _order_contact FROM basic_contact;
+
+INSERT INTO order_contact_postal(
+    contact_id,
+    is_international,
+    address1,
+    city
+)
+VALUES
+    (
+        (SELECT id FROM _order_contact),
+        TRUE,
+        'New Alley 42',
+        'Copenhagen'
+    );
+
+INSERT INTO order_contact_attribute(
+    attribute_id,
+    contact_id,
+    value
+)
+VALUES
+    (
+        tc_id_from_name('attribute','birth_country'),
+        (SELECT id FROM _order_contact),
+        'DE'
+    ),
+    (
+        tc_id_from_name('attribute','birth_date'),
+        (SELECT id FROM _order_contact),
+        '1969-05-05'
+    );
+
+INSERT INTO order_item_update_contact (
+    order_id,
+    contact_id,
+    order_contact_id,
+    reuse_behavior
+)
+VALUES (
+    (SELECT id FROM _order),
+    (SELECT id FROM _contact),
+    (SELECT id FROM _order_contact),
+    'split'
+);
+
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'successful'
+);
+
+
+-- create a contact json to be used with the tests
+CREATE TEMP TABLE _expected_contact_js ON COMMIT DROP AS SELECT
+    ('{
+        "tenant_customer_id":   "' || (SELECT id FROM v_tenant_customer LIMIT 1) || '",
+        "contact_type":         "individual",
+        "title":                null,
+        "org_reg":              null,
+        "org_vat":              null,
+        "org_duns":             null,
+        "email":                null,
+        "phone":                null,
+        "fax":                  null,
+        "country":              "US",
+        "language":             null,        
+        "tags":                 null,
+        "documentation":        null,
+        "contact_postals": [
+            {
+                "city": "Copenhagen",
+                "state": null,
+                "address1": "New Alley 42",
+                "address2": null,
+                "address3": null,
+                "org_name": null,
+                "last_name": null,
+                "first_name": null,
+                "postal_code": null,
+                "is_international": true
+            }
+        ],
+        "identity_card_number": "IDC123123123",
+        "birth_date":           "1969-05-05",
+        "birth_country":        "DE",
+        "tld_de_type":          ".de-type"
+    }')::JSONB AS value;
+
+-- compare the created contact against jsonb_get_contact_by_id()
+SELECT cmp_ok(
+    (SELECT jsonb_get_contact_by_id((SELECT id FROM _contact))),
+    '@>',
+    (SELECT value FROM _expected_contact_js),
+    'compare the manually created contact via jsonb_get_contact_by_id() against the contact json');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

@@ -1,0 +1,202 @@
+erDiagram
+    epp_extension {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text decr 
+        text doc_url 
+        boolean is_implemented 
+    }
+
+    registry {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid business_entity_id FK
+        text name 
+        text descr 
+    }
+
+    tld {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid registry_id FK
+        uuid parent_tld_id FK
+        text name 
+    }
+
+    provider {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid business_entity_id FK
+        text name 
+        text descr 
+    }
+
+    provider_instance {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_id FK
+        text name 
+        text descr 
+        boolean is_proxy 
+    }
+
+    provider_instance_tld {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_instance_id FK
+        uuid tld_id FK
+        tstzrange service_range 
+    }
+
+    supported_protocol {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    provider_protocol {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_id FK
+        uuid supported_protocol_id FK
+        boolean is_enabled 
+    }
+
+    certificate_authority {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text descr 
+        text cert 
+        tstzrange service_range 
+    }
+
+    tenant_cert {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text cert 
+        text key 
+        uuid ca_id FK
+        tstzrange service_range 
+    }
+
+    provider_instance_epp {
+        text host 
+        integer port 
+        integer conn_min 
+        integer conn_max 
+        uuid id PK
+        uuid provider_instance_id FK
+    }
+
+    provider_instance_epp_ext {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_instance_epp_id FK
+        uuid epp_extension_id FK
+    }
+
+    provider_instance_http {
+        uuid id PK
+        uuid provider_instance_id FK
+        text url 
+        text api_key 
+    }
+
+    accreditation {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        uuid tenant_id FK
+        uuid provider_instance_id FK
+        tstzrange service_range 
+    }
+
+    accreditation_epp {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        text host 
+        integer port 
+        integer conn_min 
+        integer conn_max 
+        uuid id PK
+        uuid accreditation_id FK
+        uuid cert_id FK
+        text clid 
+        text pw 
+    }
+
+    accreditation_tld {
+        uuid id PK
+        uuid accreditation_id FK
+        uuid provider_instance_tld_id FK
+        boolean is_default 
+    }
+
+    provider_instance_epp_ext }o--|| epp_extension : "epp_extension_id"
+    registry }o--|| business_entity : "business_entity_id"
+    tld }o--|| registry : "registry_id"
+    attr_value }o--|| registry : "registry_id"
+    tld }o--|| tld : "parent_tld_id"
+    provider_instance_tld }o--|| tld : "tld_id"
+    attr_value }o--|| tld : "tld_id"
+    provider }o--|| business_entity : "business_entity_id"
+    provider_instance }o--|| provider : "provider_id"
+    provider_protocol }o--|| provider : "provider_id"
+    attr_value }o--|| provider : "provider_id"
+    provider_instance_tld }o--|| provider_instance : "provider_instance_id"
+    provider_instance_epp }o--|| provider_instance : "provider_instance_id"
+    provider_instance_http }o--|| provider_instance : "provider_instance_id"
+    accreditation }o--|| provider_instance : "provider_instance_id"
+    order_item_strategy }o--|| provider_instance : "provider_instance_id"
+    attr_value }o--|| provider_instance : "provider_instance_id"
+    accreditation_tld }o--|| provider_instance_tld : "provider_instance_tld_id"
+    provider_protocol }o--|| supported_protocol : "supported_protocol_id"
+    tenant_cert }o--|| certificate_authority : "ca_id"
+    accreditation_epp }o--|| tenant_cert : "cert_id"
+    provider_instance_epp_ext }o--|| provider_instance_epp : "provider_instance_epp_id"
+    accreditation }o--|| tenant : "tenant_id"
+    accreditation_epp }o--|| accreditation : "accreditation_id"
+    accreditation_tld }o--|| accreditation : "accreditation_id"
+    provision }o--|| accreditation : "accreditation_id"
+    domain }o--|| accreditation_tld : "accreditation_tld_id"
+    order_item_create_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    order_item_renew_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    provision_domain }o--|| accreditation_tld : "accreditation_tld_id"

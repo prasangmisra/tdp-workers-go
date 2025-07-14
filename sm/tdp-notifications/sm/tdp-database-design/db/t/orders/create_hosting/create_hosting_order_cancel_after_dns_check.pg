@@ -1,0 +1,173 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+SELECT has_table('order_item_create_hosting');
+SELECT has_table('order_item_create_hosting_client');
+SELECT has_table('order_hosting_certificate');
+SELECT has_table('create_hosting_plan');
+
+-- create a hosting order
+WITH o AS (
+    INSERT INTO "order"(tenant_customer_id, type_id)
+    VALUES (
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            (SELECT id FROM v_order_type WHERE product_name='hosting' AND name='create')
+    ) RETURNING *
+)
+SELECT * into TEMP _order FROM o;
+
+-- TEST 5
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- TEST 6
+-- check the order status should be 'created'
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+-- add and check for the order items
+CREATE SEQUENCE IF NOT EXISTS hosting_counter;
+WITH oihc AS (
+    INSERT INTO order_item_create_hosting_client(
+            tenant_customer_id,
+            email
+        ) VALUES(
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            FORMAT('test%s@email.com', NEXTVAL('hosting_counter'))
+        ) RETURNING *
+)
+SELECT * into TEMP _order_item_create_hosting_client FROM oihc;
+
+-- TEST 7
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_item_create_hosting_client" WHERE id = (SELECT id FROM _order_item_create_hosting_client)),'is TRUE!');
+
+WITH oih AS(
+    INSERT INTO order_item_create_hosting(
+        order_id,
+        tenant_customer_id,
+        client_id,
+        domain_name,
+        product_id,
+        region_id,
+        hosting_status_id
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT tenant_customer_id FROM _order),
+        (SELECT id FROM _order_item_create_hosting_client),
+        FORMAT('test%s.link', NEXTVAL('hosting_counter')),
+        tc_id_from_name('hosting_product','Wordpress'),
+        tc_id_from_name('hosting_region', 'US East (N. Virginia)'),
+        tc_id_from_name('hosting_status', 'Pending DNS')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _oi_create_hosting FROM oih;
+
+-- TEST 8
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_item_create_hosting" WHERE id = (SELECT id FROM _oi_create_hosting)),'is TRUE!');
+
+-- TEST 9
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (created->processing)');
+
+
+
+-- TEST 10
+-- order must be in status processing
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+-- TEST 11
+-- order item must be in status 'ready' now
+SELECT cmp_ok(
+    (SELECT s.name FROM order_item oi JOIN order_item_status s ON s.id=oi.status_id WHERE oi.order_id = (SELECT id FROM _order)),
+    '=',
+    'ready'
+);
+
+-- TEST 12
+-- hosting order plan should exist now, should be 2 items
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM create_hosting_plan WHERE order_item_id = (SELECT id FROM _oi_create_hosting) LIMIT 1), 'is TRUE!');
+
+-- TEST 13
+-- there should be 2 item to be provisioned in the v_order_item_plan view
+SELECT  cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_create_hosting))),
+  '=',
+  2::INT
+);
+
+-- TEST 14
+-- lets grab that provision_hosting_certificate_create entry
+WITH phcc AS (
+    SELECT
+        phcc.*,
+        ps.name
+    FROM provision_hosting_certificate_create phcc
+    JOIN provision_status ps ON ps.id = phcc.status_id
+    WHERE (
+        SELECT id from f_order_item_plan((SELECT id FROM _oi_create_hosting))
+        WHERE object_name='hosting_certificate'
+    ) = ANY(order_item_plan_ids)
+    AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _provision_hosting_certificate_create FROM phcc;
+
+SELECT ok(
+    EXISTS(SELECT * from _provision_hosting_certificate_create)
+);
+
+-- TEST 15
+-- job should not be null
+SELECT ok((SELECT job_id FROM _provision_hosting_certificate_create) IS NOT NULL,'job_id is not null');
+
+-- TEST 16
+-- complete dns check
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status', 'completed') WHERE parent_id=(SELECT job_id FROM _provision_hosting_certificate_create);
+$$,'complete dns check job');
+
+-- TEST 17
+-- lets cancel hosting provisioning
+SELECT lives_ok($$
+    SELECT cancel_hosting_provision((SELECT hosting_id FROM _provision_hosting_certificate_create));
+$$,'cancel hosting provisioning and order');
+
+-- TEST 18
+-- checking hosting status
+SELECT cmp_ok(
+    (SELECT tc_name_from_id('hosting_status', h.hosting_status_id)
+    FROM ONLY hosting h WHERE h.id = (SELECT hosting_id FROM _provision_hosting_certificate_create)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 19
+-- checking related jobs
+SELECT  cmp_ok(
+  (SELECT COUNT(*)::INT FROM v_job WHERE reference_id = (SELECT id FROM _provision_hosting_certificate_create) AND job_status_name = 'failed'),
+  '=',
+  1::INT
+);
+
+-- TEST 20
+-- checking order status
+SELECT cmp_ok(
+    (SELECT order_status_name FROM v_order vo WHERE vo.order_id = (SELECT id FROM _order)),
+    '=',
+    'failed'
+);
+
+
+SELECT * from finish(true);
+
+-- COMMIT;
+ROLLBACK;

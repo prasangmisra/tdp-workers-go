@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="tdpdb_dev"
+  DTS:DTSID="{D88D65EF-D97D-460B-A4AE-EF8858FB864A}"
+  DTS:CreationName="ODBC">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="uid=tdpadm;Dsn=PostgreSQL_tdp_dev_unicode;">
+      <DTS:Password
+        DTS:Name="pwd"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAJgH2XpxnAU6spGAB7ft7WAAAAAACAAAAAAAQZgAAAAEAACAAAAAk8nGrB6WxFeAkx2qRTWOx5JLlQyNBIF+Bl171/aeZuwAAAAAOgAAAAAIAACAAAABHnCIi+4/CRetGZapaIufT0gjdcMrbAC3sYusCN97q74AAAAA3LfMoGJf8IdTxZ6MvxELjInHS9nAvwxoRNSExsWfykeryfHIWb6VLGAoa7CTKvM1lcMsWYOKK+DpEh5yuKtmCeVnL74LpnTjPrqJ3KGHssKzdMn3/QrIWpBg55DVuusckoAiyqXD+gK/9bX8e8kuqxjK/fgpiHzzXAIIRGmWQVkAAAACEwmGC5a+xuaLu/t8ljK/88d6c0bLUBQguTn+YFf1P8SIQZvmaK2st/vfUZ1piT5cLykYBVdBCWp4r7YwM52y5</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

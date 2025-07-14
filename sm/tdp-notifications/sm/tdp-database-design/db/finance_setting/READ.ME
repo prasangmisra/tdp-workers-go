@@ -1,0 +1,48 @@
+# Finance Setting 
+
+The Finance Setting module is designed to manage and configure financial settings 
+within the application. It allows users to define and adjust various financial parameters, 
+ensuring that the system operates according to the specified financial rules and regulations. 
+This module is essential for maintaining accurate financial data and supporting financial operations 
+in cost, price, and billing modules 
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Functions](#functions)
+3. [Usage](#usage)
+
+## Features
+
+- Define and manage financial settings.
+- Support for tenant-specific and provider-specific financial configurations.
+- Validity period management for financial settings.
+- Default financial settings for global configurations.
+
+## Functions
+
+### get_finance_setting
+
+Retrieves the financial setting value based on the provided parameters.
+
+### finance_setting_insert
+
+Inserts a new financial setting into the finance_setting table.
+
+### check_finance_setting_constraints
+
+Checks the constraints for a financial setting to ensure data integrity.
+
+## Usage
+
+### Retrieving a Financial Setting
+
+To retrieve a financial setting value based on specific parameters:
+SELECT * 
+	FROM get_finance_setting(
+            p_name := 'name',
+            p_tenant_id:= 'tenant_id',
+            p_tenant_customer_id:= 'tenant_customer_id',
+            p_provider_instance_tld_id:= 'p_provider_instance_tld_id',
+            p_date:= '2023-01-01 12:00:00' );
+

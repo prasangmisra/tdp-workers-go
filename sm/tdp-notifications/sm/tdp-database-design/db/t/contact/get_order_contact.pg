@@ -1,0 +1,188 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('order');
+SELECT has_table('order_contact');
+SELECT has_table('order_contact_postal');
+SELECT has_table('order_contact_attribute');
+
+
+-- create a contact json to be used with the tests
+CREATE TEMP TABLE _contact_js ON COMMIT DROP AS SELECT
+    ('{
+        "tenant_customer_id":   "' || (SELECT id FROM v_tenant_customer LIMIT 1) || '",
+        "contact_type":         "individual",
+        "title":                "CFO",
+        "org_reg":              "reg987654321",
+        "org_vat":              "vat123456789",
+        "org_duns":             "duns147258369",
+        "email":                "tomas.oesterbro@some.domain",
+        "phone":                "+1.234567890",
+        "fax":                  "+1.234567899",
+        "country":              "DK",
+        "language":             "en",        
+        "tags":                 ["tag-1", "tag-2"],
+        "documentation":        ["doc-A", "doc-B"],
+        "contact_postals": [
+            {
+                "city": "København",
+                "state": null,
+                "address1": "Rosenvængets Allé 42",
+                "address2": null,
+                "address3": null,
+                "org_name": "Some-Company",
+                "last_name": "Østerbro",
+                "first_name": "Tómas",
+                "postal_code": "1234",
+                "is_international": false
+            },
+            {
+                "city": "Copenhagen",
+                "state": null,
+                "address1": "Rosenvaengets Alley 42",
+                "address2": null,
+                "address3": null,
+                "org_name": "Some-Company",
+                "last_name": "Oesterbro",
+                "first_name": "Tomas",
+                "postal_code": "1234",
+                "is_international": true
+            }
+        ],
+        "identity_card_number": "IDC123123123",
+        "birth_date":           "1961-02-05",
+        "birth_country":        "IS",
+        "tld_de_type":          ".de-type"
+    }')::JSONB AS value;
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+                        tenant_customer_id,
+                        type_id
+        )
+        VALUES(
+                  (SELECT id FROM v_tenant_customer LIMIT 1),
+                  (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create')
+              ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- create a contact with two contact_postal entries and some tld specific attributes
+WITH basic_contact AS (
+    INSERT INTO order_contact(
+        order_id,
+        type_id,
+        title,
+        org_reg,
+        org_vat,
+        org_duns,
+        tenant_customer_id,
+        email,
+        phone,
+        fax,
+        country,
+        language,       
+        tags,
+        documentation
+    )
+    VALUES(
+        (SELECT id FROM _order),
+        tc_id_from_name('contact_type','individual'),
+        'CFO',
+        'reg987654321',
+        'vat123456789',
+        'duns147258369',
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        'tomas.oesterbro@some.domain',
+        '+1.234567890',
+        '+1.234567899',
+        'DK',
+        'en',        
+        '{"tag-1","tag-2"}',
+        '{"doc-A", "doc-B"}'
+    ) RETURNING *
+)
+SELECT * INTO TEMP _basic_contact FROM basic_contact;
+
+INSERT INTO order_contact_postal(
+    contact_id,
+    is_international,
+    first_name,
+    last_name,
+    org_name,
+    address1,
+    address2,
+    address3,
+    city,
+    postal_code,
+    state
+)
+VALUES(
+    (SELECT id FROM _basic_contact),
+    FALSE,
+    'Tómas',
+    'Østerbro',
+    'Some-Company',
+    'Rosenvængets Allé 42',
+    NULL,
+    NULL,
+    'København',
+    '1234',
+    NULL
+),(
+    (SELECT id FROM _basic_contact),
+    TRUE,
+    'Tomas',
+    'Oesterbro',
+    'Some-Company',
+    'Rosenvaengets Alley 42',
+    NULL,
+    NULL,
+    'Copenhagen',
+    '1234',
+    NULL
+);
+
+INSERT INTO order_contact_attribute(
+    attribute_id,
+    contact_id,
+    value
+)
+VALUES(
+    tc_id_from_name('attribute','birth_country'),
+    (SELECT id FROM _basic_contact),
+    'IS'
+),
+(
+    tc_id_from_name('attribute','birth_date'),
+    (SELECT id FROM _basic_contact),
+    '1961-02-05'
+),
+(
+    tc_id_from_name('attribute','identity_card_number'),
+    (SELECT id FROM _basic_contact),
+    'IDC123123123'
+),
+(
+   tc_id_from_name('attribute','tld_de_type'),
+   (SELECT id FROM _basic_contact),
+   '.de-type'
+);
+
+-- compare the created contact against jsonb_get_contact_by_id()
+SELECT cmp_ok(
+    (SELECT jsonb_get_order_contact_by_id((SELECT id FROM _basic_contact))),
+    '@>',
+    (SELECT value FROM _contact_js),
+    'compare the manually created contact via jsonb_get_order_contact_by_id() against the contact json');
+
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

@@ -1,0 +1,182 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- clean job table
+DELETE FROM job;
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_transfer_in_domain');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+-- set fee_check_allowed to true to create two validation jobs
+Update v_attribute
+SET value=true
+WHERE key='tld.lifecycle.fee_check_allowed'
+  AND tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer);
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM _tenant_customer),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='transfer_in')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+
+-- now we add the order item (order_item_transfer_in_domain)
+WITH td AS (
+    INSERT INTO order_item_transfer_in_domain(
+        name,
+        accreditation_tld_id,
+        transfer_period,
+        auth_info,
+        order_id
+        ) VALUES(
+        FORMAT('tdp-test-hello-%s.help',EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        1,
+        '',
+        (SELECT id FROM _order)
+        ) RETURNING *
+)
+SELECT * INTO TEMP _oi_transfer_domain FROM td;
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- order must be in status processing
+SELECT cmp_ok( 
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+-- order item must be in status 'ready' now
+SELECT cmp_ok( 
+    (SELECT s.name FROM order_item oi JOIN order_item_status s ON s.id=oi.status_id WHERE oi.order_id = (SELECT id FROM _order)),
+    '=',
+    'ready'
+);
+
+-- there should be 2 items to be provisioned in the order_item_plan view
+SELECT cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_transfer_domain))),
+  '=',
+  2::INT
+);
+
+-- there should be 2 jobs created to validate domain
+SELECT cmp_ok((
+    SELECT COUNT(*)::INT
+    FROM v_job vj),
+    '=',
+    2::INT
+);
+
+-- one job should be validate_domain_premium
+WITH _parent_job AS(
+    SELECT vj.*
+    FROM v_job vj
+    JOIN transfer_in_domain_plan tidp ON tidp.id = vj.reference_id
+    WHERE tidp.order_item_id = (SELECT id FROM _oi_transfer_domain)
+    AND vj.job_type_name = 'validate_domain_transferable'
+)
+SELECT * INTO TEMP _premium_job FROM _parent_job;
+
+
+SELECT ok(
+    EXISTS(
+        SELECT * FROM _premium_job
+    )
+);
+
+
+-- let's update the validate_domain_available job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = (
+        SELECT job_id
+        FROM v_job vj
+            WHERE vj.job_type_name = 'validate_domain_premium'
+            AND vj.job_status_name = 'submitted'
+    )
+$$);
+
+
+-- other job should be validate_domain_transferable
+SELECT cmp_ok((
+    SELECT COUNT(*)::INT
+    FROM v_job vj
+    WHERE  vj.job_type_name = 'validate_domain_transferable'),
+    '=',
+    1::INT
+);
+
+-- let's update the validate_domain_available job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = (
+        SELECT job_id
+        FROM v_job vj
+        JOIN transfer_in_domain_plan tidp ON tidp.id = vj.reference_id
+        WHERE tidp.order_item_id = (SELECT id FROM _oi_transfer_domain)
+            AND vj.job_type_name = 'validate_domain_transferable'
+            AND vj.job_status_name = 'submitted'
+    )
+$$);
+
+-- let's grab that provision_domain_transfer_in_request entry
+WITH pdt AS (
+    SELECT pdt.*, ps.name AS status_name
+    FROM provision_domain_transfer_in_request pdt
+        JOIN provision_status ps ON ps.id = pdt.status_id
+    WHERE (
+        SELECT id FROM f_order_item_plan((SELECT id FROM _oi_transfer_domain))
+            WHERE object_name='domain' AND plan_status_name = 'processing'
+    ) = ANY(order_item_plan_ids)
+    AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_transfer_in_request FROM pdt;
+
+-- there should be an entry in provision_domain_transfer_in_request that is pending to be provisioned
+SELECT ok(
+    EXISTS(
+        SELECT * FROM _prov_transfer_in_request
+    )
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

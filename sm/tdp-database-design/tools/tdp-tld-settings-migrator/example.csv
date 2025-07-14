@@ -1,0 +1,9 @@
+Tenant Name;TLD Name;Category Name;Setting Name;Value to upload
+opensrs;auto;dns;secdns_record_count;[1, 20)
+opensrs;auto;lifecycle;claims_period;[2024-12-11, infinity]
+opensrs;auto;contact;registrant_contact_update_restricted_fields;{'txt', ''}
+opensrs;auto;contact;required_contact_types;{}
+opensrs;auto;lifecycle;allowed_registration_periods;{2,3,5}
+opensrs;auto;contact;is_contact_update_supported;FALSE
+opensrs;auto;dns;max_nameservers;1
+opensrs;auto;finance;currency;CAD

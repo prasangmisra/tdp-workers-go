@@ -1,0 +1,88 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='delete')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+INSERT INTO host(
+    "name",
+    tenant_customer_id
+) VALUES
+      ( 'ns1.example-to-be-deleted.sexy', (SELECT id FROM v_tenant_customer LIMIT 1) ),
+      ( 'ns2.example-to-be-deleted.sexy', (SELECT id FROM v_tenant_customer LIMIT 1) );
+
+WITH cd AS (
+    INSERT INTO order_item_delete_domain(
+        order_id,
+        name
+    ) VALUES(
+        (SELECT id FROM _order),
+        'example-to-be-deleted.sexy'
+    )  RETURNING *
+)
+SELECT * INTO TEMP _oi_delete_domain FROM cd;
+
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- add hosts
+SELECT lives_ok($$
+    UPDATE provision_domain_delete SET hosts = '{"ns1.example-to-be-deleted.sexy","ns2.example-to-be-deleted.sexy"}'
+        WHERE 
+        domain_name='example-to-be-deleted.sexy';
+$$);
+
+-- mark setup_domain_delete job as completed (Child Job)
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE 
+        status_id = tc_id_from_name('job_status','submitted') 
+        AND type_id = tc_id_from_name('job_type','setup_domain_delete');
+$$);
+
+-- mark job as failed
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','failed')
+        WHERE
+        status_id = tc_id_from_name('job_status','submitted')
+        AND type_id = tc_id_from_name('job_type','provision_domain_delete_host');
+$$);
+
+-- there should be 1 item failed
+SELECT cmp_ok(
+    (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_delete_domain)) WHERE plan_status_name = 'failed'),
+    '=',
+    1::INT
+);
+
+-- order must be in status failed
+SELECT cmp_ok(
+    (SELECT order_status_name FROM v_order WHERE order_id=(SELECT id FROM _order)),
+    '=',
+    'failed'
+);
+
+SELECT ok((SELECT h.id FROM host h WHERE name='ns1.example-to-be-deleted.sexy') IS NOT NULL,'host is not deleted');
+
+SELECT ok((SELECT h.id FROM host h WHERE name='ns2.example-to-be-deleted.sexy') IS NOT NULL,'host is not deleted');
+
+SELECT ok((SELECT d.id FROM domain d WHERE name='example-to-be-deleted.sexy') IS NOT NULL,'domain is not deleted');
+
+-- end testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

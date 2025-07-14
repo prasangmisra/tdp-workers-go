@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="tdpdb_dev"
+  DTS:DTSID="{D88D65EF-D97D-460B-A4AE-EF8858FB864A}"
+  DTS:CreationName="ODBC">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="uid=tdpadm;Dsn=PostgreSQL_tdp_dev_unicode;" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

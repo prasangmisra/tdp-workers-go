@@ -1,0 +1,45 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='renew')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+SELECT lives_ok($$
+    INSERT INTO order_item_renew_domain(
+        order_id,
+        name,
+        period,
+        current_expiry_date
+    ) VALUES(
+        (SELECT id FROM _order),
+        'example-to-be-renewed.sexy',
+        2,
+        (SELECT ry_expiry_date FROM domain WHERE name='example-to-be-renewed.sexy')
+    )
+$$);
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+SELECT cmp_ok(d.name,'=',rd.domain_name,'domain name in order matches provision_domain_renew') 
+    FROM v_order_renew_domain rd 
+        JOIN domain d ON d.name = rd.domain_name
+        JOIN provision_domain_renew pdr ON pdr.domain_name = d.name;
+
+-- end testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

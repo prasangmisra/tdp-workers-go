@@ -1,0 +1,44 @@
+-- Start transaction and plan the tests
+BEGIN;
+
+-- Plan matches the number of tests, else pg_prove will report failure
+SELECT plan(6);
+
+-- Test Columns
+SELECT columns_are('subscription', ARRAY[
+    'id',
+    'descr',
+    'notification_email',
+    'webhook_url',
+    'metadata',
+    'tags',
+    'signing_secret',
+    'status_id',
+    'tenant_customer_id'
+]);
+
+-- Test Keys
+SELECT has_pk('subscription', 'Has a Primary Key' );
+SELECT col_is_pk('subscription', 'id', 'Primary Key column is: id' );
+
+-- Test Columns
+SELECT columns_are('webhook', ARRAY[
+    'id',
+    'type_id',
+    'payload',
+    'subscription_id',
+    'status_id',
+    'retries'
+]);
+
+-- Test Keys
+SELECT has_pk('webhook', 'Has a Primary Key' );
+SELECT col_is_pk('webhook', 'id', 'Primary Key column is: id' );
+
+
+
+-- Finish the tests and clean up
+SELECT * FROM finish();
+
+-- We don’t commit the transaction, this means tests don’t change the database in anyway
+ROLLBACK; 

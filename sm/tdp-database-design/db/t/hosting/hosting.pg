@@ -1,0 +1,9 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+SELECT has_table('hosting');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

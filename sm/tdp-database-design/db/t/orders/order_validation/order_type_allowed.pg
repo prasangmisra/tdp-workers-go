@@ -1,0 +1,63 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- disable order creation for .sexy TLD
+INSERT INTO attr_value(
+    key_id,
+    value_boolean,
+    tld_id,
+    tenant_id
+)
+VALUES (
+    (SELECT id FROM attr_key WHERE name = 'is_registration_allowed'),
+    FALSE,
+    (SELECT id FROM tld WHERE name = 'sexy'),
+    (SELECT id FROM tenant LIMIT 1)
+);
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+   (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+   'created',
+   'order status is ''created'' by default'
+);
+
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+-- create a registration order for a TLD that does not allow registration
+SELECT throws_imatching($$
+    INSERT INTO order_item_create_domain(order_id,name)
+    VALUES(
+        (SELECT id FROM _order),
+        FORMAT('tdp-test-%s-%s.sexy',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT)
+    )
+    $$,
+    'TLD ''sexy'' does not support domain registration',
+    'fail order creation, create order is not allowed'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

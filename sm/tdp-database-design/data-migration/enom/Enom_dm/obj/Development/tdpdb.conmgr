@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="tdpdb"
+  DTS:DTSID="{7DFCCC25-E16B-4CF6-B7A1-BB7346811ED8}"
+  DTS:CreationName="ODBC">
+  <DTS:PropertyExpression
+    DTS:Name="ConnectionString">@[$Project::Tdpdb_local_ConnectionString]</DTS:PropertyExpression>
+  <DTS:PropertyExpression
+    DTS:Name="Password">@[$Project::Tdpdb_local_Password]</DTS:PropertyExpression>
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="uid=tucows;Dsn=PostgreSQL35W;">
+      <DTS:Password
+        DTS:Name="Pwd"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAyh/dMUA/RUGNRC64Vq0l9wAAAAACAAAAAAAQZgAAAAEAACAAAAA+MT49/thVI7dlaBERXnS31ZhuCwqdzU0NbEHyHCwfFgAAAAAOgAAAAAIAACAAAAAVjaWeegVXf5G7eB7Bwo0MJTyJw8muPuNEN/SWOno5zYAAAADV+6YqG/QZZp3KeLd8QKEh86rjkG1Bx2saP88LvG0E1cZoApi6cgtBhBzSGMovc7QmPNbKUZ4lCc47a6LJ8MysV0E9IgeKm1bY9RevhTWKxGjJQ96R2sN41LNuyq2KyV6s+2ewT3dnkzOFlQt2h3vGsrhvjyBRZbQwll9jf2IKWUAAAADOnh9F0EO1BYe2iR4FPR3hCeGOyqeBjKYV9rcX4zRJroDMGe6/rAeQdXjvdKxvr/nKz1iAYXq8uUOgzic3aTbz</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

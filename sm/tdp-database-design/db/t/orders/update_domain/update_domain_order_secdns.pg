@@ -1,0 +1,209 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- clean attr_value table
+DELETE FROM attr_value;
+
+-- update secdns record range for .help TLD
+INSERT INTO attr_value(
+    key_id, 
+    value_integer_range, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id FROM attr_key WHERE name = 'secdns_record_count'),
+    int4range(0, 5, '[]'),
+    (SELECT id FROM tld WHERE name = 'help'),
+    (SELECT tenant_id FROM v_tenant_customer limit 1)
+);
+
+-- create test domain
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM v_tenant_customer limit 1)
+  AND is_default;
+
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date,
+        secdns_max_sig_life
+    ) VALUES (
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        FORMAT('host-parent-domain-%s-1.help',EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL,
+        2
+    ) RETURNING *
+)
+SELECT * INTO TEMP _test_domain FROM test_domain;
+
+-- add initial secdns to test domain 
+WITH skd AS (
+    INSERT INTO secdns_key_data(flags, algorithm, public_key)
+    VALUES (0, 3, 'test-public-key')
+    RETURNING *
+)
+SELECT * INTO TEMP _secdns_key_data FROM skd;
+	
+WITH sdd AS (
+    INSERT INTO secdns_ds_data(key_tag, algorithm, digest, key_data_id)
+    VALUES (1, 3, 'test-digest', (SELECT id FROM _secdns_key_data))
+    RETURNING *
+)
+SELECT * INTO TEMP _secdns_ds_data FROM sdd;
+    
+INSERT INTO domain_secdns (domain_id, ds_data_id)
+VALUES ((SELECT id FROM _test_domain), (SELECT id FROM _secdns_ds_data));
+
+
+-- create an order
+WITH o AS (
+INSERT INTO "order"(
+    tenant_customer_id,
+    type_id
+)
+VALUES(
+    (SELECT id FROM v_tenant_customer LIMIT 1),
+    (SELECT id FROM v_order_type WHERE product_name='domain' AND name='update')
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _order FROM o;
+
+
+WITH cd AS (
+    INSERT INTO order_item_update_domain(
+    order_id,
+    domain_id,
+    secdns_max_sig_life
+) VALUES(
+    (SELECT id FROM _order),
+    (SELECT id FROM _test_domain),
+    4
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _oi_update_domain FROM cd;
+
+-- add secdns records to add 
+WITH oskd AS (
+    INSERT INTO order_secdns_key_data(flags, algorithm, public_key)
+    VALUES (0, 3, 'test-new-public-key')
+    RETURNING *
+)
+SELECT * INTO TEMP _add_order_secdns_key_data FROM oskd;
+	
+WITH osdd AS (
+    INSERT INTO order_secdns_ds_data(key_tag, algorithm, digest, key_data_id)
+    VALUES (1, 3, 'test-new-digest', (SELECT id FROM _add_order_secdns_key_data))
+    RETURNING *
+)
+SELECT * INTO TEMP _add_order_secdns_ds_data FROM osdd;
+
+-- update secdns supported list for .help TLD
+INSERT INTO attr_value(
+    key_id, 
+    value_text_list, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id FROM attr_key WHERE name = 'secdns_supported'),
+    ARRAY['dsData', 'keyData'],
+    (SELECT id FROM tld WHERE name = 'help'),
+    (SELECT tenant_id FROM v_tenant_customer limit 1)
+);
+
+INSERT INTO update_domain_add_secdns (update_domain_id, ds_data_id)
+VALUES ((SELECT id FROM _oi_update_domain), (SELECT id FROM _add_order_secdns_ds_data));
+
+WITH osdd2 AS (
+   	INSERT INTO order_secdns_ds_data (key_tag, algorithm, digest)
+    VALUES (1, 5, 'test-new-digest')
+    RETURNING *
+)
+SELECT * INTO TEMP _add_order_secdns_ds_data2 FROM osdd2;
+
+-- update secdns supported list for .help TLD
+UPDATE attr_value 
+    SET value_text_list=ARRAY['dsData'] 
+    WHERE key_id=(SELECT id FROM attr_key WHERE name = 'secdns_supported');
+
+INSERT INTO update_domain_add_secdns (update_domain_id, ds_data_id)
+VALUES ((SELECT id FROM _oi_update_domain), (SELECT id FROM _add_order_secdns_ds_data2));
+
+-- add secdns records to remove 
+WITH oskd AS (
+    INSERT INTO order_secdns_key_data(flags, algorithm, public_key)
+    VALUES (0, 3, 'test-public-key')
+    RETURNING *
+)
+SELECT * INTO TEMP _rem_order_secdns_key_data FROM oskd;
+	
+WITH osdd AS (
+    INSERT INTO order_secdns_ds_data(key_tag, algorithm, digest, key_data_id)
+    VALUES (1, 3, 'test-digest', (SELECT id FROM _rem_order_secdns_key_data))
+    RETURNING *
+)
+SELECT * INTO TEMP _rem_order_secdns_ds_data FROM osdd;
+
+-- update secdns supported list for .help TLD
+UPDATE attr_value 
+    SET value_text_list=ARRAY['dsData', 'keyData'] 
+    WHERE key_id=(SELECT id FROM attr_key WHERE name = 'secdns_supported');
+
+INSERT INTO update_domain_rem_secdns (update_domain_id, ds_data_id)
+VALUES ((SELECT id FROM _oi_update_domain), (SELECT id FROM _rem_order_secdns_ds_data));
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- let's grab that provision_domain_update entry
+WITH pdu AS (
+    SELECT pdu.*,ps.name AS status_name
+    FROM provision_domain_update pdu
+             JOIN provision_status ps ON ps.id = pdu.status_id
+    WHERE (
+              SELECT id FROM f_order_item_plan((SELECT id FROM _oi_update_domain))
+              WHERE object_name='domain'
+          ) = ANY(order_item_plan_ids)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_domain_update FROM pdu;
+
+-- there should be a domain entry in provision_domain_update that is pending to be updated
+SELECT ok(
+   EXISTS(
+       SELECT * FROM _prov_domain_update
+   )
+);
+
+-- job should not be null
+SELECT ok((SELECT job_id FROM _prov_domain_update) IS NOT NULL,'job_id is not null');
+
+-- mark job as completed
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status', 'completed') WHERE id=(SELECT job_id FROM _prov_domain_update);
+$$,'mark job completed');
+
+
+-- should have 2 secdns records 
+SELECT cmp_ok(
+  ((SELECT COUNT(*)::INT FROM domain_secdns WHERE domain_id = (SELECT id FROM _test_domain))),
+  '=',
+  2::INT
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+-- COMMIT;
+ROLLBACK;

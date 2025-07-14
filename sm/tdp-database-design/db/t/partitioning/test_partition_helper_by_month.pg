@@ -1,0 +1,70 @@
+-- Start the test
+BEGIN;
+
+SELECT * FROM no_plan();
+
+-- TEST 1: Create the test table
+SELECT lives_ok($$
+    CREATE TABLE IF NOT EXISTS test_partitioned_table (
+        id SERIAL,
+        created_at TIMESTAMPTZ NOT NULL,
+        PRIMARY KEY (id, created_at) 
+    ) PARTITION BY RANGE (created_at);
+$$, 'Create test_partitioned_table');
+
+-- TEST 2: Call the function to create partitions
+SELECT lives_ok($$
+    SELECT partition_helper_by_month('test_partitioned_table');
+$$, 'Call partition_helper_by_month function');
+
+-- TEST 3-6: Verify that the partitions for the current and next three months exist
+DO $$
+DECLARE
+    current_month TEXT;
+    next_month TEXT;
+    two_months_later TEXT;
+    three_months_later TEXT;
+BEGIN
+    -- Calculate expected partition names
+    current_month := TO_CHAR(DATE_TRUNC('month', clock_timestamp()), 'YYYYMM');
+    next_month := TO_CHAR(DATE_TRUNC('month', clock_timestamp() + INTERVAL '1 month'), 'YYYYMM');
+    two_months_later := TO_CHAR(DATE_TRUNC('month', clock_timestamp() + INTERVAL '2 months'), 'YYYYMM');
+    three_months_later := TO_CHAR(DATE_TRUNC('month', clock_timestamp() + INTERVAL '3 months'), 'YYYYMM');
+
+    -- TEST 3: Check current month partition
+    PERFORM 1 FROM pg_tables WHERE tablename = FORMAT('test_partitioned_table_%s', current_month);
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Partition for current month not created';
+    END IF;
+
+    -- TEST 4: Check next month partition
+    PERFORM 1 FROM pg_tables WHERE tablename = FORMAT('test_partitioned_table_%s', next_month);
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Partition for next month not created';
+    END IF;
+
+    -- TEST 5: Check two months later partition
+    PERFORM 1 FROM pg_tables WHERE tablename = FORMAT('test_partitioned_table_%s', two_months_later);
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Partition for two months later not created';
+    END IF;
+
+    -- TEST 6: Check three months later partition
+    PERFORM 1 FROM pg_tables WHERE tablename = FORMAT('test_partitioned_table_%s', three_months_later);
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Partition for three months later not created';
+    END IF;
+
+    RAISE NOTICE 'All partitions created successfully';
+END;
+$$;
+
+-- TEST 7: Clean up the test table
+SELECT lives_ok($$
+    -- DROP TABLE IF EXISTS test_partitioned_table CASCADE;
+$$, 'Clean up test_partitioned_table');
+
+-- Finish the test
+SELECT * FROM finish(true);
+
+ROLLBACK;

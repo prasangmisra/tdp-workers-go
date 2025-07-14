@@ -1,0 +1,145 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('order');
+SELECT has_table('order_item_transfer_in_domain');
+
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id, tld_id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='transfer_in')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+-- Update default value for "authcode_mandatory_for_orders" tld_setting
+INSERT INTO attr_value(
+    key_id, 
+    value_text_list, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id from attr_key WHERE name='authcode_mandatory_for_orders'), 
+    ARRAY['transfer_in'],
+    (SELECT tld_id FROM _acc_tld),
+    (SELECT tenant_id FROM _tenant_customer)
+);
+
+-- now we add a new order item (order_item_transfer_in_domain)
+SELECT throws_matching($$
+    INSERT INTO order_item_transfer_in_domain(
+        name,
+        accreditation_tld_id,
+        transfer_period,
+        auth_info,
+        order_id
+    ) VALUES(
+        'tdp-test-1.help',
+        (SELECT id FROM _acc_tld),
+        1,
+        '',
+        (SELECT id FROM _order)
+    );
+    $$,
+'Auth info is mandatory for ''transfer_in'' order',
+'Check if domain can be transfered');
+
+-- Update default value for "allowed_transfer_periods" tld_setting
+INSERT INTO attr_value(
+    key_id, 
+    value_integer_list, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id from attr_key WHERE name='allowed_transfer_periods'), 
+    '{1,3,5}',
+    (SELECT tld_id FROM _acc_tld),
+    (SELECT tenant_id FROM _tenant_customer)
+);
+
+-- now we add a new order item (order_item_transfer_in_domain)
+SELECT throws_matching($$
+    INSERT INTO order_item_transfer_in_domain(
+        name,
+        accreditation_tld_id,
+        transfer_period,
+        auth_info,
+        order_id
+    ) VALUES(
+        'tdp-test-1.help',
+        (SELECT id FROM _acc_tld),
+        7,
+        'xyzabc',
+        (SELECT id FROM _order)
+    );
+    $$,
+'transfer_in period must be one of the allowed values: 1, 3, 5',
+'Check if domain can be transfered');
+
+-- Update default value for "is_transfer_allowed" tld_setting
+INSERT INTO attr_value(
+    key_id, 
+    value_boolean, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id from attr_key WHERE name='is_transfer_allowed'), 
+    'false',
+    (SELECT tld_id FROM _acc_tld),
+    (SELECT tenant_id FROM _tenant_customer)
+);
+
+-- now we add a new order item (order_item_transfer_in_domain)
+SELECT throws_matching($$
+    INSERT INTO order_item_transfer_in_domain(
+        name,
+        accreditation_tld_id,
+        transfer_period,
+        auth_info,
+        order_id
+    ) VALUES(
+        'tdp-test-3.help',
+        (SELECT id FROM _acc_tld),
+        3,
+        'xyzabc',
+        (SELECT id FROM _order)
+    );
+    $$,
+'TLD ''help'' does not support domain transfer',
+'Check if domain can be transfered');
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

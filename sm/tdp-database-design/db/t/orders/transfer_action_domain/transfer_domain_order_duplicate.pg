@@ -1,0 +1,42 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- Test 1: Verify specific index exists
+SELECT has_index('order_item_transfer_in_domain', 'order_item_transfer_in_domain_name_accreditation_tld_id_idx');
+
+-- Test 2: Verify unique constraint prevents duplicate entries
+SELECT throws_ok($$
+    WITH test_order AS (
+        INSERT INTO "order"(
+            tenant_customer_id,
+            type_id
+        )
+        VALUES(
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create')
+        ) RETURNING id
+    )
+    INSERT INTO order_item_transfer_in_domain(
+        order_id,
+        name,
+        status_id
+    )
+    VALUES
+    (
+        (SELECT id FROM test_order),
+        FORMAT('test-duplicate-%s.help', EXTRACT(epoch FROM NOW())::INT),
+        tc_id_from_name('order_item_status', 'pending')
+    ),
+    (
+        (SELECT id FROM test_order),
+        FORMAT('test-duplicate-%s.help', EXTRACT(epoch FROM NOW())::INT),
+        tc_id_from_name('order_item_status', 'pending')
+    );
+$$, 23505);
+
+-- Finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

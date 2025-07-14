@@ -1,0 +1,14 @@
+{
+    "go.goroot": "/usr/local/go",
+    "go.toolsEnvVars": {
+        "GOPRIVATE": "github.com/tucowsinc/",
+        "GOPROXY": "https://artifacts.cnco.tucows.systems/artifactory/api/go/domains-go-virtual",
+        "GOROOT": "/usr/local/go",
+        "GO111MODULE": "on"
+    },
+    "gopls": {
+        "buildFlags": [
+            "-tags=integration"
+        ]
+    }
+}

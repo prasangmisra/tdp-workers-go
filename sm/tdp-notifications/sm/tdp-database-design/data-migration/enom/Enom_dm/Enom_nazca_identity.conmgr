@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="Enom_nazca_identity"
+  DTS:DTSID="{3F62515A-00AE-4D08-A383-DCC3CF716E20}"
+  DTS:CreationName="ODBC">
+  <DTS:PropertyExpression
+    DTS:Name="ConnectionString">@[$Project::Enom_nazca_identity_ConnectionString]</DTS:PropertyExpression>
+  <DTS:PropertyExpression
+    DTS:Name="Password">@[$Project::Enom_nazca_identity_Password]</DTS:PropertyExpression>
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="uid=nludina;Dsn=PostgreSQL_nazca_dev;">
+      <DTS:Password
+        DTS:Name="pwd"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAJgH2XpxnAU6spGAB7ft7WAAAAAACAAAAAAAQZgAAAAEAACAAAADfiHwfnGEUwpUSlmKDGH+zsNfIY9vdOd3DTpDztU7GbgAAAAAOgAAAAAIAACAAAADRlNIb3/e5/nk4osAjAsAUs2ROXmk17XkQ8RWBKdoP5oAAAADgMH1gBSnocJ8UYsfg/qTyTcyjzrXjCCwVO7820sA29cXiXhOfHeqxN53TM9Qozkq+PvLwXNMUzus5Zpai+m28FO+vt195p0Pd/i2quj7eVhu4gp9RCk1JKXzyxdRqjbkkhHL0PqCR9hmI0TpJk/5jlc0iTISHR1kAN5g/M6LJ4kAAAAA2iiGmKp1Q8IpSj4QjKEAkmeN+C2Rn1An9KcydlAVX5RAQSVcISHXRRnX/Xo55dlfDSY6P0Yybt5VcYGQ+oGNE</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

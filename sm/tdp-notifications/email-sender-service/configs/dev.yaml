@@ -1,0 +1,28 @@
+# These values are used for local run
+# For DEV, they will be overwritten during deployment
+
+log:
+  outputsink: stderr
+rmq:
+  hostname: rabbitmq-local
+  port: 5671
+  username: domains
+  password: tucows
+  exchange: test
+  exchangeKind: direct
+  exchangeDurable: true
+  queueType: classic
+  emailSendQueue:
+    name: email_notification
+  finalStatusQueue:
+    name: final_status_notification
+  tlsEnabled: true
+  tlsSkipVerify: true
+
+smtpServer:
+  host: smtp.gmail.com
+  port: 587
+  username: user
+  password: password
+  retryAttempts: 3
+  retryMaxDelay: 1s

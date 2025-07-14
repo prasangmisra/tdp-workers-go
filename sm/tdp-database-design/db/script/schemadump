@@ -1,0 +1,592 @@
+#!/usr/bin/env perl -I.
+use common::sense;
+use DBI;
+use Getopt::Long;
+use String::CamelCase qw(camelize);
+use List::Util qw(first);
+use Data::Dumper;
+use Text::Pluralize;
+use Text::Wrap;
+use File::Spec qw(catfile);
+use feature q{:5.10};
+use Data::Dumper;
+$Text::Wrap::columns = 78;
+
+# on tsrange and some of the custom types that cannot be mapped directly
+# to go, we should be using/adding support for pgx (https://github.com/jackc/pgx)
+# in the mean time, they are strings.
+
+my %types;
+my %nullable_types;
+my %array_types;
+
+
+my $opts = {
+  dbname                => 'dbname',
+  dbhost                => 'dbhost',
+  dbport                => 5432,
+  dbuser                => 'srs',
+  dbpass                => undef,
+  schema                => 'public',
+  target_dir            => undef,
+  skip_rel              => [],
+  on_connect_do         => undef,
+  skip_pattern          => [],
+  work_mem              => undef,
+  connect_string_suffix => undef,
+  pgx                   => 0,
+  use_struct_comp           => 0,
+  package               => 'db',
+};
+
+# certain types of fields, require an additional import
+# this hashref maps a specific type to an import statement
+my $import_map = {
+  q{types.JSONText}  => 'github.com/jmoiron/sqlx/types',
+  q{sql.NullFloat64} => 'database/sql',
+  q{null.Float}      => 'gopkg.in/guregu/null.v3',
+  q{null.Int}        => 'gopkg.in/guregu/null.v3',
+  q{pq.Int64Array}   => 'github.com/lib/pq',
+  q{pq.Float64Array} => 'github.com/lib/pq',
+  q{pq.StringArray}  => 'github.com/lib/pq',
+};
+
+my %imports = ();
+
+# save the command line before calling GetOptions
+my $cmdline = join( ' ', map { sprintf( q{'%s'}, $_ ) } @ARGV );
+
+GetOptions(
+  "dbname=s"         => \$opts->{dbname},
+  "dbhost=s"         => \$opts->{dbhost},
+  "dbport=s"         => \$opts->{dbport},
+  "dbuser=s"         => \$opts->{dbuser},
+  "dbpass=s"         => \$opts->{dbpass},
+  "schema=s"         => \$opts->{schema},
+  "target-dir=s"     => \$opts->{target_dir},
+  "on-connect-do=s"  => \$opts->{on_connect_do},
+  "skip-rel=s@"      => \$opts->{skip_rel},
+  "skip-pattern=s@"  => \$opts->{skip_pattern},
+  "connect-suffix=s" => \$opts->{connect_string_suffix},
+  "work-mem=s"       => \$opts->{work_mem},
+  "package=s"        => \$opts->{package},
+  "pgx"              => \$opts->{pgx},
+  "use-struct-comp"  => \$opts->{use_struct_comp},
+) or die( "Error in command line arguments\n" );
+
+my $dsn = sprintf( q{dbi:Pg:dbname=%s;host=%s;port=%d},
+  $opts->{dbname}, $opts->{dbhost}, $opts->{dbport} );
+
+unless ( defined $opts->{target_dir} ) {
+  say "--target is required";
+  exit;
+}
+
+my $dbh = DBI->connect( $dsn, $opts->{dbuser}, $opts->{dbpass} );
+
+if ( defined $opts->{on_connect_do} ) {
+  $dbh->do( $opts->{on_connect_do} );
+}
+
+# Select types
+%types = (
+  text                          => 'string',
+  boolean                       => 'bool',
+  'timestamp without time zone' => 'time.Time',
+  'timestamp with time zone'    => 'time.Time',
+  date                          => 'time.Time',
+  integer                       => 'int',
+  bigint                        => 'int64',
+  numeric                       => 'null.Float',
+  cidr                          => 'string',
+  oid                           => 'string',
+  character                     => 'string',
+
+  inet                          => 'string',
+  q{USER-DEFINED}               => 'string',
+  interval                      => 'string',
+  'double precision'            => 'null.Float',
+  name                          => 'string',
+  jsonb                         => 'types.JSONText',
+  json                          => 'types.JSONText',
+  '"char"'                      => 'string',
+  q{character varying}          => 'string',
+  bytea                         => '[]byte',
+  real                          => 'null.Float',
+  uuid                          => 'string',
+  regconfig                     => 'string',
+  tsvector                      => 'string',
+  tsrange                       => 'string',
+  tstzrange                     => 'string',
+);
+
+%nullable_types = (
+  text                          => '*string',
+  boolean                       => '*bool',
+  'timestamp without time zone' => '*time.Time',
+  'timestamp with time zone'    => '*time.Time',
+  date                          => '*time.Time',
+  integer                       => '*int',
+  bigint                        => '*int64',
+  cidr                          => '*string',
+  character                     => '*string',
+  inet                          => '*string',
+  q{USER-DEFINED}               => '*string',
+  interval                      => '*string',
+  name                          => '*string',
+  '"char"'                      => '*string',
+  q{character varying}          => '*string',
+  uuid                          => '*string',
+  regconfig                     => '*string',
+  tsvector                      => '*string',
+  tsrange                       => '*string',
+  tstzrange                     => '*string',
+);
+
+%array_types = (
+  integer            => '[]int64',
+  numeric            => '[]float64',
+  bigint             => '[]int64',
+  'double precision' => '[]float64',
+  text               => '[]string',
+  boolean            => '[]bool',
+);
+
+
+# SQL table names
+my $sql_tn = q{
+  SELECT table_name FROM
+    information_schema.tables
+  WHERE table_schema = ? ORDER BY 1
+};
+
+my $sql_ct = q{
+  SELECT
+        c.column_name,
+        c.is_nullable,
+        c.data_type,
+        u.column_name IS NOT NULL AS is_primary_key,
+        c.column_default,
+        e.data_type
+  FROM information_schema.columns c
+    LEFT JOIN information_schema.table_constraints t
+      ON t.table_schema = c.table_schema
+        AND t.table_name = c.table_name
+        AND t.constraint_type = 'PRIMARY KEY'
+    LEFT JOIN information_schema.constraint_column_usage u
+      ON u.table_name =t.table_name
+      AND t.table_schema = u.table_schema
+      AND u.constraint_name = t.constraint_name
+      AND u.column_name = c.column_name
+    LEFT JOIN information_schema.element_types e
+       ON ((c.table_catalog, c.table_schema, c.table_name, 'TABLE', c.dtd_identifier)
+         = (e.object_catalog, e.object_schema, e.object_name, e.object_type, e.collection_type_identifier))
+  WHERE c.table_schema = ? AND c.table_name = ?
+  ORDER BY 1
+};
+
+my $sql_fk = q{
+SELECT
+  regexp_replace( k.column_name, '_id', '' ) AS source_col,
+  k.column_name AS orig_source_col,
+  k.table_name AS source_table,
+  u.table_name AS target_table
+FROM information_schema.table_constraints c
+  JOIN information_schema.constraint_column_usage u
+    ON u.constraint_name = c.constraint_name
+    AND c.constraint_type = 'FOREIGN KEY'
+  JOIN information_schema.key_column_usage k
+    ON k.constraint_name = c.constraint_name
+WHERE c.table_name=?
+};
+
+# NOTE: Ignores inheritence from tables in another namespaces
+my $sql_inherits = q{
+SELECT bt.relname as table_name
+from pg_class ct
+    join pg_namespace cns on ct.relnamespace = cns.oid and cns.nspname = ?
+    join pg_inherits i on i.inhrelid = ct.oid and ct.relname = ?
+    join pg_class bt on i.inhparent = bt.oid
+    join pg_namespace bns on bt.relnamespace = bns.oid  AND bns.nspname = cns.nspname 
+};
+
+my $sql_table_comment   = q{SELECT obj_description(?::regclass)};
+my $sql_column_comments = q{
+SELECT
+    (
+        SELECT
+            pg_catalog.col_description(c.oid, cols.ordinal_position::int)
+        FROM pg_catalog.pg_class c
+        WHERE
+            c.oid     = (SELECT cols.table_name::regclass::oid) AND
+            c.relname = cols.table_name
+    ) as column_comment
+
+FROM information_schema.columns cols
+WHERE
+    cols.table_catalog = ? AND
+    cols.table_schema  = ? AND
+    cols.table_name    = ? AND
+    cols.column_name = ?;
+
+};
+
+my $sth_tn   = $dbh->prepare( $sql_tn );
+my $sth_ct   = $dbh->prepare( $sql_ct );
+my $sth_fk   = $dbh->prepare( $sql_fk );
+my $sth_in   = $dbh->prepare( $sql_inherits );
+my $sth_tcom = $dbh->prepare( $sql_table_comment );
+my $sth_ccom = $dbh->prepare( $sql_column_comments );
+
+$sth_tn->execute( $opts->{schema} );
+
+my $target_file   = File::Spec->catfile( $opts->{target_dir}, 'model.go' );
+my $target_output = IO::File->new( qq{>$target_file} );
+
+my $target_test = File::Spec->catfile( $opts->{target_dir}, 'model_test.go' );
+my $test_output = IO::File->new( qq{>$target_test} );
+
+unless ( defined $test_output ) {
+  die( qq{cannot open $target_test for writing} );
+}
+
+select( $target_output );
+
+my $date      = scalar localtime;
+my $opts_dump = wrap( qq{//  }, q{//  }, $cmdline );
+my %model     = ();
+
+# say STDERR Dumper( $opts );
+
+while ( my ( $table_name ) = @{ $sth_tn->fetchrow_arrayref } ) {
+
+  next if first { $table_name eq $_ } @{ $opts->{skip_rel} };
+  next if first { $table_name =~ m{$_} } @{ $opts->{skip_pattern} };
+
+  $sth_ct->execute( $opts->{schema}, $table_name );
+  $sth_fk->execute( $table_name );
+  $sth_in->execute( $opts->{schema}, $table_name );
+  $sth_tcom->execute( $table_name );
+
+  my $model_name = camelize( $table_name );
+
+  $model{$model_name} //= {
+    fields      => [],
+    foreign_key => {},
+    has_many    => [],
+    inherits    => [],
+    comment     => q{}
+  };
+
+  my $fields   = $model{$model_name}->{fields}      //= [];
+  my $fk       = $model{$model_name}->{foreign_key} //= {};
+  my $inherits = $model{$model_name}->{inherits}    //= [];
+  $model{$model_name}->{comment} //= q{};
+  $model{$model_name}->{table_name} = $table_name;
+
+  # table comment
+  while ( my ( $t_com ) = @{ $sth_tcom->fetchrow_arrayref } ) {
+    $model{$model_name}->{comment} = fix_comment( $t_com );
+  }
+
+  # inheritance processing
+  while ( my ( $parent ) = @{ $sth_in->fetchrow_arrayref } ) {
+    push @{$inherits}, camelize( $parent );
+  }
+
+  # foreign key processing
+  while ( my ( $source, $orig_col, $source_table, $target ) =
+    @{ $sth_fk->fetchrow_arrayref } )
+  {
+
+    $fk->{ camelize( $source ) } =
+      { target => camelize( $target ), orig_col => $orig_col , source => $source};
+
+    my $tcamel   = camelize( $target );
+    my $has_many = $model{$tcamel}->{has_many} //= [];
+    my $plural_source_table = pluralize(
+      sprintf( q{%s(s|es)}, $source_table ),
+      $source_table =~ m{s$} ? 2 : 1
+    );
+    push @{$has_many}, {
+      $plural_source_table => sprintf( q{[]%s}, camelize( $source_table ) )
+    };
+  }
+
+  while ( my ( $col, $is_null, $data_type, $is_pk, $default, $element_type ) =
+    @{ $sth_ct->fetchrow_arrayref } )
+  {
+
+    $sth_ccom->execute( $opts->{dbname}, $opts->{schema}, $table_name, $col );
+    my ( $comment ) = @{ $sth_ccom->fetchrow_arrayref };
+    $comment = fix_comment( $comment );
+
+    # if ( $data_type eq 'ARRAY' ) {
+    #   warn( qq{$col $data_type $default $element_type} );
+    # }
+
+    my $t = $types{$data_type};
+    if ($is_null eq "YES" && $opts->{pgx} && exists $nullable_types{$data_type}) {
+      $t = $nullable_types{$data_type};
+    }
+
+    my $col_type = {
+      type     => $t || qq{NOT_FOUND_IN_MAP: $data_type},
+      is_pk    => $is_pk,
+      name     => camelize( $col ),
+      orig_col => $col,
+      comment  => $comment,
+      default  => 'NULL'
+    };
+
+    if ( $data_type eq 'ARRAY' ) {
+      $col_type->{type} = sprintf( '%s',
+             $array_types{$element_type}
+          || $types{$element_type}
+          || qq{NOT_FOUND_IN_MAP: $data_type} );
+      $t = $col_type->{type};
+    }
+
+    push @{$fields}, $col_type;
+
+    # if there's an import that needs to be added, do it
+    if ( exists $import_map->{$t} ) {
+      $imports{ $import_map->{$t} } = 1;
+    }
+
+  }
+
+}
+
+$sth_fk->finish;
+$sth_ct->finish;
+$sth_tn->finish;
+$sth_tcom->finish;
+$sth_ccom->finish;
+
+$dbh->disconnect;
+
+my $imports = qq{\n};
+
+foreach my $import ( sort keys %imports ) {
+  $imports .= qq{\t"$import"\n};
+}
+
+my $work_mem = sprintf( q{db.Exec("SET work_mem TO '%s'")}, $opts->{work_mem} )
+  if $opts->{work_mem};
+
+my $package = $opts->{package};
+
+say qq{// This module implements the database model (ORM)
+// for $opts->{dbname}
+//
+// This is an automatically generated file, do not edit
+// by hand.
+//
+// schemadump options:
+$opts_dump
+//
+// Generated On:
+//  $date
+package $package
+
+import (
+  "fmt"
+  "os"
+  "time"
+  $imports
+  "github.com/jinzhu/gorm"
+  "github.com/lib/pq"
+  // blank import needed to load the driver
+  _ "github.com/jinzhu/gorm/dialects/postgres"
+)
+
+// Connect connects to the postgres database using
+// the url string
+func Connect(url string) (*gorm.DB, error) {
+
+  connectString := fmt.Sprintf("%s $opts->{connect_string_suffix}", url)
+  logging := false
+
+  if os.Getenv("QUERY_TRACE") == "1" {
+    logging = true
+  }
+
+  db, err := gorm.Open("postgres", connectString)
+
+  if err != nil {
+    return nil, err
+  }
+
+  $work_mem
+
+  db.SingularTable(true)
+  db.LogMode(logging)
+
+  return db, nil
+}
+
+// Table Definitions
+
+};
+say;
+
+foreach my $name ( sort keys %model ) {
+
+  # table documentation
+  # printf( qq{// %s - %s\n}, $name, $model{$name}->{table_name} );
+  printf( qq{// %s\n}, $name );
+  printf( qq{%s\n},    wrap( qq{// }, q{// }, $model{$name}->{comment} ) );
+
+  # struct def
+  printf( "type %s struct {\n", $name );
+
+
+
+  my $skip_cols = [];
+  if ($opts->{use_struct_comp}){
+    # deal with inheritance first
+    printf( qq{  // inherits from\n} ) if scalar @{ $model{$name}->{inherits} };
+    foreach my $in ( @{ $model{$name}->{inherits} } ) {
+      printf( qq{  %s\n}, $in );
+      push @{$skip_cols}, map { $_->{name} } @{ $model{$in}->{fields} };
+    }
+  }
+
+  my %cols_seen = {};
+
+  # cols
+  foreach my $col ( sort { $a->{orig_col} cmp $b->{orig_col} }
+    @{ $model{$name}->{fields} } )
+  {
+    # skip those columns that are inherited
+    next if first { $col->{name} eq $_ } @{$skip_cols};
+
+    # column documentation
+    printf( qq{%s\n}, wrap( qq{\t// }, qq{\t// }, $col->{comment} ) )
+      if defined $col->{comment};
+
+    # column definition
+    if ($opts->{pgx}){
+      printf(
+        qq{  %-20s %-20s `db:"%s" json:"%s"`\n},
+        $col->{name},
+        $col->{type},
+        $col->{orig_col},
+        lc $col->{orig_col}
+      );
+    } else {
+      printf(
+        qq{  %-20s %-20s `gorm:"column:%s%s%s" json:"%s"`\n},
+        $col->{name},
+        $col->{type},
+        $col->{orig_col},
+        $col->{is_pk} ? ';primary_key:yes' : '',
+        ( defined $col->{default} and not $col->{is_pk} )
+        ? sprintf( q{;default:%s}, $col->{default} )
+        : q{},
+        lc $col->{orig_col}
+      );
+    }
+
+    # record the col so we can check the methods later
+    $cols_seen{ $col->{name} } = 1;
+
+  }
+
+  # belongs to
+  printf( qq{\n  // belongs to\n} )
+    if scalar keys %{ $model{$name}->{foreign_key} };
+
+  while ( my ( $k, $v ) = each %{ $model{$name}->{foreign_key} } ) {
+    next if $name eq $v->{target};
+
+    my $key = $k;
+    my $src = $v->{source};
+
+    if ( exists $cols_seen{$k} ) {
+      $key = sprintf( q{%sObj}, $k );
+      $src = sprintf( q{%s_obj}, $src );
+    }
+    if ($opts->{pgx}){
+      printf( qq{  %-20s *%s `json:"%s"`\n}, $key, $v->{target}, $src);
+    } else {
+      printf( qq{  %-20s *%s `gorm:"ForeignKey:%s"`\n},
+        $key, $v->{target}, camelize( $v->{orig_col} ) );
+    }
+  }
+
+  # has_many
+  printf( qq{\n  // has many\n} ) if scalar @{ $model{$name}->{has_many} };
+
+  my %hm_added = {};
+  foreach my $m ( @{ $model{$name}->{has_many} } ) {
+    while ( my ( $k, $v ) = each %{$m} ) {
+      my $key = camelize($k);
+      printf( qq{  %-20s %s `json:"%s"`\n}, $key, $v, $k ) unless exists $hm_added{$key};
+      $hm_added{$key} = 1;
+    }
+  }
+
+  say "}\n";
+
+  say sprintf(
+    q{
+// TableName sets the table name
+func (%s) TableName() string {
+	return "%s"
+}
+}, $name, $model{$name}->{table_name}
+  );
+
+}
+
+print $test_output sprintf(
+  q{
+// this is a very basic test for the model
+// please do not change this file since its contents
+// are automatically generated by schemadump
+package %s
+
+import (
+  "fmt"
+  "testing"
+)
+
+func ExampleConnect() {
+  _, err := Connect("user=%s dbname=%s host=%s port=%d sslmode=disable")
+
+  if err == nil {
+    fmt.Println("successfully connected to the db")
+  } else {
+    fmt.Println("failed to connect to the db: ", err)
+  }
+  // Output: successfully connected to the db
+}
+
+func TestConnect( t *testing.T ){
+  _, err := Connect("user=%1$s dbname=%2$s host=%3$s port=%4$d sslmode=disable")
+
+  if err == nil {
+    fmt.Println("successfully connected to the db")
+  }
+
+}
+
+}, $package, $opts->{dbuser}, $opts->{dbname}, $opts->{dbhost}, $opts->{dbport}
+);
+
+# say STDERR Dumper( \%model );
+
+sub fix_comment {
+  my ( $comment ) = @_;
+  $comment =~ s{^(?:\n|\r)$}{ }g;           # remove trailing/leading new lines
+  $comment =~ s{([^\.?])\r?\n}{\1 }g;       # remove internal nonsense new lines
+  $comment =~ s{\s{2,}}{ }g;                # remove duplicate spaces
+  $comment =~ s{^\s+|\s+$}{}g;              # remove leading/traling spaces
+  $comment =~ s{\=\w+\s+}{}g;               # remove POD head/items
+  $comment =~ s{[A-Z]\s*<(.*?)>}{"\1"}g;    # remove pod wraps
+  return $comment;
+}
+
+

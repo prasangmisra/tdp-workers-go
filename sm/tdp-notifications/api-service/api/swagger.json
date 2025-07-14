@@ -1,0 +1,2485 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Manage domain notifications and subscriptions",
+        "title": "Domains Notifications and Subscriptions API",
+        "contact": {
+            "name": "Tucows Domains Support",
+            "url": "https://www.tucows.com/",
+            "email": "support@tucows.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "general"
+                ],
+                "summary": "Handles the default route for the api",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/DefaultResponse"
+                        }
+                    },
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/notifications": {
+            "post": {
+                "description": "Creates a notification and places it on the message bus",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Create notification",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The amount of time (seconds) to wait for a sync response. After the timeout has elapsed, the response will be available asynchronously through webhooks.",
+                        "name": "x-timeout",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The API version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer id",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Notification payload",
+                        "name": "notification",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subscriptions": {
+            "get": {
+                "description": "Gets a list of subscriptions based on query parameters.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Get a list of subscriptions",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The amount of time (seconds) to wait for a sync response. After the timeout has elapsed, the response will be available asynchronously through webhooks.",
+                        "name": "x-timeout",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The API version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer id",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "name": "page_number",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "created_date",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "asc",
+                        "name": "sort_direction",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionsGetResponse"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new notifications subscription for domain and contacts updates",
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Create a new subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "An idempotency key is a unique value generated by the client which the server uses to recognize subsequent retries of the same request. How you create unique keys is up to you, but we suggest using V4 UUIDs, or another random string with enough entropy to avoid collisions. Idempotency keys can be up to 255 characters long",
+                        "name": "idempotency-key",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The api version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer id",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "New subscription to create",
+                        "name": "subscription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionCreateResponse"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subscriptions/{id}": {
+            "get": {
+                "description": "Gets subscription by ID",
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Get subscription by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subscription ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "An idempotency key is a unique value generated by the client which the server uses to recognize subsequent retries of the same request.",
+                        "name": "idempotency-key",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The API version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer ID",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionGetResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Given an ID, deletes the matching subscription",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Deletes a subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subscription ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "The amount of time (seconds) to wait for a sync response. After the timeout has elapsed, the response will be available asynchronously through webhooks.",
+                        "name": "x-timeout",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The API version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer id",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates a notifications subscription for domain and contact events.",
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Update a subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subscription ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "An idempotency key is a unique value generated by the client which the server uses to recognize subsequent retries of the same request. How you Update unique keys is up to you, but we suggest using V4 UUIDs, or another random string with enough entropy to avoid collisions. Idempotency keys can be up to 255 characters long",
+                        "name": "idempotency-key",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The api version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer id",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Subscription to Update",
+                        "name": "subscription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionUpdateResponse"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subscriptions/{id}/pause": {
+            "patch": {
+                "description": "Pauses a subscription by setting its state to \"Paused\". Only Active or Degraded subscriptions can be paused.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Pause an active or degraded subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subscription ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The API version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer id",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionPauseResponse"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subscriptions/{id}/resume": {
+            "patch": {
+                "description": "Resumes a subscription by setting its state to \"Active\". Only Paused subscriptions can be resumed.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Resume a paused subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subscription ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The API version",
+                        "name": "x-version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Tenant customer id",
+                        "name": "x-tenant-customer-id",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SubscriptionResumeResponse"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "retry-after": {
+                                "type": "int",
+                                "description": "Number of seconds to wait before making additional requests"
+                            },
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/problem.ProblemDetails"
+                        },
+                        "headers": {
+                            "x-rate-limit": {
+                                "type": "int",
+                                "description": "Total number of available requests before being throttled"
+                            },
+                            "x-rate-limit-remaining": {
+                                "type": "int",
+                                "description": "Remaining number of available requests"
+                            },
+                            "x-request-duration": {
+                                "type": "int",
+                                "description": "Time in seconds it took to receive the response"
+                            },
+                            "x-transaction-id": {
+                                "type": "string",
+                                "description": "Unique request identifier"
+                            },
+                            "x-version": {
+                                "type": "string",
+                                "description": "The api version"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health/": {
+            "get": {
+                "description": "Gets health check for the api and all dependencies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "general"
+                ],
+                "summary": "Get the health check information for the api",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/HealthCheckResponse"
+                        }
+                    },
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "DefaultResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "HealthCheckResponse": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/HealthCheckResponseItem"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Overall health status. Can be one of [Healthy], [Degraded] or [Unhealthy]",
+                    "type": "string",
+                    "example": "Healthy"
+                }
+            }
+        },
+        "HealthCheckResponseItem": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "Subscription": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/SubscriptionStatus"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "SubscriptionCreateRequest": {
+            "type": "object",
+            "required": [
+                "notification_email",
+                "notification_types",
+                "url"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "SubscriptionCreateResponse": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "signing_secret": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/SubscriptionStatus"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "SubscriptionGetResponse": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/SubscriptionStatus"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "SubscriptionPauseResponse": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/SubscriptionStatus"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "SubscriptionResumeResponse": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/SubscriptionStatus"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "SubscriptionStatus": {
+            "type": "string",
+            "enum": [
+                "ACTIVE",
+                "PAUSED",
+                "DEGRADED",
+                "DEACTIVATED"
+            ],
+            "x-enum-varnames": [
+                "Active",
+                "Paused",
+                "Degraded",
+                "Deactivated"
+            ]
+        },
+        "SubscriptionUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "$ref": "#/definitions/models.NotificationTypesUpdate"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "SubscriptionUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "notification_email": {
+                    "type": "string"
+                },
+                "notification_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/SubscriptionStatus"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "SubscriptionsGetResponse": {
+            "type": "object",
+            "properties": {
+                "has_next_page": {
+                    "type": "boolean"
+                },
+                "has_previous_page": {
+                    "type": "boolean"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Subscription"
+                    }
+                },
+                "page_number": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.NotificationTypesUpdate": {
+            "type": "object",
+            "required": [
+                "add",
+                "rem"
+            ],
+            "properties": {
+                "add": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "rem": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "problem.ProblemDetails": {
+            "type": "object",
+            "properties": {
+                "detail": {
+                    "type": "string"
+                },
+                "instance": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

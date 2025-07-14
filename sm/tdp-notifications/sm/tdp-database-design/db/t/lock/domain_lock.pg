@@ -1,0 +1,68 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld 
+    FROM v_accreditation_tld
+    WHERE tld_name = 'help' 
+        AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+        AND is_default;
+
+-- create a domain entry for testing
+WITH test_domain AS (
+  INSERT INTO domain(
+    tenant_customer_id,
+    name,
+    accreditation_tld_id,
+    ry_created_date,
+    ry_expiry_date,
+    expiry_date
+  ) VALUES (
+    (SELECT id FROM _tenant_customer),
+    FORMAT('tdp-test-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+    (SELECT id FROM _acc_tld),
+    NOW(),
+    NOW() + ('1 years')::INTERVAL,
+    NOW() + ('1 years')::INTERVAL
+  ) RETURNING * 
+)
+SELECT * INTO TEMP _test_domain FROM test_domain;
+
+-- add lock for domain update
+SELECT lives_ok($$
+    SELECT set_domain_lock((SELECT id FROM _test_domain), 'update');
+    $$,
+    'insert lock for domain'
+);
+
+-- add lock for domain delete
+SELECT lives_ok($$
+    SELECT set_domain_lock((SELECT id FROM _test_domain), 'delete');
+    $$,
+    'insert lock for domain'
+);
+
+-- add registrar lock for domain transfer (not exposed)
+SELECT lives_ok($$
+    SELECT set_domain_lock((SELECT id FROM _test_domain), 'transfer', TRUE);
+    $$,
+    'insert lock for domain'
+);
+
+-- check domain locks
+SELECT cmp_ok( 
+    (SELECT locks FROM v_domain vd WHERE vd.id = (SELECT id FROM _test_domain))::TEXT,
+    '=',
+    '["update", "delete"]'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+--COMMIT;
+ROLLBACK;

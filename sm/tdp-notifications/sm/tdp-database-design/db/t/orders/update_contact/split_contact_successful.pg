@@ -1,0 +1,472 @@
+-- same contact different handles, contact split and order passes
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_update_contact');
+SELECT has_table('order_contact_postal');
+SELECT has_table('order_contact_attribute');
+SELECT has_table('update_contact_plan');
+SELECT has_table('provision_contact_update');
+SELECT has_table('provision_domain_contact_update');
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- create a domain entry for testing
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM _tenant_customer),
+        FORMAT('tdp-test-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _domain_1 FROM test_domain;
+
+
+-- create a domain entry for testing
+WITH test_domain AS (
+    INSERT INTO domain(
+            tenant_customer_id,
+            name,
+            accreditation_tld_id,
+            ry_created_date,
+            ry_expiry_date,
+            expiry_date
+        ) VALUES (
+            (SELECT id FROM _tenant_customer),
+            FORMAT('tdp-test-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+            (SELECT id FROM _acc_tld),
+            NOW(),
+            NOW() + ('1 years')::INTERVAL,
+            NOW() + ('1 years')::INTERVAL
+        ) RETURNING *
+)
+SELECT * INTO TEMP _domain_2 FROM test_domain;
+
+-- create a contact with two contact_postal entries and some tld specific attributes
+WITH basic_contact AS (
+    INSERT INTO contact(
+            type_id,
+            title,
+            org_reg,
+            org_vat,
+            org_duns,
+            tenant_customer_id,
+            email,
+            phone,
+            fax,
+            country,
+            language,           
+            tags,
+            documentation
+        )
+        VALUES(
+            tc_id_from_name('contact_type','individual'),
+            'CFO',
+            'reg987654321',
+            'vat123456789',
+            'duns147258369',
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            'tomas.oesterbro@some.domain',
+            '+1.234567890',
+            '+1.234567899',
+            'DK',
+            'en',           
+            '{"tag-1","tag-2"}',
+            '{"doc-A", "doc-B"}'
+        ) RETURNING *
+)
+SELECT * INTO TEMP _contact FROM basic_contact;
+
+INSERT INTO contact_postal(
+    contact_id,
+    is_international,
+    first_name,
+    last_name,
+    org_name,
+    address1,
+    address2,
+    address3,
+    city,
+    postal_code,
+    state
+)
+VALUES(
+    (SELECT id FROM _contact),
+    TRUE,
+    'Tomas',
+    'Oesterbro',
+    'Some-Company',
+    'Rosenvaengets Alley 42',
+    NULL,
+    NULL,
+    'Copenhagen',
+    '1234',
+    NULL
+);
+
+INSERT INTO contact_attribute(
+    attribute_id,
+    contact_id,
+    value
+)
+VALUES
+(
+    tc_id_from_name('attribute','birth_country'),
+    (SELECT id FROM _contact),
+    'DK'
+),
+(
+    tc_id_from_name('attribute','birth_date'),
+    (SELECT id FROM _contact),
+    '1961-02-05'
+),
+(
+    tc_id_from_name('attribute','identity_card_number'),
+    (SELECT id FROM _contact),
+    'IDC123123123'
+),
+(
+    tc_id_from_name('attribute','tld_de_type'),
+    (SELECT id FROM _contact),
+    '.de-type'
+);
+
+
+-- create a contact json to be used with the tests
+CREATE TEMP TABLE _expected_duplicated_contact_js ON COMMIT DROP AS SELECT
+    ('{
+        "tenant_customer_id":   "' || (SELECT id FROM v_tenant_customer LIMIT 1) || '",
+        "contact_type":         "individual",
+        "title":                "CFO",
+        "org_reg":              "reg987654321",
+        "org_vat":              "vat123456789",
+        "org_duns":             "duns147258369",
+        "email":                "tomas.oesterbro@some.domain",
+        "phone":                "+1.234567890",
+        "fax":                  "+1.234567899",
+        "country":              "DK",
+        "language":             "en",        
+        "tags":                 ["tag-1", "tag-2"],
+        "documentation":        ["doc-A", "doc-B"],
+        "contact_postals": [
+            {
+                "city": "Copenhagen",
+                "state": null,
+                "address1": "Rosenvaengets Alley 42",
+                "address2": null,
+                "address3": null,
+                "org_name": "Some-Company",
+                "last_name": "Oesterbro",
+                "first_name": "Tomas",
+                "postal_code": "1234",
+                "is_international": true
+            }
+        ],
+        "identity_card_number": "IDC123123123",
+        "birth_date":           "1961-02-05",
+        "birth_country":        "DK",
+        "tld_de_type":          ".de-type"
+    }')::JSONB AS value;
+
+
+INSERT INTO domain_contact(
+    domain_id,
+    contact_id,
+    domain_contact_type_id,
+    handle
+) VALUES (
+    (SELECT id from _domain_1),
+    (SELECT id from _contact),
+    tc_id_from_name('domain_contact_type','registrant'),
+    'handle_1'
+);
+
+INSERT INTO domain_contact(
+    domain_id,
+    contact_id,
+    domain_contact_type_id,
+    handle
+) VALUES (
+    (SELECT id from _domain_2),
+    (SELECT id from _contact),
+    tc_id_from_name('domain_contact_type','tech'),
+    'handle_2'
+);
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='contact' AND name='update')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+-- create a contact with two contact_postal entries and some tld specific attributes
+WITH basic_contact AS (
+    INSERT INTO order_contact(
+        order_id,
+        type_id,
+        country,
+        email
+    )
+    VALUES(
+        (SELECT id FROM _order),
+        tc_id_from_name('contact_type','individual'),
+        'US',
+        'new.email@some.domain'
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_contact FROM basic_contact;
+
+INSERT INTO order_contact_postal(
+    contact_id,
+    is_international,
+    address1,
+    city
+)
+VALUES
+(
+    (SELECT id FROM _order_contact),
+    TRUE,
+    'New Alley 42',
+    'Copenhagen'
+);
+
+INSERT INTO order_contact_attribute(
+    attribute_id,
+    contact_id,
+    value
+)
+VALUES
+(
+    tc_id_from_name('attribute','birth_country'),
+    (SELECT id FROM _order_contact),
+    'DE'
+),
+(
+    tc_id_from_name('attribute','birth_date'),
+    (SELECT id FROM _order_contact),
+    '1969-05-05'
+);
+
+WITH uc AS (
+    INSERT INTO order_item_update_contact (
+        order_id,
+        contact_id,
+        order_contact_id,
+        reuse_behavior
+    )
+    VALUES (
+        (SELECT id FROM _order),
+        (SELECT id FROM _contact),
+        (SELECT id FROM _order_contact),
+        'split'
+    ) RETURNING *
+)
+SELECT * INTO TEMP _oi_update_contact FROM uc;
+
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+-- let's grab that provision_contact_update entry
+WITH pc AS (
+    SELECT pc.*,ps.name AS status_name
+    FROM provision_contact_update pc
+    JOIN provision_status ps ON ps.id = pc.status_id
+    WHERE (
+        SELECT id FROM f_order_item_plan((SELECT id FROM _oi_update_contact))
+        WHERE object_name='contact'
+    ) = ANY(order_item_plan_ids)
+    AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_contact_update FROM pc;
+
+-- there should be a contact entry in provision_contact that is pending to be provisioned
+SELECT ok(
+   EXISTS(
+       SELECT * FROM _prov_contact_update
+   )
+);
+
+WITH job_id AS (
+    SELECT job_id FROM _prov_contact_update
+)
+SELECT * INTO TEMP _pc_job_id FROM job_id;
+
+-- job should not be null
+SELECT ok((SELECT job_id FROM _pc_job_id) IS NOT NULL,'job_id is not null');
+
+SELECT cmp_ok(
+    (SELECT job_status_name FROM v_job WHERE job_id = (SELECT job_id FROM _pc_job_id)),
+    '=',
+    'created'
+);
+
+WITH pdc AS (
+    SELECT pdc.*,ps.name AS status_name
+    FROM provision_domain_contact_update pdc
+    JOIN provision_status ps ON ps.id = pdc.status_id
+    WHERE provision_contact_update_id = (SELECT id FROM _prov_contact_update)
+      AND ps.name = 'failed'
+)
+SELECT * INTO TEMP _prov_domain_contact_update_failed FROM pdc;
+
+SELECT ok(
+    EXISTS(
+       SELECT * FROM _prov_domain_contact_update_failed
+    )
+);
+
+WITH pdc AS (
+    SELECT pdc.*,ps.name AS status_name
+    FROM provision_domain_contact_update pdc
+             JOIN provision_status ps ON ps.id = pdc.status_id
+    WHERE provision_contact_update_id = (SELECT id FROM _prov_contact_update)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_domain_contact_update_pending FROM pdc;
+
+SELECT ok(
+    EXISTS(
+        SELECT * FROM _prov_domain_contact_update_pending
+    )
+);
+
+WITH job_id AS (
+    SELECT job_id FROM _prov_domain_contact_update_pending
+)
+SELECT * INTO TEMP _pdc_job_id FROM job_id;
+
+-- job should not be null
+SELECT ok((SELECT job_id FROM _pdc_job_id) IS NOT NULL,'job_id is not null');
+
+SELECT cmp_ok(
+   (SELECT job_status_name FROM v_job WHERE job_id = (SELECT job_id FROM _pdc_job_id)),
+   '=',
+   'submitted'
+);
+
+-- mark child job as complete
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE id = (SELECT job_id FROM _pdc_job_id)
+$$);
+
+
+-- parent job is complete
+SELECT cmp_ok(
+   (SELECT job_status_name FROM v_job WHERE job_id = (SELECT job_id FROM _pc_job_id)),
+   '=',
+   'completed'
+);
+
+
+-- create a contact json to be used with the tests
+CREATE TEMP TABLE _expected_updated_expected_duplicated_contact_js ON COMMIT DROP AS SELECT
+     ('{
+        "tenant_customer_id":   "' || (SELECT id FROM v_tenant_customer LIMIT 1) || '",
+        "contact_type":         "individual",
+        "title":                null,
+        "org_reg":              null,
+        "org_vat":              null,
+        "org_duns":             null,
+        "email":                "new.email@some.domain",
+        "phone":                null,
+        "fax":                  null,
+        "country":              "US",
+        "language":             null,      
+        "tags":                 null,
+        "documentation":        null,
+        "contact_postals": [
+            {
+                "city": "Copenhagen",
+                "state": null,
+                "address1": "New Alley 42",
+                "address2": null,
+                "address3": null,
+                "org_name": null,
+                "last_name": null,
+                "first_name": null,
+                "postal_code": null,
+                "is_international": true
+            }
+        ],
+        "identity_card_number": "IDC123123123",
+        "birth_date":           "1969-05-05",
+        "birth_country":        "DE",
+        "tld_de_type":          ".de-type"
+    }')::JSONB AS value;
+
+-- compare the created contact against jsonb_get_contact_by_id()
+SELECT cmp_ok(
+   (SELECT jsonb_get_contact_by_id((SELECT id FROM _contact))),
+   '@>',
+   (SELECT  value FROM _expected_updated_expected_duplicated_contact_js),
+   'compare the updated contact via jsonb_get_contact_by_id() against the expected contact json');
+
+
+SELECT cmp_ok(
+    (SELECT contact_id FROM domain_contact WHERE domain_id = (SELECT id FROM _domain_2)),
+    '=',
+    (SELECT id FROM _contact),
+    'compare domain contact id with updated contact id');
+
+SELECT cmp_ok(
+    (SELECT contact_id FROM domain_contact WHERE domain_id = (SELECT id FROM _domain_1)),
+    '!=',
+    (SELECT id FROM _contact),
+    'compare domain contact id with updated contact id');
+
+SELECT cmp_ok(
+   (SELECT jsonb_get_contact_by_id((SELECT contact_id FROM domain_contact WHERE domain_id = (SELECT id FROM _domain_1)))),
+   '@>',
+   (SELECT  value FROM _expected_duplicated_contact_js),
+   'compare the duplicated domain contact via jsonb_get_contact_by_id() against the expected contact json');
+
+
+SELECT cmp_ok(
+   (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+   '=',
+   'successful'
+);
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

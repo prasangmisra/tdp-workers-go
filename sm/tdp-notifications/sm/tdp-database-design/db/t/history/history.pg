@@ -1,0 +1,146 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+SELECT has_schema('history');
+
+-- functions
+WITH functions AS ( 
+    SELECT function_name FROM (
+        VALUES
+        ('irreversibly_delete_data')
+    ) AS f (function_name)
+)SELECT has_function(function_name) FROM FUNCTIONS;
+
+-- tables 
+WITH tables AS ( 
+    SELECT table_name FROM (
+        VALUES
+		('domain'),
+        ('contact'),
+		('contact_postal'),
+		('contact_attribute'),
+		('secdns_key_data'),
+		('secdns_ds_data'),
+		('domain_secdns'),
+		('host'),
+		('host_addr'),
+        ('domain_contact'),
+        ('domain_host')
+	) AS f (table_name)
+)SELECT has_table(table_name) FROM tables;
+
+-- columns 
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'contact' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'contact' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'contact_postal' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'contact_postal' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'contact_attribute' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'contact_attribute' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'secdns_key_data' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'secdns_key_data' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'secdns_ds_data' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'secdns_ds_data' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain_secdns' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain_secdns' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'host' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'host' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'host_addr' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'host_addr' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain_host' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain_host' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+WITH columns AS (
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain_contact' AND table_schema = 'public'
+    EXCEPT
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'domain_contact' AND table_schema = 'history'
+    ),p AS (
+        SELECT column_name
+        FROM columns
+        WHERE column_name NOT IN ('created_by', 'updated_date', 'deleted_by','updated_by', 'created_date','deleted_date')
+    ) SELECT ok((SELECT count(p.column_name) = 0 FROM p),'IS TRUE!');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

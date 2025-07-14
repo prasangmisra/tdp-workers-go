@@ -1,0 +1,226 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+CREATE SEQUENCE IF NOT EXISTS hosting_counter;
+CREATE OR REPLACE FUNCTION new_provision_hosting_delete(_hosting_status_id UUID, _status TEXT) RETURNS provision_hosting_delete AS $$
+DECLARE
+    _provision_hosting_delete   provision_hosting_delete;
+    _hosting_id                 UUID;
+    _hosting_client_id          UUID;
+    _tenant_customer_id         UUID;
+BEGIN
+    SELECT id FROM v_tenant_customer LIMIT 1 into _tenant_customer_id;
+    INSERT INTO hosting_client(
+            tenant_customer_id,
+            email
+        ) VALUES(
+            _tenant_customer_id,
+            FORMAT('test%s@email.com', NEXTVAL('hosting_counter'))
+        ) RETURNING id INTO _hosting_client_id;
+
+    INSERT INTO hosting(
+            tenant_customer_id,
+            client_id,
+            domain_name,
+            product_id,
+            region_id,
+            hosting_status_id,
+            status
+        ) VALUES(
+            _tenant_customer_id,
+            _hosting_client_id,
+            FORMAT('test%s.link', NEXTVAL('hosting_counter')),
+            tc_id_from_name('hosting_product','Wordpress'),
+            tc_id_from_name('hosting_region', 'US East (N. Virginia)'),
+            _hosting_status_id,
+            _status
+        ) RETURNING id INTO _hosting_id;
+
+    INSERT INTO provision_hosting_delete(
+            tenant_customer_id,
+            hosting_id,
+            hosting_status_id,
+            status
+        ) VALUES(
+            _tenant_customer_id,
+            _hosting_id,
+            _hosting_status_id,
+            _status
+        ) RETURNING * INTO _provision_hosting_delete;
+    RETURN(_provision_hosting_delete);
+
+END;
+$$ LANGUAGE plpgsql;
+
+-------------------------------- provision_hosting_delete backward compatibility of status and hosting_status_id ------------------------------
+
+-- INSERT - only status provided
+SELECT * INTO TEMP _h_status FROM new_provision_hosting_delete(NULL, 'Cancelled');
+
+-- TEST 1
+-- status must be 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 2
+-- hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- UPDATE - only status provided
+UPDATE provision_hosting_delete SET status = 'Requested' WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 3
+-- status must be 'Requested'
+SELECT cmp_ok(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Requested'
+);
+
+-- TEST 4
+-- hosting_status_id must be an id of 'Requested' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Requested')
+);
+
+
+-- both status and hosting_status_id provided
+UPDATE provision_hosting_delete SET status = 'Failed', hosting_status_id =  tc_id_from_name('hosting_status', 'Failed') WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 5
+-- status must be 'Failed'
+SELECT cmp_ok(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Failed'
+);
+
+-- TEST 6
+-- hosting_status_id must be an id of 'Failed' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Failed')
+);
+
+-- UPDATE - status set to NULL
+UPDATE provision_hosting_delete SET status = NULL WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 7
+-- status must be NULL
+SELECT is(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- TEST 8
+-- hosting_status_id must be NULL
+SELECT is(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- UPDATE - only hosting_status_id provided
+UPDATE provision_hosting_delete SET hosting_status_id = tc_id_from_name('hosting_status', 'Requested') WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 9
+-- status must be 'Requested'
+SELECT cmp_ok(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Requested'
+);
+
+-- TEST 10
+-- hosting_status_id must be an id of 'Requested' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Requested')
+);
+
+-- UPDATE - hosting_status_id set to NULL
+UPDATE provision_hosting_delete SET hosting_status_id = NULL WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 11
+-- status must be NULL
+SELECT is(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- TEST 12
+-- hosting_status_id must be NULL
+SELECT is(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- INSERT - only hosting_status_id provided
+SELECT * INTO TEMP _h_status_id FROM new_provision_hosting_delete(tc_id_from_name('hosting_status', 'Cancelled'), NULL);
+
+-- TEST 13
+-- status must be 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status_id)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 14
+-- hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_status_id)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- INSERT - both status and hosting_status_id provided
+SELECT * INTO TEMP _h_both FROM new_provision_hosting_delete(tc_id_from_name('hosting_status', 'Cancelled'), 'Failed');
+
+-- TEST 15
+-- status must be 'Failed'
+SELECT cmp_ok(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_both)),
+    '=',
+    'Failed'
+);
+
+-- TEST 16
+-- hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_both)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- INSERT - both status and hosting_status_id are NULL
+SELECT * INTO TEMP _h_null FROM new_provision_hosting_delete(NULL, NULL);
+
+-- TEST 17
+-- status must be NULL
+SELECT is(
+    (SELECT status FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+-- TEST 18
+-- hosting_status_id must be NULL
+SELECT is(
+    (SELECT hosting_status_id FROM provision_hosting_delete WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+select * from finish(true);
+
+ROLLBACK;

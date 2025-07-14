@@ -1,0 +1,24 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Locally" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="tdp-notifications" />
+    <working_directory value="$PROJECT_DIR$" />
+    <envs>
+      <env name="ENV" value="development" />
+      <env name="RMQ_HOSTNAME" value="localhost" />
+      <env name="RMQ_PORT" value="5672" />
+      <env name="TLS_ENABLED" value="false" />
+      <env name="TLS_SKIP_VERIFY" value="false" />
+      <env name="LOG_OUTPUT_SINK" value="stderr" />
+      <env name="VALIDATOR_HTTPSURL" value="false" />
+      <env name="VALIDATOR_URLREACHABILITY" value="false" />
+    </envs>
+    <kind value="PACKAGE" />
+    <package value="github.com/tucowsinc/tdp-notifications/api-service/cmd" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/api-service/cmd/main.go" />
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Down" run_configuration_type="MAKEFILE_TARGET_RUN_CONFIGURATION" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="RMQ Up" run_configuration_type="MAKEFILE_TARGET_RUN_CONFIGURATION" />
+    </method>
+  </configuration>
+</component>

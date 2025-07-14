@@ -1,0 +1,52 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_host');
+SELECT has_table('order_host_addr');
+SELECT has_table('order_item_create_host');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+-- create a host entry for testing
+WITH test_host AS (
+    INSERT INTO host(
+        tenant_customer_id,
+        name
+    ) VALUES (
+        (SELECT id FROM _tenant_customer),
+        FORMAT('ns1.tdp-test-%s.help', EXTRACT(epoch from NOW())::INT)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _host FROM test_host;
+
+-- create a host json to be used with the tests
+CREATE TEMP TABLE _host_js ON COMMIT DROP AS SELECT
+    ('{
+        "tenant_customer_id":   "' || (SELECT tenant_customer_id FROM _host ) || '",
+        "customer_user_id":     "' || (SELECT tc_id_from_name('v_customer_user','John Doe Squarespace')) || '",          
+		"name": "' || (SELECT name FROM _host) || '",		
+        "order_host_addrs": [
+            {
+                "address": "2001:1338::2"              
+            },
+            {
+               "address": "2001:1338::3" 
+            }
+        ]      
+    }')::JSONB AS value;
+
+-- check if host can be created
+SELECT throws_matching($$
+    SELECT create_host_order_from_jsonb((SELECT value FROM _host_js));
+    $$,
+'already exists',
+'check if host can be created');
+
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

@@ -1,0 +1,236 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- create a host parent domain entry for testing
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM v_tenant_customer limit 1)
+  AND is_default;
+
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        FORMAT('host-parent-domain-%s-1.help',EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _host_parent_domain FROM test_domain;
+
+-- IPv6 support is disabled
+UPDATE v_attribute
+    SET value=false
+WHERE tld_name='help' 
+    AND key='tld.dns.ipv6_support' 
+    AND tenant_id=(SELECT tenant_id FROM v_tenant_customer LIMIT 1);
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='update')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+-- create a contact (personal)
+WITH oc AS (
+    INSERT INTO order_contact (
+        order_id,
+        type_id,
+        email,
+        phone,
+        fax,
+        country,
+        tenant_customer_id
+    )
+    VALUES( 
+        (SELECT id FROM _order),
+        tc_id_from_name('contact_type','individual'),
+        'person@test.example', 
+        '+555.5555551212',
+        '+555.5555551213',
+        'US',
+        (SELECT id FROM v_tenant_customer LIMIT 1)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_contact FROM oc;
+
+
+-- postal data as well
+WITH cp AS (
+    INSERT INTO order_contact_postal
+    (
+        contact_id,
+        is_international,
+        first_name,
+        last_name,
+        address1,
+        city,
+        postal_code,
+        state 
+    )
+    VALUES(
+        (SELECT id FROM _order_contact),
+        TRUE,
+        'John',
+        'Smith',
+        '555 Adress line',
+        'Los Angeles',
+        '90210',
+        'California'
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_contact_postal FROM cp;
+
+
+-- create a host
+WITH oh AS (
+    INSERT INTO order_host (
+        "name",
+         tenant_customer_id        
+    )
+    VALUES(    
+       'ns1.' || (SELECT name FROM _host_parent_domain),
+       (SELECT id FROM v_tenant_customer LIMIT 1)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order_host FROM oh;
+
+-- add the host address 
+SELECT lives_ok($$
+    INSERT INTO order_host_addr(
+        host_id,
+        address
+    )
+    (
+           SELECT 
+             (SELECT id FROM _order_host),
+             a.addr 
+        FROM ( SELECT addr FROM (
+                        VALUES
+                            ('3001:124:85a3::8a2e:370:7340'::INET),
+                            ('3001:124:85a3::8a2e:370:7341'::INET)
+                        ) AS t (addr)
+            )a
+    )
+$$,'insert record in order_host_addr');
+
+
+-- now we add the order item (order_item_update_domain)
+WITH ud AS (
+    INSERT INTO order_item_update_domain(
+        order_id,
+        name
+    ) VALUES (
+        (SELECT id FROM _order),
+        (SELECT name FROM _host_parent_domain)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _oi_update_domain FROM ud;
+
+-- add the contacts
+SELECT lives_ok($$
+    INSERT INTO update_domain_contact(
+        update_domain_id,
+        domain_contact_type_id,
+        order_contact_id
+    )
+    (
+        SELECT
+            ud.id,
+            dct.id AS domain_contact_type_id,
+            oc.id AS order_contact_id
+        FROM _oi_update_domain ud
+            JOIN domain_contact_type dct ON TRUE
+            JOIN _order_contact oc ON TRUE
+    );
+$$,'insert record in update_domain_contact');
+
+-- add the domain nameservers 
+SELECT lives_ok($$
+    INSERT INTO update_domain_add_nameserver(
+        update_domain_id,        
+        host_id
+    )
+    VALUES(
+        (SELECT id FROM _oi_update_domain),
+        (SELECT id FROM _order_host)
+    );
+$$,'insert record in update_domain_add_nameserver');
+
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- let's update the validate_host_available job and corresponding order item plan to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE order_item_plan
+    SET validation_status_id = tc_id_from_name('order_item_plan_validation_status','completed')
+    WHERE id = ( 
+        SELECT vj.reference_id
+        FROM v_job vj 
+        JOIN update_domain_plan udp ON udp.id = vj.reference_id
+        WHERE udp.order_item_id = (SELECT id FROM _oi_update_domain)
+            AND vj.job_type_name = 'validate_host_available'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = ( 
+        SELECT job_id
+        FROM v_job vj 
+        JOIN update_domain_plan udp ON udp.id = vj.reference_id
+        WHERE udp.order_item_id = (SELECT id FROM _oi_update_domain)
+            AND vj.job_type_name = 'validate_host_available'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+
+-- let's update the validate_domain_available job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = ( 
+        SELECT job_id
+        FROM v_job vj 
+        JOIN update_domain_plan udp ON udp.id = vj.reference_id
+        WHERE udp.order_item_id = (SELECT id FROM _oi_update_domain)
+            AND vj.job_type_name = 'validate_domain_available'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+-- order must be failed
+SELECT cmp_ok( 
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'failed'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+-- COMMIT;
+ROLLBACK;

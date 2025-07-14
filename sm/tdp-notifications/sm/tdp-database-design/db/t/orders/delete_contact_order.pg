@@ -1,0 +1,246 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_delete_contact');
+SELECT has_table('delete_contact_plan');
+SELECT has_table('provision_contact_delete');
+
+
+-- create a contact with two contact_postal entries and some tld specific attributes
+WITH basic_contact AS (
+    INSERT INTO contact(
+                        type_id,
+                        title,
+                        org_reg,
+                        org_vat,
+                        org_duns,
+                        tenant_customer_id,
+                        email,
+                        phone,
+                        fax,
+                        country,
+                        language,                        
+                        tags,
+                        documentation
+        )
+        VALUES(
+                  tc_id_from_name('contact_type','individual'),
+                  'CFO',
+                  'reg987654321',
+                  'vat123456789',
+                  'duns147258369',
+                  (SELECT id FROM v_tenant_customer LIMIT 1),
+                  'tomas.oesterbro@some.domain',
+                  '+1.234567890',
+                  '+1.234567899',
+                  'DK',
+                  'en',                  
+                  '{"tag-1","tag-2"}',
+                  '{"doc-A", "doc-B"}'
+              ) RETURNING *
+)
+SELECT * INTO TEMP _contact FROM basic_contact;
+
+INSERT INTO contact_postal(
+    contact_id,
+    is_international,
+    first_name,
+    last_name,
+    org_name,
+    address1,
+    address2,
+    address3,
+    city,
+    postal_code,
+    state
+)
+VALUES(
+          (SELECT id FROM _contact),
+          FALSE,
+          'Tómas',
+          'Østerbro',
+          'Some-Company',
+          'Rosenvængets Allé 42',
+          NULL,
+          NULL,
+          'København',
+          '1234',
+          NULL
+      ),(
+          (SELECT id FROM _contact),
+          TRUE,
+          'Tomas',
+          'Oesterbro',
+          'Some-Company',
+          'Rosenvaengets Alley 42',
+          NULL,
+          NULL,
+          'Copenhagen',
+          '1234',
+          NULL
+      );
+
+INSERT INTO contact_attribute(
+    attribute_id,
+    contact_id,
+    value
+)
+VALUES(
+          tc_id_from_name('attribute','birth_country'),
+          (SELECT id FROM _contact),
+          'DK'
+      ),(
+          tc_id_from_name('attribute','birth_date'),
+          (SELECT id FROM _contact),
+          '1961-02-05'
+      ),(
+
+          tc_id_from_name('attribute','identity_card_number'),
+          (SELECT id FROM _contact),
+          'IDC123123123'
+      ),(
+          tc_id_from_name('attribute','tld_de_type'),
+          (SELECT id FROM _contact),
+          '.de-type'
+      );
+
+insert into provision_contact(contact_id,accreditation_id,tenant_customer_id,handle)
+values ((SELECT id FROM _contact),(SELECT id FROM accreditation LIMIT 1),(SELECT id FROM v_tenant_customer LIMIT 1),'test1');
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+                        tenant_customer_id,
+                        type_id
+        )
+        VALUES(
+                  (SELECT id FROM v_tenant_customer LIMIT 1),
+                  (SELECT id FROM v_order_type WHERE product_name='contact' AND name='delete')
+              ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+WITH dc AS (
+    INSERT INTO order_item_delete_contact (
+               order_id,
+               contact_id
+        )
+        VALUES ((SELECT id FROM _order),
+                (SELECT id FROM _contact))
+           returning *
+)
+SELECT * INTO TEMP _oi_delete_contact FROM dc;
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+SELECT cmp_ok(
+       (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+       '=',
+       'processing'
+   );
+
+-- let's grab that provision_contact_delete entry
+WITH pc AS (
+    SELECT pc.*,ps.name AS status_name
+    FROM ONLY provision_contact_delete pc
+             JOIN provision_status ps ON ps.id = pc.status_id
+    WHERE (
+              SELECT id FROM f_order_item_plan((SELECT id FROM _oi_delete_contact))
+              WHERE object_name='contact'
+          ) = ANY(order_item_plan_ids)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_contact_delete FROM pc;
+
+-- there should be a contact entry in provision_contact that is pending to be provisioned
+SELECT ok(
+       EXISTS(
+           SELECT * FROM _prov_contact_delete
+       )
+);
+
+
+WITH job_id AS (
+    SELECT job_id FROM _prov_contact_delete
+)
+SELECT * INTO TEMP _pc_job_id FROM job_id;
+
+-- job should not be null
+SELECT ok((SELECT job_id FROM _pc_job_id) IS NOT NULL,'job_id is not null');
+
+SELECT cmp_ok(
+   (SELECT job_status_name FROM v_job WHERE job_id = (SELECT job_id FROM _pc_job_id)),
+   '=',
+   'created'
+);
+
+WITH pdc AS (
+    SELECT pdc.*,ps.name AS status_name
+    FROM provision_contact_delete pdc
+             JOIN provision_status ps ON ps.id = pdc.status_id
+    WHERE parent_id = (SELECT id FROM _prov_contact_delete)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_domain_contact_delete_pending FROM pdc;
+
+SELECT ok(
+       EXISTS(
+           SELECT * FROM _prov_domain_contact_delete_pending
+       )
+);
+
+WITH job_id AS (
+    SELECT job_id FROM _prov_domain_contact_delete_pending
+)
+SELECT * INTO TEMP _pdc_job_id FROM job_id;
+
+-- job should not be null
+SELECT ok((SELECT job_id FROM _pdc_job_id) IS NOT NULL,'job_id is not null');
+
+SELECT cmp_ok(
+       (SELECT job_status_name FROM v_job WHERE job_id = (SELECT job_id FROM _pdc_job_id)),
+       '=',
+       'submitted'
+   );
+
+
+
+
+-- mark child job as complete
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE id = (SELECT job_id FROM _pdc_job_id)
+$$);
+
+
+-- parent job is complete
+SELECT cmp_ok(
+   (SELECT job_status_name FROM v_job WHERE job_id = (SELECT job_id FROM _pc_job_id)),
+   '=',
+   'completed'
+);
+
+
+SELECT isnt((SELECT deleted_date FROM only contact WHERE id=(SELECT id FROM _contact)),NULL);
+SELECT isnt((SELECT deleted_date FROM only contact_postal WHERE contact_id=(SELECT id FROM _contact) LIMIT 1),NULL);
+SELECT isnt((SELECT deleted_date FROM only contact_attribute WHERE contact_id=(SELECT id FROM _contact) LIMIT 1),NULL);
+
+
+SELECT cmp_ok(
+   (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+   '=',
+   'successful'
+);
+
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

@@ -1,0 +1,253 @@
+digraph g {
+node [ fontsize = "10", shape = record ];
+edge [];
+
+"class.audit" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\l}" ];
+
+"class.audit_trail" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\l}" ];
+
+"class.epp_setting" [shape = record, label = "{<col0> \N| host:  text\lport:  integer\lconn_min:  integer\lconn_max:  integer\l}" ];
+
+"class.provision" [shape = record, label = "{<col0> \N| id:  uuid\laccreditation_id:  uuid\ltenant_customer_id:  uuid\lprovisioned_date:  timestamp with time zone\lstatus_id:  uuid\lroid:  text\ljob_id:  uuid\lorder_item_plan_ids:  uuid[]\lresult_message:  text\lresult_data:  jsonb\l}" ];
+
+"class.soft_delete" [shape = record, label = "{<col0> \N| deleted_date:  timestamp with time zone\ldeleted_by:  text\l}" ];
+
+"cron.job" [shape = record, label = "{<col0> \N| jobid:  bigint\lschedule:  text\lcommand:  text\lnodename:  text\lnodeport:  integer\ldatabase:  text\lusername:  text\lactive:  boolean\ljobname:  name\l}" ];
+
+"cron.job_run_details" [shape = record, label = "{<col0> \N| jobid:  bigint\lrunid:  bigint\ljob_pid:  integer\ldatabase:  text\lusername:  text\lcommand:  text\lstatus:  text\lreturn_message:  text\lstart_time:  timestamp with time zone\lend_time:  timestamp with time zone\l}" ];
+
+"public.accreditation" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lname:  text\ltenant_id:  uuid\lprovider_instance_id:  uuid\lservice_range:  tstzrange\l}" ];
+
+"public.accreditation_epp" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lhost:  text\lport:  integer\lconn_min:  integer\lconn_max:  integer\lid:  uuid\laccreditation_id:  uuid\lcert_id:  uuid\lclid:  text\lpw:  text\l}" ];
+
+"public.accreditation_tld" [shape = record, label = "{<col0> \N| id:  uuid\laccreditation_id:  uuid\lprovider_instance_tld_id:  uuid\lis_default:  boolean\l}" ];
+
+"public.audit_trail_log_202212" [shape = record, label = "{<col0> \N| id:  bigint\ltable_name:  text\loperation:  text\lobject_id:  uuid\lold_value:  hstore\lnew_value:  hstore\lstatement_date:  timestamp with time zone\lcreated_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\l}" ];
+
+"public.audit_trail_log_202301" [shape = record, label = "{<col0> \N| id:  bigint\ltable_name:  text\loperation:  text\lobject_id:  uuid\lold_value:  hstore\lnew_value:  hstore\lstatement_date:  timestamp with time zone\lcreated_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\l}" ];
+
+"public.business_entity" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.certificate_authority" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lname:  text\ldescr:  text\lcert:  text\lservice_range:  tstzrange\l}" ];
+
+"public.contact" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\ltenant_customer_id:  uuid\lemail:  text\lvoice:  text\lfax:  text\l}" ];
+
+"public.contact_postal" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lcontact_id:  uuid\lis_ascii:  boolean\lfirst_name:  text\llast_name:  text\lis_org:  boolean\lorg_name:  text\lorg_reg:  text\lorg_vat:  text\lorg_duns:  text\laddress1:  text\laddress2:  text\laddress3:  text\lcity:  text\lpc:  text\lsp:  text\lcc:  text\l}" ];
+
+"public.country" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\lalpha2:  text\lalpha3:  text\lcalling_code:  text\l}" ];
+
+"public.create_domain_contact" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lcreate_domain_id:  uuid\ldomain_contact_type_id:  uuid\lorder_contact_id:  uuid\l}" ];
+
+"public.create_domain_nameserver" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lcreate_domain_id:  uuid\lname:  fqdn\l}" ];
+
+"public.create_domain_nameserver_addr" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lnameserver_id:  uuid\laddr:  inet\l}" ];
+
+"public.create_domain_plan" [shape = record, label = "{<col0> \N| id:  uuid\lorder_item_id:  uuid\lparent_id:  uuid\lstatus_id:  uuid\lorder_item_object_id:  uuid\lreference_id:  uuid\lresult_message:  text\lresult_data:  jsonb\lcreated_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\l}" ];
+
+"public.customer" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\lbusiness_entity_id:  uuid\lparent_customer_id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.customer_user" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\lcustomer_id:  uuid\luser_id:  uuid\l}" ];
+
+"public.domain" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\ltenant_customer_id:  uuid\laccreditation_tld_id:  uuid\lname:  text\lauth_info:  text\lroid:  text\lry_created_date:  timestamp with time zone\lry_expiry_date:  timestamp with time zone\lry_updated_date:  timestamp with time zone\lry_transfered_date:  timestamp with time zone\lexpiry_date:  timestamp with time zone\l}" ];
+
+"public.domain_contact" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\ldomain_id:  uuid\lcontact_id:  uuid\ldomain_contact_type_id:  uuid\lis_local_presence:  boolean\lis_privacy_proxy:  boolean\l}" ];
+
+"public.domain_contact_type" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.domain_host" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\ldomain_id:  uuid\lhost_id:  uuid\l}" ];
+
+"public.epp_extension" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lname:  text\ldecr:  text\ldoc_url:  text\lis_implemented:  boolean\l}" ];
+
+"public.error_category" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.error_dictionary" [shape = record, label = "{<col0> \N| id:  integer\lcategory_id:  uuid\lmessage:  text\lcolumns_affected:  text[]\l}" ];
+
+"public.host" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\ltenant_customer_id:  uuid\lname:  text\ldomain_id:  uuid\l}" ];
+
+"public.host_addr" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lhost_id:  uuid\laddress:  inet\l}" ];
+
+"public.job" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\ltenant_customer_id:  uuid\ltype_id:  uuid\lstatus_id:  uuid\lstart_date:  timestamp with time zone\lend_date:  timestamp with time zone\lretry_date:  timestamp with time zone\lretry_count:  integer\lreference_id:  uuid\ldata:  jsonb\lresult_msg:  text\lresult_data:  jsonb\levent_id:  text\l}" ];
+
+"public.job_status" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\lis_final:  boolean\lis_success:  boolean\l}" ];
+
+"public.job_type" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\lreference_table:  text\lreference_status_table:  text\lreference_status_column:  text\lrouting_key:  text\l}" ];
+
+"public.migration" [shape = record, label = "{<col0> \N| version:  text\lname:  text\lapplied_date:  timestamp with time zone\l}" ];
+
+"public.order" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\ltenant_customer_id:  uuid\ltype_id:  uuid\lcustomer_user_id:  uuid\lstatus_id:  uuid\lpath_id:  uuid\l}" ];
+
+"public.order_contact" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\ltenant_customer_id:  uuid\lemail:  text\lvoice:  text\lfax:  text\lorder_id:  uuid\l}" ];
+
+"public.order_contact_postal" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lcontact_id:  uuid\lis_ascii:  boolean\lfirst_name:  text\llast_name:  text\lis_org:  boolean\lorg_name:  text\lorg_reg:  text\lorg_vat:  text\lorg_duns:  text\laddress1:  text\laddress2:  text\laddress3:  text\lcity:  text\lpc:  text\lsp:  text\lcc:  text\l}" ];
+
+"public.order_item" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lorder_id:  uuid\lstatus_id:  uuid\l}" ];
+
+"public.order_item_create_domain" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lorder_id:  uuid\lstatus_id:  uuid\lname:  fqdn\lregistration_period:  integer\laccreditation_tld_id:  uuid\l}" ];
+
+"public.order_item_object" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.order_item_plan" [shape = record, label = "{<col0> \N| id:  uuid\lorder_item_id:  uuid\lparent_id:  uuid\lstatus_id:  uuid\lorder_item_object_id:  uuid\lreference_id:  uuid\lresult_message:  text\lresult_data:  jsonb\l}" ];
+
+"public.order_item_plan_status" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lname:  text\ldescr:  text\lis_success:  boolean\lis_final:  boolean\l}" ];
+
+"public.order_item_renew_domain" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lorder_id:  uuid\lstatus_id:  uuid\lname:  fqdn\lperiod:  integer\laccreditation_tld_id:  uuid\lcurrent_expiry_date:  timestamp with time zone\l}" ];
+
+"public.order_item_status" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\lis_final:  boolean\lis_success:  boolean\l}" ];
+
+"public.order_item_strategy" [shape = record, label = "{<col0> \N| id:  uuid\lorder_type_id:  uuid\lprovider_instance_id:  uuid\lobject_id:  uuid\lprovision_order:  integer\l}" ];
+
+"public.order_status" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\lis_final:  boolean\lis_success:  boolean\l}" ];
+
+"public.order_status_path" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.order_status_transition" [shape = record, label = "{<col0> \N| id:  uuid\lpath_id:  uuid\lfrom_id:  uuid\lto_id:  uuid\l}" ];
+
+"public.order_type" [shape = record, label = "{<col0> \N| id:  uuid\lproduct_id:  uuid\lname:  text\l}" ];
+
+"public.product" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\l}" ];
+
+"public.provider" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lbusiness_entity_id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.provider_instance" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lprovider_id:  uuid\lname:  text\ldescr:  text\lis_proxy:  boolean\l}" ];
+
+"public.provider_instance_epp" [shape = record, label = "{<col0> \N| host:  text\lport:  integer\lconn_min:  integer\lconn_max:  integer\lid:  uuid\lprovider_instance_id:  uuid\l}" ];
+
+"public.provider_instance_epp_ext" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lprovider_instance_epp_id:  uuid\lepp_extension_id:  uuid\l}" ];
+
+"public.provider_instance_http" [shape = record, label = "{<col0> \N| id:  uuid\lprovider_instance_id:  uuid\lurl:  text\lapi_key:  text\l}" ];
+
+"public.provider_instance_tld" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lprovider_instance_id:  uuid\ltld_id:  uuid\lservice_range:  tstzrange\l}" ];
+
+"public.provider_protocol" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lprovider_id:  uuid\lsupported_protocol_id:  uuid\lis_enabled:  boolean\l}" ];
+
+"public.provision_contact" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\laccreditation_id:  uuid\ltenant_customer_id:  uuid\lprovisioned_date:  timestamp with time zone\lstatus_id:  uuid\lroid:  text\ljob_id:  uuid\lorder_item_plan_ids:  uuid[]\lresult_message:  text\lresult_data:  jsonb\lcontact_id:  uuid\lhandle:  text\lpw:  text\l}" ];
+
+"public.provision_domain" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\laccreditation_id:  uuid\ltenant_customer_id:  uuid\lprovisioned_date:  timestamp with time zone\lstatus_id:  uuid\lroid:  text\ljob_id:  uuid\lorder_item_plan_ids:  uuid[]\lresult_message:  text\lresult_data:  jsonb\lname:  fqdn\lregistration_period:  integer\lpw:  text\lis_complete:  boolean\laccreditation_tld_id:  uuid\lry_created_date:  timestamp with time zone\lry_expiry_date:  timestamp with time zone\l}" ];
+
+"public.provision_domain_contact" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lprovision_domain_id:  uuid\lcontact_id:  uuid\lcontact_type_id:  uuid\l}" ];
+
+"public.provision_domain_host" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lprovision_domain_id:  uuid\lhost_id:  uuid\l}" ];
+
+"public.provision_domain_renew" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\laccreditation_id:  uuid\ltenant_customer_id:  uuid\lprovisioned_date:  timestamp with time zone\lstatus_id:  uuid\lroid:  text\ljob_id:  uuid\lorder_item_plan_ids:  uuid[]\lresult_message:  text\lresult_data:  jsonb\ldomain_id:  uuid\lperiod:  integer\lcurrent_expiry_date:  timestamp with time zone\lis_auto:  boolean\lry_expiry_date:  timestamp with time zone\l}" ];
+
+"public.provision_host" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\laccreditation_id:  uuid\ltenant_customer_id:  uuid\lprovisioned_date:  timestamp with time zone\lstatus_id:  uuid\lroid:  text\ljob_id:  uuid\lorder_item_plan_ids:  uuid[]\lresult_message:  text\lresult_data:  jsonb\lhost_id:  uuid\l}" ];
+
+"public.provision_status" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\lis_success:  boolean\lis_final:  boolean\l}" ];
+
+"public.registry" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lbusiness_entity_id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.renew_domain_plan" [shape = record, label = "{<col0> \N| id:  uuid\lorder_item_id:  uuid\lparent_id:  uuid\lstatus_id:  uuid\lorder_item_object_id:  uuid\lreference_id:  uuid\lresult_message:  text\lresult_data:  jsonb\lcreated_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\l}" ];
+
+"public.supported_protocol" [shape = record, label = "{<col0> \N| id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.tenant" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\lbusiness_entity_id:  uuid\lname:  text\ldescr:  text\l}" ];
+
+"public.tenant_cert" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lname:  text\lcert:  text\lkey:  text\lca_id:  uuid\lservice_range:  tstzrange\l}" ];
+
+"public.tenant_customer" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\ltenant_id:  uuid\lcustomer_id:  uuid\lcustomer_number:  text\l}" ];
+
+"public.tld" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\lid:  uuid\lregistry_id:  uuid\lparent_tld_id:  uuid\lname:  text\l}" ];
+
+"public.user" [shape = record, label = "{<col0> \N| created_date:  timestamp with time zone\lupdated_date:  timestamp with time zone\lcreated_by:  text\lupdated_by:  text\ldeleted_date:  timestamp with time zone\ldeleted_by:  text\lid:  uuid\lemail:  text\lname:  text\l}" ];
+
+
+"class.provision" -> "public.accreditation" [label="provision_accreditation_id_fkey"];
+"class.provision" -> "public.tenant_customer" [label="provision_tenant_customer_id_fkey"];
+"class.provision" -> "public.provision_status" [label="provision_status_id_fkey"];
+"class.provision" -> "public.job" [label="provision_job_id_fkey"];
+"public.accreditation" -> "public.tenant" [label="accreditation_tenant_id_fkey"];
+"public.accreditation" -> "public.provider_instance" [label="accreditation_provider_instance_id_fkey"];
+"public.accreditation_epp" -> "public.accreditation" [label="accreditation_epp_accreditation_id_fkey"];
+"public.accreditation_epp" -> "public.tenant_cert" [label="accreditation_epp_cert_id_fkey"];
+"public.accreditation_tld" -> "public.accreditation" [label="accreditation_tld_accreditation_id_fkey"];
+"public.accreditation_tld" -> "public.provider_instance_tld" [label="accreditation_tld_provider_instance_tld_id_fkey"];
+"public.contact" -> "public.tenant_customer" [label="contact_tenant_customer_id_fkey"];
+"public.contact_postal" -> "public.contact" [label="contact_postal_contact_id_fkey"];
+"public.contact_postal" -> "public.country" [label="contact_postal_cc_fkey"];
+"public.create_domain_contact" -> "public.order_item_create_domain" [label="create_domain_contact_create_domain_id_fkey"];
+"public.create_domain_contact" -> "public.domain_contact_type" [label="create_domain_contact_domain_contact_type_id_fkey"];
+"public.create_domain_contact" -> "public.order_contact" [label="create_domain_contact_order_contact_id_fkey"];
+"public.create_domain_nameserver" -> "public.order_item_create_domain" [label="create_domain_nameserver_create_domain_id_fkey"];
+"public.create_domain_nameserver_addr" -> "public.create_domain_nameserver" [label="create_domain_nameserver_addr_nameserver_id_fkey"];
+"public.create_domain_plan" -> "public.order_item_create_domain" [label="create_domain_plan_order_item_id_fkey"];
+"public.customer" -> "public.business_entity" [label="customer_business_entity_id_fkey"];
+"public.customer" -> "public.customer" [label="customer_parent_customer_id_fkey"];
+"public.customer_user" -> "public.customer" [label="customer_user_customer_id_fkey"];
+"public.customer_user" -> "public.user" [label="customer_user_user_id_fkey"];
+"public.domain" -> "public.tenant_customer" [label="domain_tenant_customer_id_fkey"];
+"public.domain" -> "public.accreditation_tld" [label="domain_accreditation_tld_id_fkey"];
+"public.domain_contact" -> "public.domain" [label="domain_contact_domain_id_fkey"];
+"public.domain_contact" -> "public.contact" [label="domain_contact_contact_id_fkey"];
+"public.domain_contact" -> "public.domain_contact_type" [label="domain_contact_domain_contact_type_id_fkey"];
+"public.domain_host" -> "public.domain" [label="domain_host_domain_id_fkey"];
+"public.domain_host" -> "public.host" [label="domain_host_host_id_fkey"];
+"public.error_dictionary" -> "public.error_category" [label="error_dictionary_category_id_fkey"];
+"public.host" -> "public.tenant_customer" [label="host_tenant_customer_id_fkey"];
+"public.host" -> "public.domain" [label="host_domain_id_fkey"];
+"public.host_addr" -> "public.host" [label="host_addr_host_id_fkey"];
+"public.job" -> "public.tenant_customer" [label="job_tenant_customer_id_fkey"];
+"public.job" -> "public.job_type" [label="job_type_id_fkey"];
+"public.job" -> "public.job_status" [label="job_status_id_fkey"];
+"public.order" -> "public.tenant_customer" [label="order_tenant_customer_id_fkey"];
+"public.order" -> "public.order_type" [label="order_type_id_fkey"];
+"public.order" -> "public.customer_user" [label="order_customer_user_id_fkey"];
+"public.order" -> "public.order_status" [label="order_status_id_fkey"];
+"public.order" -> "public.order_status_path" [label="order_path_id_fkey"];
+"public.order_contact" -> "public.order" [label="order_contact_order_id_fkey"];
+"public.order_contact_postal" -> "public.order_contact" [label="order_contact_postal_contact_id_fkey"];
+"public.order_item" -> "public.order" [label="order_item_order_id_fkey"];
+"public.order_item" -> "public.order_item_status" [label="order_item_status_id_fkey"];
+"public.order_item_create_domain" -> "public.order" [label="order_item_create_domain_order_id_fkey"];
+"public.order_item_create_domain" -> "public.order_item_status" [label="order_item_create_domain_status_id_fkey"];
+"public.order_item_create_domain" -> "public.accreditation_tld" [label="order_item_create_domain_accreditation_tld_id_fkey"];
+"public.order_item_plan" -> "public.order_item_plan" [label="order_item_plan_parent_id_fkey"];
+"public.order_item_plan" -> "public.order_item_plan_status" [label="order_item_plan_status_id_fkey"];
+"public.order_item_plan" -> "public.order_item_object" [label="order_item_plan_order_item_object_id_fkey"];
+"public.order_item_renew_domain" -> "public.order" [label="order_item_renew_domain_order_id_fkey"];
+"public.order_item_renew_domain" -> "public.order_item_status" [label="order_item_renew_domain_status_id_fkey"];
+"public.order_item_renew_domain" -> "public.accreditation_tld" [label="order_item_renew_domain_accreditation_tld_id_fkey"];
+"public.order_item_strategy" -> "public.order_type" [label="order_item_strategy_order_type_id_fkey"];
+"public.order_item_strategy" -> "public.provider_instance" [label="order_item_strategy_provider_instance_id_fkey"];
+"public.order_item_strategy" -> "public.order_item_object" [label="order_item_strategy_object_id_fkey"];
+"public.order_status_transition" -> "public.order_status_path" [label="order_status_transition_path_id_fkey"];
+"public.order_status_transition" -> "public.order_status" [label="order_status_transition_from_id_fkey"];
+"public.order_status_transition" -> "public.order_status" [label="order_status_transition_to_id_fkey"];
+"public.order_type" -> "public.product" [label="order_type_product_id_fkey"];
+"public.provider" -> "public.business_entity" [label="provider_business_entity_id_fkey"];
+"public.provider_instance" -> "public.provider" [label="provider_instance_provider_id_fkey"];
+"public.provider_instance_epp" -> "public.provider_instance" [label="provider_instance_epp_provider_instance_id_fkey"];
+"public.provider_instance_epp_ext" -> "public.provider_instance_epp" [label="provider_instance_epp_ext_provider_instance_epp_id_fkey"];
+"public.provider_instance_epp_ext" -> "public.epp_extension" [label="provider_instance_epp_ext_epp_extension_id_fkey"];
+"public.provider_instance_http" -> "public.provider_instance" [label="provider_instance_http_provider_instance_id_fkey"];
+"public.provider_instance_tld" -> "public.provider_instance" [label="provider_instance_tld_provider_instance_id_fkey"];
+"public.provider_instance_tld" -> "public.tld" [label="provider_instance_tld_tld_id_fkey"];
+"public.provider_protocol" -> "public.provider" [label="provider_protocol_provider_id_fkey"];
+"public.provider_protocol" -> "public.supported_protocol" [label="provider_protocol_supported_protocol_id_fkey"];
+"public.provision_contact" -> "public.tenant_customer" [label="provision_contact_tenant_customer_id_fkey"];
+"public.provision_contact" -> "public.provision_status" [label="status_id_fk"];
+"public.provision_contact" -> "public.contact" [label="provision_contact_contact_id_fkey"];
+"public.provision_domain" -> "public.tenant_customer" [label="provision_domain_tenant_customer_id_fkey"];
+"public.provision_domain" -> "public.provision_status" [label="status_id_fk"];
+"public.provision_domain" -> "public.accreditation_tld" [label="provision_domain_accreditation_tld_id_fkey"];
+"public.provision_domain_contact" -> "public.provision_domain" [label="provision_domain_contact_provision_domain_id_fkey"];
+"public.provision_domain_contact" -> "public.contact" [label="provision_domain_contact_contact_id_fkey"];
+"public.provision_domain_contact" -> "public.domain_contact_type" [label="provision_domain_contact_contact_type_id_fkey"];
+"public.provision_domain_host" -> "public.provision_domain" [label="provision_domain_host_provision_domain_id_fkey"];
+"public.provision_domain_host" -> "public.host" [label="provision_domain_host_host_id_fkey"];
+"public.provision_domain_renew" -> "public.tenant_customer" [label="provision_domain_renew_tenant_customer_id_fkey"];
+"public.provision_domain_renew" -> "public.provision_status" [label="status_id_fk"];
+"public.provision_domain_renew" -> "public.domain" [label="provision_domain_renew_domain_id_fkey"];
+"public.provision_host" -> "public.tenant_customer" [label="provision_host_tenant_customer_id_fkey"];
+"public.provision_host" -> "public.provision_status" [label="status_id_fk"];
+"public.provision_host" -> "public.host" [label="provision_host_host_id_fkey"];
+"public.registry" -> "public.business_entity" [label="registry_business_entity_id_fkey"];
+"public.renew_domain_plan" -> "public.order_item_renew_domain" [label="renew_domain_plan_order_item_id_fkey"];
+"public.tenant" -> "public.business_entity" [label="tenant_business_entity_id_fkey"];
+"public.tenant_cert" -> "public.certificate_authority" [label="tenant_cert_ca_id_fkey"];
+"public.tenant_customer" -> "public.tenant" [label="tenant_customer_tenant_id_fkey"];
+"public.tenant_customer" -> "public.customer" [label="tenant_customer_customer_id_fkey"];
+"public.tld" -> "public.registry" [label="tld_registry_id_fkey"];
+"public.tld" -> "public.tld" [label="tld_parent_tld_id_fkey"];
+}
+
+

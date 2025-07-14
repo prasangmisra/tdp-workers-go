@@ -1,0 +1,141 @@
+## Functions
+
+### addCostEntry
+Adds a new cost entry to the database.
+
+### updateCostEntry
+Updates an existing cost entry in the database.
+
+### deleteCostEntry
+Deletes a cost entry from the database.
+
+### retrieveCostEntries
+Retrieves all cost entries from the database.
+
+### calculateTotalCosts
+Calculates the total costs from all cost entries.
+# Cost Module
+
+## Overview
+The Cost Module is responsible for managing and calculating costs associated with various operations within the system. It provides functionalities to add, update, delete, and retrieve cost-related data.
+
+## Features
+- Add new cost entries
+- Update existing cost entries
+- Delete cost entries
+- Retrieve cost entries
+- Calculate total costs
+
+--------------------------- 
+## HOW TO SEED cost data 
+
+When new TLD added; 
+    - registry_fee through the approval process added to domain_cost_component;  
+    - promo registry_fee through the approval process added to domain_cost_component;  
+    - tax_fee added to domain_cost_component when it is not 0; 
+    - manual_processing_fee if applicable added to domain_cost_component;
+
+
+## HOW TO UPDATE cost data 
+
+1. update of values like icann_fee , bank_fee, intercomapny_fee in finance_settings thus we need to update all the  icann_fee , bank_fee, intercomapny_fee in domain_cost_component and get the updated from mat view;  
+
+2. validity ended or new registry_fees got approved 
+
+
+
+## HOW TO CALCULATE cost data 
+
+1. total_cost is calculated per order_type & accreditation_tld
+
+total_cost can include the following components:
+    - icann fee - fee by ICANN that is fixed amount of cents per transaction/year ; now 0.18 USD; value is stored in finance_settings with validity;  
+    icann_fee = 0 when tld is country_code ( two letters) OR 
+                  when TLD has parent tld ( .mail.com - parent tld of .com )   
+
+    - bank fee - fee that covers conversion from tenant currency to registry currency;  usually 2% of registry_fee; value is stored in finance_settings with validity; 
+        OpenSRS & ENOM: For all costs not in USD, add a 2% ‘bank fee’ on top of the base fee to cover the difference between the market exchange rate and the rate we receiving from our bank
+        EPAG For all costs not in EUR, add a 2% ‘bank fee’ on top of the base fee to cover the difference between the market exchange rate and the rate we receiving from our bank
+        Ascio For all costs not in DKK, EUR, SGD, or USD, add a 2% ‘bank fee’ on top of the base fee to cover the difference between the market exchange rate and the rate we receiving from our bank
+
+    - sales tax fee - fee that are required by the registry location; % of registry_fee; INPUTTED during seeding; usually 0;  
+    
+    - intercompany pricing fee - fee that is recorded but is not included in total_cost; applicable when customer of a tenant purchases product with accreditation from other tenants; usually 5% of registry_fee; value is stored in finance_settings with validity; 
+    
+    - registry fee - fee that is inputted through the approval process; given in currency per year/transaction; Registry_fee for some products like create and renew can be linear and non-linear which means that is it entered for each year supported by registry or entered for 1 year only; 
+    
+    - manual processing fee - fee that is applicable per order (not per year) INPUTTED during seeding; usually in USD; 
+
+order_type: redeem excludes ICANN fee; 
+
+order_type can be per transaction or per time period ( month, year, quarter) 
+therefore, fee is attached to order_type_period_type ( create - year/month/quarter; transfer_away, redeem - transaction; renew - transaction + period ot time or just transaction - depends on registry requarments)
+
+2. Cost type: 
+Cost can be 
+    fee - the total cost for a product and order type for a given Brand, Vendor, Product, Order Type, and Period, and Validity
+    repeating fee - A repeating cost that needs to be tracked for a vendor or product but is not tied to any specific order or price, e.g. a yearly accreditation fee
+
+3. Fee description: 
+Each fee is described by 
+    cost_component_type (aka name), 
+    cost_type, 
+    value, 
+    is_percent - TRUE when percent of registry_fee and false when amount in currency; 
+    currency, 
+    is_periodic - TRUE when applicable to each transaction/time interval ; and FALSE when applicable to the entire order;  
+    is_in_total_cost - some fees are only recorder by not included in total_cost calculation like inter-company_fee; 
+    is_promo - promotional cost that overrides non-promotional; here exists only for registry_fee but can be used for any fee;
+    is_promo_applied_to_1_year_only - there are three types of promotions: 1. linear then value is FALSE; 2.non-linear then value is FALSE; and 3.mostly used - applicable to the 1st year only then value is TRUE; 
+    is_rebate - applicable to promotions only; when full cost is charged but lated Tucows receives the difference between full cost and promo cost; 
+    is_premium - for some TLDs desired names are unique and have premium pricing; value obtained by checking registry; the check returns registry_fee for given N years and currency which might be different from currency settings for tld; 
+    validity - period when fee is working;
+
+Each relevant not NULL domain_cost component is stored in cost_domain_component table;
+The values are given either for 1 transaction/year if cost is linear or there are N records ( depends on what registry sells)
+
+    - Some fees such as registry fee for order type create and renew can be linear and non-linear; 
+    - When it is linear then N year product is calculated by linear cost multiply by N year; 
+    - When is is non-linear then N year product is retrieved from given fee for N year; 
+    
+    - Some fees such as registry fee can have promotions; 
+    - When promotion is linear then N year promo is calculated by linear promo cost multiply by N year; 
+    - When promotion is non-linear then N year promo is retrieved from given promo cost for N year; 
+    - When promotion has a flag is_promo_applied_to_1_year_only then promo cost is calculated as 
+        promotion applicable to the first year of purchase while the other years are calculated with non-promo cost
+        promo + cost * ( Nyear -1); 
+
+4. Currency 
+- Currency list is stored in table currency_type;
+- Currency_exchange_rate is a table that stores conversion rates for each currency into USD; 
+- OANDA Currency Converter API used for conversion rates;
+- Daily USD and EUR currency conversions sent to check the fluctuation; 
+- Monthly conversions used to calculate costs in the Pricing Service;
+- Conversion rate on the last day of the month is used for next month’s conversion rate;
+- Builtin functionality to adjust the conversion rate mid-month by manually triggered function 
+- Costs are entered in their original currency and converted on a monthly basis into USD
+- Each cost component is multiplied to currency_exchange_rate ( 1 when it is in USD) in order to convert it into USD and calculate the sum of the components; 
+- total_cost is in USD. 
+
+- in the future Tucows will support multiple currencies for customers (USD, EUR, SGD, CAD)
+- meanwhile exchange rates should be stored for bunch of currency_types due to registry_fee inputed in various currencies 
+
+- > cost_usd should be recalculated on-the-fly from USD to EUR, SGD, CAD
+
+
+TODO: 
+1. in finance settings 
+    - add currency_type_id as parameter 
+    - change general.margin_cap to currency_type.margin_cap
+    - modify view; functions; 
+    - input default 100000; for CAD example 150000; 
+
+2. in cost module:
+    - nothing 
+3. in price module: 
+    - get currency column added to cost range; 
+    - ... 
+    
+
+
+

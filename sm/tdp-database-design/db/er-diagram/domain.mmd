@@ -1,0 +1,84 @@
+erDiagram
+    domain_contact_type {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        uuid accreditation_tld_id FK
+        text name 
+        text auth_info 
+        text roid 
+        timestamp_with_time_zone ry_created_date 
+        timestamp_with_time_zone ry_expiry_date 
+        timestamp_with_time_zone ry_updated_date 
+        timestamp_with_time_zone ry_transfered_date 
+        timestamp_with_time_zone expiry_date 
+    }
+
+    domain_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid domain_id FK
+        uuid contact_id FK
+        uuid domain_contact_type_id FK
+        boolean is_local_presence 
+        boolean is_privacy_proxy 
+    }
+
+    host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        text name 
+        uuid domain_id FK
+    }
+
+    host_addr {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid host_id FK
+        inet address 
+    }
+
+    domain_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid domain_id FK
+        uuid host_id FK
+    }
+
+    domain_contact }o--|| domain_contact_type : "domain_contact_type_id"
+    create_domain_contact }o--|| domain_contact_type : "domain_contact_type_id"
+    provision_domain_contact }o--|| domain_contact_type : "contact_type_id"
+    domain }o--|| tenant_customer : "tenant_customer_id"
+    domain }o--|| accreditation_tld : "accreditation_tld_id"
+    domain_contact }o--|| domain : "domain_id"
+    host }o--|| domain : "domain_id"
+    domain_host }o--|| domain : "domain_id"
+    provision_domain_renew }o--|| domain : "domain_id"
+    domain_contact }o--|| contact : "contact_id"
+    host }o--|| tenant_customer : "tenant_customer_id"
+    host_addr }o--|| host : "host_id"
+    domain_host }o--|| host : "host_id"
+    provision_host }o--|| host : "host_id"
+    provision_domain_host }o--|| host : "host_id"

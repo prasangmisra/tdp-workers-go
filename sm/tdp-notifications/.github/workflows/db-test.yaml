@@ -1,0 +1,38 @@
+name: Test Database
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'database/**'
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'database/**'
+
+jobs:
+  github-context:
+    runs-on: [self-hosted, tdp]
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    steps:
+      - name: Display context
+        run: echo "$GITHUB_CONTEXT"
+
+  test:
+    needs: [github-context]
+    runs-on: [self-hosted, tdp]
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run Tests For database
+        env:
+          DC_PROJECT_NAME: ${{ github.sha }}-database
+        run: make --directory=database itest

@@ -1,0 +1,96 @@
+erDiagram
+
+   order_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid type_id 
+        text title 
+        text org_reg 
+        text org_vat 
+        text org_duns 
+        uuid tenant_customer_id 
+        text email 
+        text phone 
+        text fax 
+        text country 
+        text language 
+        ARRAY tags 
+        ARRAY documentation 
+        uuid order_id FK
+        
+    }
+    order_item_create_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid contact_id FK
+    }
+
+    create_contact_plan {
+        uuid id PK
+        uuid order_item_id FK
+        uuid parent_id 
+        uuid status_id 
+        uuid order_item_object_id 
+        uuid reference_id 
+        text result_message 
+        jsonb result_data 
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    order_contact_postal {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid contact_id FK
+        boolean is_international 
+        text first_name 
+        text last_name 
+        text org_name 
+        text address1 
+        text address2 
+        text address3 
+        text city 
+        text postal_code 
+        text state 
+    }
+
+    order_contact_attribute {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid attribute_id 
+        uuid attribute_type_id 
+        uuid contact_id FK
+        text value 
+    }
+
+    order_item_create_contact }o--|| order : "order_id"
+    order_item_create_contact }o--|| order_item_status : "status_id"
+    create_contact_plan }o--|| order_item_create_contact : "order_item_id"
+    order_contact_postal }o--|| order_contact : "contact_id"
+    order_contact_attribute }o--|| order_contact : "contact_id"
+    order_contact ||--|| order_item_create_contact : "contact_id"

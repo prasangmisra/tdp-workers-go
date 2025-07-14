@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+# Script to populate DB migration files.
+
+# Honors $PSQL if set.
+# Honors $PGHOST if set.
+# Honors $PGDATABASE if set.
+# Honors $PGPORT if set.
+# Honors $DIR if set.
+
+usage() {
+    echo "Usage: $0 [<db_name>]"
+    echo
+    echo "Populate database migrations"
+    echo "If <db_name> is not specified, uses \$PGDATABASE (currently \"$PGDATABASE\")."
+    echo "If \$PGDATABASE is not set, <db_name> must be specified."
+    echo "If \$PSQL is not set (currently \"$PSQL\"), will use \"psql\"."
+    echo "If \$PGHOST is not set (currently \"$PGHOST\"), will use \"localhost\"."
+    echo "If \$PGPORT is not set (currently \"$PGPORT\"), will use \"5432\"."
+    echo "If \$DIR is not set (currently \"$DIR\"), will use current directory (`pwd`). It can be used to configure a directory where migrations folder exists."
+}
+
+# Set DB credentials
+if [[ -z "$PGUSER" ]]; then
+  echo "PGUSER:"
+  read PGUSER
+fi
+
+if [[ -z "$PGPASSWORD" ]]; then
+  echo "PGPASSWORD:"
+  read PGPASSWORD
+fi
+
+# Database connection parameters
+database=${1:-$PGDATABASE}
+psqlcommand=${PSQL:-"psql"}
+host=${PGHOST:-"localhost"}
+port=${PGPORT:-"5432"}
+user=${PGUSER}
+pass=${PGPASSWORD}
+
+if [[ ! -z "$DIR" ]]; then
+  cd $DIR
+fi
+
+if [[ ! -d migrations ]]; then
+    echo "Must be run from the parent directory of \"migrations\"."
+    echo
+    usage
+    exit 1
+fi
+
+if [[ -z "$database" ]]; then
+    echo "No database specified."
+    echo
+    usage
+    exit 1
+fi
+
+version_number="$2"
+
+if [[ -z "$2" ]]; then
+    if [[ "$host" == "localhost" ]]; then
+        version_number="v0.0.0"
+    else
+        echo "version number must be specified."
+        usage
+        exit 1
+    fi
+fi
+
+
+
+filenames=(`(cd migrations; find . -maxdepth 1 -name "*.sql") | sort -n`)
+
+if [ ${#filenames[@]} -ne 0 ]; then
+  for filename in ${filenames[@]}; do
+    echo
+    if [[ $filename =~ ^\./([0-9]{12})_(.*)\.sql$ ]]; then
+        echo "Populating migration file '${filename}'..."
+        migration_version=${BASH_REMATCH[1]}
+        migration_name=${BASH_REMATCH[2]}
+
+        # Check if the migration is already recorded
+        result=$($psqlcommand -h $host -p $port -U $user -d $database -t -c "SELECT 1 FROM migration WHERE version = '$migration_version';")
+
+        # Insert the migration record if it doesn't exist
+        if [[ -z $result ]]; then
+            $psqlcommand -h $host -p $port -U $user -d $database -c "INSERT INTO migration (version, name, applied_date, version_number) VALUES ('$migration_version', '$migration_name', CURRENT_TIMESTAMP, '$version_number');"
+            echo "Recorded migration $migration_name with version $migration_version"
+        else
+            echo "Migration $migration_name with version $migration_version already recorded"
+        fi
+    else
+        echo "Skipping unrecognized filename $filename."
+    fi
+  done
+else
+  echo "No migrations to populate."
+fi

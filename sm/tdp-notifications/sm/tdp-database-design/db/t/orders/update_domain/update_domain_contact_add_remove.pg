@@ -1,0 +1,317 @@
+BEGIN;
+
+
+-- start testing
+SELECT *
+FROM no_plan();
+
+update v_attribute
+SET value='{"billing","admin","tech"}'
+WHERE key = 'tld.contact.optional_contact_types'
+  AND tld_name = 'help'
+  AND tenant_id = (SELECT tenant_id FROM v_tenant_customer limit 1);
+
+-- create test domain
+SELECT accreditation_tld_id as id
+INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id = (SELECT tenant_id FROM v_tenant_customer limit 1)
+  AND is_default;
+
+WITH test_domain AS (
+    INSERT INTO domain (
+                        tenant_customer_id,
+                        name,
+                        accreditation_tld_id,
+                        ry_created_date,
+                        ry_expiry_date,
+                        expiry_date,
+                        secdns_max_sig_life
+        ) VALUES ((SELECT id FROM v_tenant_customer LIMIT 1),
+                  FORMAT('contact-test-domain-%s-1.help', EXTRACT(epoch from NOW())::INT),
+                  (SELECT id FROM _acc_tld),
+                  NOW(),
+                  NOW() + ('1 years')::INTERVAL,
+                  NOW() + ('1 years')::INTERVAL,
+                  2) RETURNING *)
+SELECT *
+INTO TEMP _test_domain
+FROM test_domain;
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order" (
+                         tenant_customer_id,
+                         type_id
+        )
+        VALUES ((SELECT id FROM v_tenant_customer LIMIT 1),
+                (SELECT id FROM v_order_type WHERE product_name = 'domain' AND name = 'update')) RETURNING *)
+SELECT *
+INTO TEMP _order
+FROM o;
+
+-- create a contact (personal) for add operation
+WITH oc_add AS (
+    INSERT INTO order_contact (
+                               order_id,
+                               type_id,
+                               email,
+                               phone,
+                               fax,
+                               country,
+                               tenant_customer_id
+        )
+        VALUES ((SELECT id FROM _order),
+                tc_id_from_name('contact_type', 'individual'),
+                'add-contact@test.example',
+                '+555.5555551214',
+                '+555.5555551215',
+                'US',
+                (SELECT id FROM v_tenant_customer LIMIT 1)) RETURNING *)
+SELECT *
+INTO TEMP _order_contact_add
+FROM oc_add;
+
+
+-- Create update domain order item
+WITH cd AS (
+    INSERT INTO order_item_update_domain (
+                                          order_id,
+                                          name
+        ) VALUES ((SELECT id FROM _order),
+                  (SELECT name FROM _test_domain)) returning *)
+SELECT *
+INTO TEMP _oi_update_domain
+FROM cd;
+
+-- Add contacts (new approach)
+SELECT lives_ok($$
+    INSERT INTO update_domain_add_contact(
+        update_domain_id,
+        domain_contact_type_id,
+        order_contact_id
+    )
+    VALUES (
+        (SELECT id FROM _oi_update_domain),
+        tc_id_from_name('domain_contact_type', 'admin'),
+        (SELECT id FROM _order_contact_add)
+    );
+$$, 'insert record in update_domain_add_contact');
+
+-- Add a technical contact too
+SELECT lives_ok($$
+    INSERT INTO update_domain_add_contact(
+        update_domain_id,
+        domain_contact_type_id,
+        order_contact_id
+    )
+    VALUES (
+        (SELECT id FROM _oi_update_domain),
+        tc_id_from_name('domain_contact_type', 'tech'),
+        (SELECT id FROM _order_contact_add)
+    );
+$$, 'insert another record in update_domain_add_contact');
+
+-- Create an order_contact record for the removal operation
+WITH oc_rem AS (
+    INSERT INTO order_contact (
+                               order_id,
+                               type_id,
+                               email,
+                               phone,
+                               fax,
+                               country,
+                               tenant_customer_id
+        )
+        VALUES ((SELECT id FROM _order),
+                tc_id_from_name('contact_type', 'individual'),
+                'add-contact@test.example',
+                '+555.5555551214',
+                '+555.5555551215',
+                'US',
+                (SELECT id FROM v_tenant_customer LIMIT 1)) RETURNING *)
+SELECT *
+INTO TEMP _order_contact_rem
+FROM oc_rem;
+
+INSERT INTO contact (SELECT * FROM contact WHERE id = (SELECT id FROM _order_contact_rem));
+
+INSERT INTO domain_contact(domain_id,
+                           contact_id,
+                           domain_contact_type_id)
+VALUES ((SELECT id FROM _test_domain),
+        (SELECT id FROM _order_contact_rem),
+        tc_id_from_name('domain_contact_type', 'admin'));
+
+-- Then update the remove contacts section to use this order_contact
+SELECT lives_ok($$
+    INSERT INTO update_domain_rem_contact(
+        update_domain_id,
+        domain_contact_type_id,
+        order_contact_id
+    )
+    VALUES (
+        (SELECT id FROM _oi_update_domain),
+        tc_id_from_name('domain_contact_type', 'admin'),
+        (SELECT id FROM _order_contact_rem)
+    );
+$$, 'insert record in update_domain_rem_contact');
+
+-- Move order to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$, 'move order to next status (pending->processing)');
+
+-- let's grab that provision_contact entry
+WITH pc AS (SELECT pc.*, ps.name AS status_name
+            FROM provision_contact pc
+                     JOIN provision_status ps ON ps.id = pc.status_id
+            WHERE (SELECT id
+                   FROM f_order_item_plan((SELECT id FROM _oi_update_domain))
+                   WHERE object_name = 'contact') = ANY (order_item_plan_ids)
+              AND ps.name = 'pending')
+SELECT *
+INTO TEMP _prov_contact
+FROM pc;
+
+-- there should be an entry in provision_contact that is pending to be provisioned
+SELECT ok(
+               EXISTS(SELECT *
+                      FROM _prov_contact)
+       );
+
+-- Job IDs should not be null
+-- job should not be null
+SELECT ok((SELECT job_id FROM _prov_contact) IS NOT NULL, 'job_id is not null');
+
+-- Verify add contacts count (should be 2 - admin and tech)
+SELECT is(
+               (SELECT count(*)
+                FROM update_domain_add_contact
+                WHERE update_domain_id = (SELECT id FROM _oi_update_domain)),
+               2::bigint,
+               'Two contacts should be added (admin and tech)'
+       );
+
+-- Verify remove contacts count (should be 1 - billing)
+SELECT is(
+               (SELECT count(*)
+                FROM update_domain_rem_contact
+                WHERE update_domain_id = (SELECT id FROM _oi_update_domain)),
+               1::bigint,
+               'One contact should be removed (billing)'
+       );
+
+-- Verify that there is a value in provision_contact
+SELECT ok(
+               (SELECT COUNT(*) FROM provision_contact WHERE id = (SELECT id FROM _prov_contact)) = 1,
+               'There is a record in provision_contact'
+       );
+
+-- Update provision_contact status to complete
+SELECT lives_ok($$
+    UPDATE provision_contact
+    SET status_id = (SELECT id FROM provision_status WHERE name = 'completed')
+    WHERE id = (SELECT id FROM _prov_contact);
+$$, 'Update provision_contact status to completed');
+
+
+-- Verify the status was updated correctly
+SELECT is(
+               (SELECT ps.name
+                FROM provision_contact pc
+                         JOIN provision_status ps ON ps.id = pc.status_id
+                WHERE pc.id = (SELECT id FROM _prov_contact)),
+               'completed',
+               'provision_contact status should be completed'
+       );
+
+-- Capture provision_domain_update record into a temp table
+WITH pdu AS (SELECT pdu.*
+             FROM provision_domain_update pdu
+             WHERE pdu.domain_id = (SELECT id FROM _test_domain))
+SELECT *
+INTO TEMP _prov_domain_update
+FROM pdu;
+
+-- Verify there is at least one record
+SELECT ok(
+               EXISTS(SELECT * FROM _prov_domain_update),
+               'provision_domain_update record exists for the test domain'
+       );
+
+-- Verify the count of items in provision_domain_update_add_contact
+SELECT is(
+               (SELECT COUNT(*)
+                FROM provision_domain_update_add_contact pduac
+                         JOIN provision_domain_update pdu ON pdu.id = pduac.provision_domain_update_id
+                WHERE pdu.domain_id = (SELECT id FROM _test_domain)),
+               2::bigint,
+               'Two items should be in provision_domain_update_add_contact'
+       );
+
+-- Verify the count of items in provision_domain_update_rem_contact
+SELECT is(
+               (SELECT COUNT(*)
+                FROM provision_domain_update_rem_contact pdurc
+                         JOIN provision_domain_update pdu ON pdu.id = pdurc.provision_domain_update_id
+                WHERE pdu.domain_id = (SELECT id FROM _test_domain)),
+               1::bigint,
+               'One item should be in provision_domain_update_rem_contact'
+       );
+
+-- Update provision_domain_update status to complete
+SELECT lives_ok($$
+    UPDATE provision_domain_update
+    SET status_id = (SELECT id FROM provision_status WHERE name = 'completed')
+    WHERE id = (SELECT id FROM _prov_domain_update);
+$$, 'Update provision_domain_update status to completed');
+
+-- Verify the status was updated correctly
+SELECT is(
+               (SELECT ps.name
+                FROM provision_domain_update pdu
+                         JOIN provision_status ps ON ps.id = pdu.status_id
+                WHERE pdu.id = (SELECT id FROM _prov_domain_update)),
+               'completed',
+               'provision_domain_update status should be completed'
+       );
+
+-- Verify the domain_contact entries after provisioning is completed
+SELECT is(
+               (SELECT COUNT(*)
+                FROM domain_contact
+                WHERE domain_id = (SELECT id FROM _test_domain)),
+               2::bigint,
+               'Domain should have two contacts after provisioning'
+       );
+
+-- Verify the types of contacts
+SELECT is(
+               (SELECT COUNT(*)
+                FROM domain_contact dc
+                         JOIN domain_contact_type dct ON dct.id = dc.domain_contact_type_id
+                WHERE dc.domain_id = (SELECT id FROM _test_domain)
+                  AND dct.name = 'admin'),
+               1::bigint,
+               'Domain should have one admin contact'
+       );
+
+SELECT is(
+               (SELECT COUNT(*)
+                FROM domain_contact dc
+                         JOIN domain_contact_type dct ON dct.id = dc.domain_contact_type_id
+                WHERE dc.domain_id = (SELECT id FROM _test_domain)
+                  AND dct.name = 'tech'),
+               1::bigint,
+               'Domain should have one tech contact'
+       );
+
+
+-- finish testing
+SELECT *
+FROM finish(true);
+
+ROLLBACK;

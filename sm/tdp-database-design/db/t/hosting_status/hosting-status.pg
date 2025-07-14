@@ -1,0 +1,13 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+SELECT has_table('hosting_status');
+SELECT fk_ok('hosting', 'hosting_status_id', 'hosting_status', 'id');
+SELECT fk_ok('provision_hosting_create', 'hosting_status_id', 'hosting_status', 'id');
+SELECT fk_ok('provision_hosting_update', 'hosting_status_id', 'hosting_status', 'id');
+SELECT fk_ok('provision_hosting_delete', 'hosting_status_id', 'hosting_status', 'id');
+
+select * from finish(true);
+
+ROLLBACK;

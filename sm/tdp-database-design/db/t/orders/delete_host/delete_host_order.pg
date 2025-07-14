@@ -1,0 +1,158 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_delete_host');
+SELECT has_table('delete_host_plan');
+SELECT has_table('provision_host_delete');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- create a domain entry for testing
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM _tenant_customer),
+        'tdp-test-123.help',
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _domain FROM test_domain;
+
+-- create a host
+WITH basic_host AS (
+    INSERT INTO host(
+        tenant_customer_id,
+        "name",
+        domain_id
+    ) VALUES(
+        (SELECT id FROM _tenant_customer),
+        'ns1.' || (SELECT name from _domain),
+        (SELECT id FROM _domain)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _host FROM basic_host;
+
+-- add the host address 
+INSERT INTO host_addr(
+    host_id,
+    address
+) VALUES (
+    (SELECT id FROM _host),
+    '192.166.1.100'::INET
+);
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    ) VALUES(
+        (SELECT id FROM _tenant_customer),
+        (SELECT id FROM v_order_type WHERE product_name='host' AND name='delete')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+WITH dh AS (
+    INSERT INTO order_item_delete_host (
+               order_id,
+               host_id
+        )
+        VALUES ((SELECT id FROM _order),
+                (SELECT id FROM _host))
+           returning *
+)
+SELECT * INTO TEMP _oi_delete_host FROM dh;
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+SELECT cmp_ok(
+       (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+       '=',
+       'processing'
+   );
+
+-- let's grab that provision_host_delete entry
+WITH phd AS (
+    SELECT phd.*,ps.name AS status_name
+    FROM ONLY provision_host_delete phd
+             JOIN provision_status ps ON ps.id = phd.status_id
+    WHERE (
+              SELECT id FROM f_order_item_plan((SELECT id FROM _oi_delete_host))
+              WHERE object_name='host'
+          ) = ANY(order_item_plan_ids)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_host_delete FROM phd;
+
+-- update the job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE status_id=tc_id_from_name('job_status','submitted')
+$$);
+
+-- check whether provisioned date was set on provision_host_delete
+SELECT ok(
+    (SELECT provisioned_date IS NOT NULL FROM provision_host_delete WHERE id=(SELECT id FROM _prov_host_delete)),
+    'check whether provisioned date was set on provision_host_delete' 
+);
+
+-- check whether the status is set to success and final on host
+SELECT ok(
+    (SELECT s.is_success AND s.is_final 
+        FROM provision_host_delete phd
+            JOIN provision_status s ON phd.status_id=s.id 
+        WHERE phd.id=(SELECT _phd.id FROM _prov_host_delete _phd)),
+    'check whether the status is set to success and final on host' 
+);
+
+-- check whether the host order_item_plan completed successfully
+SELECT ok(
+    (SELECT plan_status_name = 'completed' FROM f_order_item_plan((SELECT id FROM order_item_delete_host WHERE created_date = NOW())) 
+            WHERE object_name='host'),
+    'check whether the host order_item_plan completed successfully'
+);
+
+-- check whether the order_item completed successfully
+SELECT cmp_ok(
+    (SELECT tc_name_from_id('order_item_status',status_id) FROM order_item_delete_host WHERE created_date = NOW()),
+    '=',
+    'complete',
+    'check whether the order item completed successfully'
+);
+
+-- check whether the order completed successfully
+SELECT cmp_ok(
+    (SELECT tc_name_from_id('order_status',status_id) FROM "order" WHERE created_date = NOW()),
+    '=',
+    'successful',
+    'check whether the order completed successfully'
+);
+
+SELECT * FROM finish(true);
+
+ROLLBACK;
+-- COMMIT;

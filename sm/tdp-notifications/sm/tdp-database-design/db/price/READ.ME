@@ -1,0 +1,110 @@
+# Price Module
+
+## Overview
+The Price Module is responsible for managing and calculating prices associated with various operations 
+within the system. It provides functionalities to add, update, delete, and retrieve price-related data.
+
+## Features
+- Add new price entries
+- Update existing price entries
+- Delete price entries
+- Retrieve price entries
+- Calculate total prices
+
+## Functions
+
+### roundup
+Rounds up a given decimal amount to the nearest specified integer multiple.
+
+### convert_currency_with_detail
+Converts a given amount from one currency to another, providing detailed information about the conversion rates and currencies involved.
+
+### signup_for_promotion
+Allows a tenant customer to sign up for a promotion by inserting relevant details into the `domain_price_customer_promo` table.
+
+### show_domain_price_tier
+Returns the tier prices for a domain, either for all tiers or for a specific tenant customer, in the input currency.
+
+### get_domain_price_tier
+Returns the tier price for a tenant customer.
+
+### get_domain_price_custom
+Returns a custom price if it exists for a tenant customer.
+
+### get_domain_price_premium
+Returns the price of a premium domain with details.
+
+### get_domain_price_promo
+Returns the value of the total price for a promotion considering the number of years and type of promotion (linear/non-linear/applicable to 1st year only/to all years).
+
+### get_domain_price
+Returns the value of the total price for unknown price type considering the number of years
+
+--------------------------- 
+## HOW TO SEED price data 
+
+When new TLD added; 
+    - tier price through the approval process added to domain_price_tier;  
+    - promo registry_fee through the approval process added to domain_price_tenant_promo;  
+
+
+When new customer added; 
+    - customer-tier information into product_customer_tier; 
+    - if applicable, customer promotions are added to mv_domain_price_customer_promo
+    - if applicable, custom or 'custom - cost+' pricing is added to domain_price_custom
+    - if applicable, custom premium margins are added to domain_premium_margin
+
+## HOW TO UPDATE price data 
+
+1. validity ended or new prices got approved; input though the approval process; see only new records in mv_xxx
+
+
+## HOW TO CALCULATE price data 
+
+    important note: MINIMIZE CURRENCY CONVERSION !!!!!!!!!!! BUSINESS NEED! 
+    important note: special currencies for some TLD are rather rare exception; offered to huge customers only;  
+
+### price type: tier 
+    1. Function determines the tier of tenant_customer from product_customer_tier
+    2. then it retrieves tenant_customer currency
+	3. then it retrieves tier price in tenant_customer currency FROM domain_price_tier; 
+
+### price type: premium OR price type: custom - premium
+    1. Function retrieves tenant_customer currency
+    1. then it retrieves margin_cap in tenant_customer currency
+    2. Then it retrieves margin value from domain_premium_margin ( depending on cost range of a product) 
+    3. Converts registry fee into USD  — into customer_currency
+    4. It converts premium registry_fee into USD and compares it with margin_cap, picks the smallest; 
+    5. Calculates price by adding registry_fee and min(margin | margin_cap) in USD
+    6. Retrieves value of roundup 
+    7. Converts price into customer_currency and rounds it up;
+
+### price type: custom
+    1. Function retrieves custom price from domain_price_custom table;
+
+### price type: custom - cost+
+    1. Function retrieves custom price from domain_price_custom table;
+	2. Then it calculates total_cost for desired product 
+    3. Then it converts cost into customer currency 
+    4. Then it sums up 'custom cost+' and 'cost' values —>> does not roundup!!! 
+
+### price type: promo - all OR promo - signup
+    1. Function retrieves tier_price from product_customer_tier,
+    2. Then it finds customer_currency,
+    3. Then it converts tier_price into customer_currency,
+    4. Then it retrieves promo from domain_price_customer_promo,
+    5. Then it converts promo info customer_currency and check if it is linear,
+        non-linear, 1st_year_only and calculates total_price possibly with tier_price 
+    6. round up ???? NO?!
+
+### price type: promo - custom
+    1. Function retrieves tier_price from product_customer_tier,
+    2. Then it finds customer_currency,
+    3. Then it converts tier_price into customer_currency,
+    4. Then it finds tenant info from tenant_customer_id
+    5. Then it retrieves promo info from domain_price_tenant_promo
+    6. Then it converts promo into customer_currency and check if it is linear,
+        non-linear, 1st_year_only and calculates total_price possibly with tier_price
+
+### price type: repeating charge
+    ???? 

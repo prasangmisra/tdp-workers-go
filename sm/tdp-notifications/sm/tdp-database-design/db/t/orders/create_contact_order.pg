@@ -1,0 +1,237 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('order');
+SELECT has_table('order_item_create_contact');
+SELECT has_table('order_contact_postal');
+SELECT has_table('order_contact_attribute');
+SELECT has_table('create_contact_plan');
+
+
+-- create a contact json to be used with the tests
+CREATE TEMP TABLE _contact_js ON COMMIT DROP AS SELECT
+    ('{
+        "tenant_customer_id":   "' || (SELECT id FROM v_tenant_customer LIMIT 1) || '",
+        "customer_user_id":     "' || (SELECT tc_id_from_name('v_customer_user','John Doe Squarespace')) || '",
+        "contact_type":         "individual",
+        "title":                "CFO",
+        "org_reg":              null,
+        "org_vat":              "XY1234567",
+        "email":                "roger.rabbit@hole.org",
+        "phone":                "+45.987654321",
+        "fax":                  "",
+        "country":              "DK",
+        "language":             "en",       
+        "tags":                 ["tag-one", "tag-two", "tag-three"],
+        "documentation":        ["unknown purpose", "useless doc"],
+        "order_contact_postals": [
+            {
+                "city": "København",
+                "state": null,
+                "address1": "Rosenvængets Allé 42",
+                "address2": null,
+                "address3": null,
+                "org_name": "Some-Company",
+                "last_name": "Østerbro",
+                "first_name": "Tómas",
+                "postal_code": "1234",
+                "is_international": false
+            },
+            {
+                "city": "Copenhagen",
+                "state": null,
+                "address1": "Rosenvaengets Alley 42",
+                "address2": null,
+                "address3": null,
+                "org_name": "Some-Company",
+                "last_name": "Oesterbro",
+                "first_name": "Tomas",
+                "postal_code": "1234",
+                "is_international": true
+            }
+        ],
+        "identity_card_number": "IDC123123123",
+        "birth_date":           "1965-03-08",
+        "birth_country":        "IS",
+        "tld_de_type":          ".de-type"
+    }')::JSONB AS value;
+
+-- create a create contact order
+SELECT lives_ok($$
+    SELECT create_contact_order_from_jsonb((SELECT value FROM _contact_js));
+$$,'create a create contact order');
+
+-- verify a order has been created
+SELECT lives_ok($$
+    SELECT * FROM "order" WHERE created_date = NOW();
+$$, 'verify an order has been created');
+
+-- verify a order_contact has been created
+SELECT lives_ok($$
+    SELECT * FROM order_contact WHERE created_date = NOW();
+$$, 'verify an order has been created');
+
+-- verify a create contact order item has been created
+SELECT lives_ok($$
+    SELECT * FROM order_item_create_contact WHERE created_date = NOW();
+$$, 'verify a create contact order item has been create');
+
+-- verify a non-international postal to the create contact order item has been created
+SELECT lives_ok($$
+    SELECT * FROM order_contact_postal WHERE is_international = FALSE AND created_date = NOW();
+$$, 'verify a non-international postal to the create contact order item has been create');
+
+-- verify an international postal to the create contact order item has been created
+SELECT lives_ok($$
+    SELECT * FROM order_contact_postal WHERE is_international = TRUE AND created_date = NOW();
+$$, 'verify an international postal to the create contact order item has been create');
+
+-- verify the international postal accepts ascii text only 
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET first_name='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET last_name='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET org_name='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET address1='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET address2='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET address3='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET city='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET postal_code='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+SELECT throws_ok($$
+    UPDATE order_contact_postal SET state='äéµ' WHERE is_international = TRUE AND created_date = NOW();
+    $$,
+    23514,
+    'new row for relation "order_contact_postal" violates check constraint "contact_postal_check"',
+    'verify the international postal does not accept a non-ascii first_name');
+
+-- check whether the order matches the _contact_js.value
+SELECT cmp_ok(
+    (SELECT jsonb_get_create_contact_order_by_id((SELECT id FROM "order" WHERE created_date = NOW()))),
+    '@>',
+    (SELECT value FROM _contact_js),
+    'check whether the order matches the _contact_js.value'
+);
+
+-- check whether the order retrieved using jsonb_get_order_by_id matches the _contact_js.value
+SELECT cmp_ok(
+    (SELECT order_data FROM jsonb_get_order_by_id((SELECT id FROM "order" WHERE created_date = NOW()))),
+    '@>',
+    (SELECT value FROM _contact_js),
+   'check whether the order matches the _contact_js.value'
+);
+
+-- check whether the product name retrieved using jsonb_get_order_by_id is contact
+SELECT cmp_ok(
+    (SELECT product_name FROM jsonb_get_order_by_id((SELECT id FROM "order" WHERE created_date = NOW()))),
+    '=',
+    'contact',
+   'check whether the order product name is contact'
+);
+
+-- move order status from pending to processing
+SELECT lives_ok($$
+    UPDATE "order" SET
+        status_id = order_next_status((SELECT order_id FROM order_item_create_contact WHERE created_date = NOW()), TRUE)
+    WHERE id = (SELECT order_id FROM order_item_create_contact WHERE created_date = NOW());
+$$,'move order status from pending to processing');
+
+-- check whether the order_item completed successfully
+SELECT cmp_ok(
+    (SELECT tc_name_from_id('order_item_status',status_id) FROM order_item_create_contact WHERE created_date = NOW()),
+    '=',
+    'complete',
+    'check whether the order item completed successfully'
+);
+
+-- check whether the order completed successfully
+SELECT cmp_ok(
+    (SELECT tc_name_from_id('order_status',status_id) FROM "order" WHERE created_date = NOW()),
+    '=',
+    'successful',
+    'check whether the order completed successfully'
+);
+
+-- check whether the contact has materialized
+SELECT cmp_ok(
+    (SELECT COUNT(*) FROM ONLY contact WHERE id = (SELECT contact_id FROM order_item_create_contact WHERE created_date = NOW()))::TEXT,
+    '=',
+    '1',
+    'check whether the contact has materialized'
+);
+
+SELECT ok(
+   EXISTS(
+       SELECT short_id FROM ONLY contact WHERE id = (SELECT contact_id FROM order_item_create_contact WHERE created_date = NOW())
+   )
+);
+
+-- check whether the contact postals have materialized
+SELECT cmp_ok(
+    (SELECT COUNT(*) FROM ONLY contact_postal WHERE contact_id = (SELECT contact_id FROM order_item_create_contact WHERE created_date = NOW()))::TEXT,
+    '=', 
+    '2',
+    'check whether the contact postals have materialized'
+);
+
+-- check whether the contact attributes have materialized
+SELECT cmp_ok(
+    (SELECT COUNT(*) FROM ONLY contact_attribute WHERE contact_id = (SELECT contact_id FROM order_item_create_contact WHERE created_date = NOW()))::TEXT,
+    '=',
+    '4',
+    'check whether the contact attributes have materialized'
+);
+
+-- check whether the created contact matches the _contact_js.value
+SELECT cmp_ok(
+    (SELECT jsonb_get_contact_by_id((SELECT id FROM ONLY contact WHERE created_date = NOW()))),
+    '@>',
+    (SELECT replace(value::text, '"order_contact_postals"', '"contact_postals"')::jsonb FROM _contact_js) - 'customer_user_id',
+    'check whether the created contact matches the _contact_js.value'
+);
+
+SELECT * FROM finish(true);
+
+--COMMIT;
+ROLLBACK;

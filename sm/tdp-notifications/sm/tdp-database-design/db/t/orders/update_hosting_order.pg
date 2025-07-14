@@ -1,0 +1,355 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+-- TEST 1-7
+SELECT has_table('order_item_create_hosting');
+SELECT has_table('order_item_update_hosting');
+SELECT has_table('order_item_create_hosting_client');
+SELECT has_table('order_hosting_certificate');
+SELECT has_table('order_item_update_hosting_certificate');
+SELECT has_table('create_hosting_plan');
+SELECT has_table('update_hosting_plan');
+SELECT has_table('provision_hosting_update');
+
+-- create a hosting order
+WITH o AS (
+    INSERT INTO "order"(tenant_customer_id, type_id)
+    VALUES (
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            (SELECT id FROM v_order_type WHERE product_name='hosting' AND name='create')
+    ) RETURNING *
+)
+SELECT * into TEMP _order FROM o;
+
+-- TEST 8
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- TEST 9
+-- check the order status should be 'created'
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+-- add and check for the order items
+CREATE SEQUENCE IF NOT EXISTS hosting_counter;
+WITH oihc AS (
+    INSERT INTO order_item_create_hosting_client(
+            tenant_customer_id,
+            email
+        ) VALUES(
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            FORMAT('test%s@email.com', NEXTVAL('hosting_counter'))
+        ) RETURNING *
+)
+SELECT * into TEMP _order_item_create_hosting_client FROM oihc;
+
+-- TEST 10
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_item_create_hosting_client" WHERE id = (SELECT id FROM _order_item_create_hosting_client)),'is TRUE!');
+
+WITH oihcer AS (
+    INSERT INTO order_hosting_certificate(
+            body,
+            private_key,
+            not_before,
+            not_after
+        ) VALUES(
+            'cert-body',
+            'cert-private-key',
+            NOW(),
+            NOW()
+        ) RETURNING *
+)
+SELECT * into TEMP _order_hosting_certificate FROM oihcer;
+
+-- TEST 11
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_hosting_certificate" WHERE id = (SELECT id FROM _order_hosting_certificate)),'is TRUE!');
+
+WITH oih AS(
+    INSERT INTO order_item_create_hosting(
+        order_id,
+        tenant_customer_id,
+        client_id,
+        certificate_id,
+        domain_name,
+        product_id,
+        region_id
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT tenant_customer_id FROM _order),
+        (SELECT id FROM _order_item_create_hosting_client),
+        (SELECT id FROM _order_hosting_certificate),
+        FORMAT('test%s.link', NEXTVAL('hosting_counter')),
+        tc_id_from_name('hosting_product','Static Website'),
+        tc_id_from_name('hosting_region', 'US East (N. Virginia)')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _oi_create_hosting FROM oih;
+
+-- TEST 12
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_item_create_hosting" WHERE id = (SELECT id FROM _oi_create_hosting)),'is TRUE!');
+
+
+-- TEST 13
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (created->processing)');
+
+
+
+-- TEST 14
+-- order must be in status processing
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+
+-- TEST 15
+-- order item must be in status 'ready' now
+SELECT cmp_ok(
+    (SELECT s.name FROM order_item oi JOIN order_item_status s ON s.id=oi.status_id WHERE oi.order_id = (SELECT id FROM _order)),
+    '=',
+    'ready'
+);
+
+
+-- TEST 16
+-- hosting order plan should exist now
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM create_hosting_plan WHERE order_item_id = (SELECT id FROM _oi_create_hosting) LIMIT 1), 'is TRUE!');
+
+
+
+-- TEST 17
+-- there should be 1 item to be provisioned in the order_item_plan view
+SELECT  cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_create_hosting))),
+  '=',
+  2::INT
+);
+
+
+-- TEST 18
+-- lets grab that provision_hosting_create entry
+WITH phc AS (
+    SELECT
+        phc.*,
+        ps.name
+    FROM provision_hosting_create phc
+    JOIN provision_status ps ON ps.id = phc.status_id
+    WHERE (
+        SELECT id from f_order_item_plan((SELECT id FROM _oi_create_hosting))
+        WHERE object_name='hosting'
+    ) = ANY(order_item_plan_ids)
+    AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _provision_hosting_create FROM phc;
+
+SELECT ok(
+    EXISTS(SELECT * from _provision_hosting_create)
+);
+
+
+-- TEST 19
+-- job should not be null
+SELECT ok((SELECT job_id FROM _provision_hosting_create) IS NOT NULL,'job_id is not null');
+
+
+-- TEST 20
+-- lets update provision_hosting_create with expected data
+SELECT lives_ok($$
+    UPDATE provision_hosting_create SET
+        hosting_status_id = tc_id_from_name('hosting_status', 'In progress'),
+        is_active = TRUE,
+        is_deleted = FALSE
+    WHERE id = (SELECT id FROM _provision_hosting_create)
+$$);
+
+-- TEST 21
+-- lets update the job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = (SELECT job_id FROM _provision_hosting_create) AND status_id = tc_id_from_name('job_status','submitted')
+$$);
+
+
+-- TEST 22
+-- provision status must be successful
+SELECT ok(
+    (SELECT s.is_success AND s.is_final
+        FROM provision_hosting_create h
+        JOIN provision_status s ON h.status_id=s.id
+        WHERE h.id=(SELECT hh.id FROM _provision_hosting_create hh)),
+    'status is set to success and final on provision hosting create'
+);
+
+
+
+-- TEST 23
+-- plan status should now be completed
+SELECT ok(
+    (SELECT plan_status_name = 'completed'
+    FROM f_order_item_plan((SELECT d.id FROM _oi_create_hosting d))
+        WHERE object_name='hosting'),
+    'hosting order_item_plan completed successfully'
+);
+
+-- TEST 24
+-- hosting is_active should be true
+SELECT ok((SELECT is_active from ONLY hosting WHERE id=(SELECT id FROM _oi_create_hosting)) ,'is_active is true');
+
+
+--
+--
+--
+--
+
+-- TEST 25
+-- create a update hosting order
+WITH ou AS (
+    INSERT INTO "order"(tenant_customer_id, type_id)
+    VALUES (
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            (SELECT id FROM v_order_type WHERE product_name='hosting' AND name='update')
+    ) RETURNING *
+)
+SELECT * into TEMP _order_update FROM ou;
+
+-- TEST 26
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order_update)),'is TRUE!');
+
+-- TEST 27
+-- check the order status should be 'created'
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order_update)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+
+WITH oihu AS(
+    INSERT INTO order_item_update_hosting(
+        hosting_id,
+        order_id,
+        is_active
+    ) VALUES(
+        (SELECT id FROM _oi_create_hosting),
+        (SELECT id FROM _order_update),
+        FALSE
+    ) RETURNING *
+)
+SELECT * INTO TEMP _oi_update_hosting FROM oihu;
+
+-- TEST 28
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_item_update_hosting" WHERE id = (SELECT id FROM _oi_update_hosting)),'is TRUE!');
+
+
+-- TEST 29
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order_update),TRUE) WHERE id=(SELECT id FROM _order_update);
+$$,'move order to next status (created->processing)');
+
+
+
+-- TEST 30
+-- order must be in status processing
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order_update)),
+    '=',
+    'processing'
+);
+
+
+-- TEST 31
+-- order item must be in status 'ready' now
+SELECT cmp_ok(
+    (SELECT s.name FROM order_item oi JOIN order_item_status s ON s.id=oi.status_id WHERE oi.order_id = (SELECT id FROM _order_update)),
+    '=',
+    'ready'
+);
+
+
+-- TEST 32
+-- hosting order plan should exist now
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM update_hosting_plan WHERE order_item_id = (SELECT id FROM _oi_update_hosting)), 'is TRUE!');
+
+
+
+-- TEST 33
+-- there should be 1 item to be provisioned in the order_item_plan view
+SELECT  cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_update_hosting))),
+  '=',
+  1::INT
+);
+
+
+-- TEST 34
+-- lets grab that provision_hosting_update entry
+WITH phu AS (
+    SELECT
+        phu.*,
+        ps.name
+    FROM provision_hosting_update phu
+    JOIN provision_status ps ON ps.id = phu.status_id
+    WHERE (
+        SELECT id from f_order_item_plan((SELECT id FROM _oi_update_hosting))
+        WHERE object_name='hosting'
+    ) = ANY(order_item_plan_ids)
+    AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _provision_hosting_update FROM phu;
+
+SELECT ok(
+    EXISTS(SELECT * from _provision_hosting_update)
+);
+
+
+-- TEST 35
+-- job should not be null
+SELECT ok((SELECT job_id FROM _provision_hosting_update) IS NOT NULL,'job_id is not null');
+
+
+
+-- TEST 36
+-- lets update the job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = (SELECT job_id FROM _provision_hosting_update) AND status_id = tc_id_from_name('job_status','submitted')
+$$);
+
+
+-- TEST 37
+-- provision status must be successful
+SELECT ok(
+    (SELECT s.is_success AND s.is_final
+        FROM provision_hosting_create h
+        JOIN provision_status s ON h.status_id=s.id
+        WHERE h.id=(SELECT hh.id FROM _provision_hosting_create hh)),
+    'status is set to success and final on provision hosting create'
+);
+
+
+-- TEST 38
+-- plan status should now be completed
+SELECT ok(
+    (SELECT plan_status_name = 'completed'
+    FROM f_order_item_plan((SELECT d.id FROM _oi_update_hosting d))
+        WHERE object_name='hosting'),
+    'hosting order_item_plan completed successfully'
+);
+
+-- TEST 39
+-- hosting is_active should be false
+SELECT is((SELECT is_active from ONLY hosting WHERE id=(SELECT hosting_id FROM _oi_update_hosting)), FALSE ,'is_active is false');
+
+SELECT * from finish(true);
+
+ROLLBACK;

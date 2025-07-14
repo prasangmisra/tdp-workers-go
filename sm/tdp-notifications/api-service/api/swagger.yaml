@@ -1,0 +1,1756 @@
+definitions:
+  DefaultResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  HealthCheckResponse:
+    properties:
+      details:
+        items:
+          $ref: '#/definitions/HealthCheckResponseItem'
+        type: array
+      name:
+        type: string
+      status:
+        description: Overall health status. Can be one of [Healthy], [Degraded] or
+          [Unhealthy]
+        example: Healthy
+        type: string
+    type: object
+  HealthCheckResponseItem:
+    properties:
+      description:
+        type: string
+      error:
+        type: string
+      key:
+        type: string
+      status:
+        type: string
+    type: object
+  Subscription:
+    properties:
+      created_date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        items:
+          type: string
+        type: array
+      status:
+        $ref: '#/definitions/SubscriptionStatus'
+      tags:
+        items:
+          type: string
+        type: array
+      updated_date:
+        type: string
+      url:
+        type: string
+    type: object
+  SubscriptionCreateRequest:
+    properties:
+      description:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      url:
+        type: string
+    required:
+    - notification_email
+    - notification_types
+    - url
+    type: object
+  SubscriptionCreateResponse:
+    properties:
+      created_date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        items:
+          type: string
+        type: array
+      signing_secret:
+        type: string
+      status:
+        $ref: '#/definitions/SubscriptionStatus'
+      tags:
+        items:
+          type: string
+        type: array
+      updated_date:
+        type: string
+      url:
+        type: string
+    type: object
+  SubscriptionGetResponse:
+    properties:
+      created_date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        items:
+          type: string
+        type: array
+      status:
+        $ref: '#/definitions/SubscriptionStatus'
+      tags:
+        items:
+          type: string
+        type: array
+      updated_date:
+        type: string
+      url:
+        type: string
+    type: object
+  SubscriptionPauseResponse:
+    properties:
+      created_date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        items:
+          type: string
+        type: array
+      status:
+        $ref: '#/definitions/SubscriptionStatus'
+      tags:
+        items:
+          type: string
+        type: array
+      updated_date:
+        type: string
+      url:
+        type: string
+    type: object
+  SubscriptionResumeResponse:
+    properties:
+      created_date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        items:
+          type: string
+        type: array
+      status:
+        $ref: '#/definitions/SubscriptionStatus'
+      tags:
+        items:
+          type: string
+        type: array
+      updated_date:
+        type: string
+      url:
+        type: string
+    type: object
+  SubscriptionStatus:
+    enum:
+    - ACTIVE
+    - PAUSED
+    - DEGRADED
+    - DEACTIVATED
+    type: string
+    x-enum-varnames:
+    - Active
+    - Paused
+    - Degraded
+    - Deactivated
+  SubscriptionUpdateRequest:
+    properties:
+      description:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        $ref: '#/definitions/models.NotificationTypesUpdate'
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  SubscriptionUpdateResponse:
+    properties:
+      created_date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      notification_email:
+        type: string
+      notification_types:
+        items:
+          type: string
+        type: array
+      status:
+        $ref: '#/definitions/SubscriptionStatus'
+      tags:
+        items:
+          type: string
+        type: array
+      updated_date:
+        type: string
+      url:
+        type: string
+    type: object
+  SubscriptionsGetResponse:
+    properties:
+      has_next_page:
+        type: boolean
+      has_previous_page:
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/Subscription'
+        type: array
+      page_number:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  models.NotificationTypesUpdate:
+    properties:
+      add:
+        items:
+          type: string
+        type: array
+      rem:
+        items:
+          type: string
+        type: array
+    required:
+    - add
+    - rem
+    type: object
+  problem.ProblemDetails:
+    properties:
+      detail:
+        type: string
+      instance:
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+info:
+  contact:
+    email: support@tucows.com
+    name: Tucows Domains Support
+    url: https://www.tucows.com/
+  description: Manage domain notifications and subscriptions
+  title: Domains Notifications and Subscriptions API
+  version: "1.0"
+paths:
+  /:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/DefaultResponse'
+        default:
+          description: ""
+      summary: Handles the default route for the api
+      tags:
+      - general
+  /api/notifications:
+    post:
+      consumes:
+      - application/json
+      description: Creates a notification and places it on the message bus
+      parameters:
+      - description: The amount of time (seconds) to wait for a sync response. After
+          the timeout has elapsed, the response will be available asynchronously through
+          webhooks.
+        in: header
+        name: x-timeout
+        type: integer
+      - description: The API version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer id
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      - description: Notification payload
+        in: body
+        name: notification
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Create notification
+      tags:
+      - notifications
+  /api/subscriptions:
+    get:
+      consumes:
+      - application/json
+      description: Gets a list of subscriptions based on query parameters.
+      parameters:
+      - description: The amount of time (seconds) to wait for a sync response. After
+          the timeout has elapsed, the response will be available asynchronously through
+          webhooks.
+        in: header
+        name: x-timeout
+        type: integer
+      - description: The API version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer id
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      - default: 1
+        in: query
+        minimum: 1
+        name: page_number
+        type: integer
+      - default: 10
+        in: query
+        minimum: 1
+        name: page_size
+        type: integer
+      - default: created_date
+        in: query
+        name: sort_by
+        type: string
+      - default: asc
+        enum:
+        - asc
+        - desc
+        in: query
+        name: sort_direction
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/SubscriptionsGetResponse'
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Get a list of subscriptions
+      tags:
+      - subscriptions
+    post:
+      description: Creates a new notifications subscription for domain and contacts
+        updates
+      parameters:
+      - description: An idempotency key is a unique value generated by the client
+          which the server uses to recognize subsequent retries of the same request.
+          How you create unique keys is up to you, but we suggest using V4 UUIDs,
+          or another random string with enough entropy to avoid collisions. Idempotency
+          keys can be up to 255 characters long
+        in: header
+        name: idempotency-key
+        type: string
+      - description: The api version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer id
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      - description: New subscription to create
+        in: body
+        name: subscription
+        required: true
+        schema:
+          $ref: '#/definitions/SubscriptionCreateRequest'
+      responses:
+        "201":
+          description: Created
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/SubscriptionCreateResponse'
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Create a new subscription
+      tags:
+      - subscriptions
+  /api/subscriptions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Given an ID, deletes the matching subscription
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: The amount of time (seconds) to wait for a sync response. After
+          the timeout has elapsed, the response will be available asynchronously through
+          webhooks.
+        in: header
+        name: x-timeout
+        type: integer
+      - description: The API version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer id
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "404":
+          description: Not Found
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Deletes a subscription
+      tags:
+      - subscriptions
+    get:
+      description: Gets subscription by ID
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: An idempotency key is a unique value generated by the client
+          which the server uses to recognize subsequent retries of the same request.
+        in: header
+        name: idempotency-key
+        type: string
+      - description: The API version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer ID
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SubscriptionGetResponse'
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Get subscription by ID
+      tags:
+      - subscriptions
+    patch:
+      description: Updates a notifications subscription for domain and contact events.
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: An idempotency key is a unique value generated by the client
+          which the server uses to recognize subsequent retries of the same request.
+          How you Update unique keys is up to you, but we suggest using V4 UUIDs,
+          or another random string with enough entropy to avoid collisions. Idempotency
+          keys can be up to 255 characters long
+        in: header
+        name: idempotency-key
+        type: string
+      - description: The api version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer id
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      - description: Subscription to Update
+        in: body
+        name: subscription
+        required: true
+        schema:
+          $ref: '#/definitions/SubscriptionUpdateRequest'
+      responses:
+        "200":
+          description: OK
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/SubscriptionUpdateResponse'
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "404":
+          description: Not Found
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Update a subscription
+      tags:
+      - subscriptions
+  /api/subscriptions/{id}/pause:
+    patch:
+      description: Pauses a subscription by setting its state to "Paused". Only Active
+        or Degraded subscriptions can be paused.
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: The API version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer id
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/SubscriptionPauseResponse'
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "404":
+          description: Not Found
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Pause an active or degraded subscription
+      tags:
+      - subscriptions
+  /api/subscriptions/{id}/resume:
+    patch:
+      description: Resumes a subscription by setting its state to "Active". Only Paused
+        subscriptions can be resumed.
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: The API version
+        in: header
+        name: x-version
+        required: true
+        type: string
+      - description: Tenant customer id
+        in: header
+        name: x-tenant-customer-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/SubscriptionResumeResponse'
+        "400":
+          description: Bad Request
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "401":
+          description: Unauthorized
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "403":
+          description: Forbidden
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "404":
+          description: Not Found
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "408":
+          description: Request Timeout
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "429":
+          description: Too Many Requests
+          headers:
+            retry-after:
+              description: Number of seconds to wait before making additional requests
+              type: int
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          headers:
+            x-rate-limit:
+              description: Total number of available requests before being throttled
+              type: int
+            x-rate-limit-remaining:
+              description: Remaining number of available requests
+              type: int
+            x-request-duration:
+              description: Time in seconds it took to receive the response
+              type: int
+            x-transaction-id:
+              description: Unique request identifier
+              type: string
+            x-version:
+              description: The api version
+              type: string
+          schema:
+            $ref: '#/definitions/problem.ProblemDetails'
+      summary: Resume a paused subscription
+      tags:
+      - subscriptions
+  /health/:
+    get:
+      consumes:
+      - application/json
+      description: Gets health check for the api and all dependencies
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/HealthCheckResponse'
+        default:
+          description: ""
+      summary: Get the health check information for the api
+      tags:
+      - general
+swagger: "2.0"

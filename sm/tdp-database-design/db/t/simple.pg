@@ -1,0 +1,14 @@
+-- This is a simple test plan. See https://pgtap.org/ for more info
+
+BEGIN;
+
+SELECT plan(4);
+
+SET search_path TO class,public;
+
+SELECT has_table('audit' );
+SELECT has_table('soft_delete' );
+SELECT has_table('audit_trail' );
+SELECT has_table('migration' );
+
+ROLLBACK;

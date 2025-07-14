@@ -1,0 +1,322 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- create a host parent domain entry for testing
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM v_tenant_customer limit 1)
+  AND is_default;
+
+WITH parent_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        FORMAT('host-parent-domain-%s-1.help',EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _host_parent_domain FROM parent_domain;
+
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        FORMAT('test-domain-%s-1.help',EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+), test_hosts AS (
+    INSERT INTO host(
+        "name",
+        tenant_customer_id
+    ) VALUES
+    ( 'ns1.' || (SELECT name FROM _host_parent_domain), (SELECT id FROM v_tenant_customer LIMIT 1) ), 
+    ( 'ns2.' || (SELECT name FROM _host_parent_domain), (SELECT id FROM v_tenant_customer LIMIT 1) )
+    RETURNING *
+), test_domain_host AS (
+    INSERT INTO domain_host(
+        domain_id,
+        host_id
+    ) (
+        SELECT
+        (SELECT id FROM test_domain) AS domain_id,
+        id AS host_id
+        FROM
+            test_hosts
+    )
+)
+SELECT * INTO TEMP _test_domain FROM test_domain;
+
+-- create an order
+WITH o AS (
+INSERT INTO "order"(
+    tenant_customer_id,
+    type_id
+)
+VALUES(
+    (SELECT id FROM v_tenant_customer LIMIT 1),
+    (SELECT id FROM v_order_type WHERE product_name='domain' AND name='update')
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _order FROM o;
+
+WITH oiud AS (
+    INSERT INTO order_item_update_domain(
+        order_id,
+        name
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain)
+    ) returning *
+)
+SELECT * INTO TEMP _oi_update_domain FROM oiud;
+
+
+-- create a host order to add
+WITH oh AS (
+    INSERT INTO order_host (
+        "name",
+         tenant_customer_id        
+    )
+    VALUES(    
+       'ns3.' || (SELECT name FROM _host_parent_domain),
+       (SELECT id FROM v_tenant_customer LIMIT 1)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _add_order_host FROM oh;
+
+-- add the host order address 
+SELECT lives_ok($$
+    INSERT INTO order_host_addr(
+        host_id,
+        address
+    )
+    (
+        SELECT 
+            (SELECT id FROM _add_order_host),
+            a.addr 
+        FROM ( 
+            SELECT addr FROM (
+            VALUES
+                ('192.168.1.100'::INET),
+                ('192.168.1.101'::INET)
+            ) AS t (addr)
+        ) a
+    )
+$$,'insert record in order_host_addr');
+
+-- add the update domain add nameservers 
+SELECT lives_ok($$
+    INSERT INTO update_domain_add_nameserver(
+        update_domain_id,        
+        host_id
+    )
+    VALUES(
+        (SELECT id FROM _oi_update_domain),
+        (SELECT id FROM _add_order_host)
+    );
+$$,'insert record in update_domain_add_nameserver');
+
+-- create a host order to remove
+WITH oh AS (
+    INSERT INTO order_host (
+        "name",
+         tenant_customer_id        
+    )
+    VALUES(    
+       'ns2.' || (SELECT name FROM _host_parent_domain),
+       (SELECT id FROM v_tenant_customer LIMIT 1)
+    ) RETURNING *
+)
+SELECT * INTO TEMP _rem_order_host FROM oh;
+
+-- add the update domain remove nameservers 
+SELECT lives_ok($$
+    INSERT INTO update_domain_rem_nameserver(
+        update_domain_id,        
+        host_id
+    )
+    VALUES(
+        (SELECT id FROM _oi_update_domain),
+        (SELECT id FROM _rem_order_host)
+    );
+$$,'insert record in update_domain_rem_nameserver');
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- order must be in status processing
+SELECT cmp_ok( 
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+-- order item must be in status 'ready' now
+SELECT cmp_ok( 
+    (SELECT s.name FROM order_item oi JOIN order_item_status s ON s.id=oi.status_id WHERE oi.order_id = (SELECT id FROM _order)),
+    '=',
+    'ready'
+);
+
+-- there should be 2 items plans (host and domain)
+SELECT cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_update_domain)) WHERE plan_status_name = 'new'),
+  '=',
+  2::INT
+);
+
+-- there should be 1 item pending validation (host)
+SELECT cmp_ok(
+  (SELECT COUNT(*)::INT FROM f_order_item_plan((SELECT id FROM _oi_update_domain)) WHERE plan_validation_status_name = 'started'),
+  '=',
+  1::INT
+);
+
+-- there should be 1 job created to validate host
+SELECT cmp_ok((
+    SELECT COUNT(*)::INT
+    FROM v_job vj 
+    JOIN update_domain_plan udp ON udp.id = vj.reference_id
+    WHERE udp.order_item_id = (SELECT id FROM _oi_update_domain)
+        AND vj.job_type_name = 'validate_host_available'),
+  '=',
+  1::INT
+);
+
+-- let's update the validate_host_available job and corresponding order item plan to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE order_item_plan
+    SET validation_status_id = tc_id_from_name('order_item_plan_validation_status','completed')
+    WHERE id = ( 
+        SELECT vj.reference_id
+        FROM v_job vj 
+        JOIN update_domain_plan udp ON udp.id = vj.reference_id
+        WHERE udp.order_item_id = (SELECT id FROM _oi_update_domain)
+            AND vj.job_type_name = 'validate_host_available'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+SELECT lives_ok($$
+    UPDATE job
+    SET status_id = tc_id_from_name('job_status','completed')
+    WHERE id = ( 
+        SELECT job_id
+        FROM v_job vj 
+        JOIN update_domain_plan udp ON udp.id = vj.reference_id
+        WHERE udp.order_item_id = (SELECT id FROM _oi_update_domain)
+            AND vj.job_type_name = 'validate_host_available'
+            AND vj.job_status_name = 'submitted'
+    ) 
+$$);
+
+-- let's grab that provision_host entry
+WITH ph AS (
+    SELECT ph.*, ps.name AS status_name
+    FROM provision_host ph
+             JOIN provision_status ps ON ps.id = ph.status_id
+    WHERE (
+              SELECT id FROM f_order_item_plan((SELECT id FROM _oi_update_domain))
+              WHERE object_name='host'
+          ) = ANY(order_item_plan_ids)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_host FROM ph;
+
+-- there should be a host entry in provision_host that is pending to be provisioned
+SELECT ok(
+   EXISTS(
+       SELECT * FROM _prov_host
+   )
+);
+
+-- job should not be null
+SELECT ok((SELECT job_id FROM _prov_host) IS NOT NULL,'job_id is not null');
+
+-- let's update the job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE status_id=tc_id_from_name('job_status','submitted')
+$$);
+
+-- provisioned date should be set on host
+SELECT ok(
+    (SELECT provisioned_date IS NOT NULL FROM provision_host WHERE id=(SELECT id FROM _prov_host)),
+    'provisioned date was set on provision_host' 
+);
+
+-- status must be successful
+SELECT ok(
+    (SELECT s.is_success AND s.is_final 
+        FROM provision_host h 
+            JOIN provision_status s ON h.status_id=s.id 
+        WHERE h.id=(SELECT hh.id FROM _prov_host hh)),
+    'status is set to success and final on host' 
+);
+
+-- let's grab that provision_domain_update entry
+WITH pc AS (
+    SELECT pdu.*, ps.name AS status_name
+    FROM provision_domain_update pdu
+             JOIN provision_status ps ON ps.id = pdu.status_id
+    WHERE (
+              SELECT id FROM f_order_item_plan((SELECT id FROM _oi_update_domain))
+              WHERE object_name='domain'
+          ) = ANY(order_item_plan_ids)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_domain_update FROM pc;
+
+-- there should be a domain update entry in provision_domain_update that is pending to be provisioned
+SELECT ok(
+   EXISTS(
+       SELECT * FROM _prov_domain_update
+   )
+);
+
+-- job should not be null
+SELECT ok((SELECT job_id FROM _prov_domain_update) IS NOT NULL,'job_id is not null');
+
+-- let's update the job to see if it changes to complete
+SELECT lives_ok($$
+    UPDATE job SET status_id = tc_id_from_name('job_status','completed')
+        WHERE id=(SELECT job_id FROM _prov_domain_update)
+$$);
+
+-- order should now be complete 
+SELECT ok( 
+        order_status_is_final 
+        AND 
+        order_status_is_success
+    )
+    FROM v_order
+    WHERE order_id=(SELECT id FROM _order);
+
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

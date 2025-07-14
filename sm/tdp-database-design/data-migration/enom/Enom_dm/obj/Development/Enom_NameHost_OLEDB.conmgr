@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="Enom_NameHost_OLEDB"
+  DTS:DTSID="{F452449C-2F32-4538-A46A-E6D7B902CE2F}"
+  DTS:CreationName="OLEDB">
+  <DTS:PropertyExpression
+    DTS:Name="ConnectionString">@[$Project::Enom_NameHost_OLEDB_ConnectionString]</DTS:PropertyExpression>
+  <DTS:PropertyExpression
+    DTS:Name="Password">@[$Project::Enom_NameHost_OLEDB_Password]</DTS:PropertyExpression>
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=CEN2vwmssql01.staging.local;User ID=nludina;Initial Catalog=namehost;Provider=MSOLEDBSQL.1;Application Name=SSIS-Enom_dm-{F452449C-2F32-4538-A46A-E6D7B902CE2F}CEN2vwmssql01.staging.local.namehost.nludina;Auto Translate=False;">
+      <DTS:Password
+        DTS:Name="Password"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAyh/dMUA/RUGNRC64Vq0l9wAAAAACAAAAAAAQZgAAAAEAACAAAADN2SNPBp20xdtfK5K1iOt+Nfq/brjdkIkzyCGpvnNk9wAAAAAOgAAAAAIAACAAAAAAYjVQWRyahamyTTAc8ZeeWlHP2wleFazTk+VYNog/KoAAAACX2vEdWvx/7DhajW1ctzerX15dqVpVLEmMdpp5gAm6fkWDSg7DQZx8Tl5VRRxnj6RInf6O224CWzHmp9YGyYwCJUV97/ter+yGbP0IKUbNe6RU3CwYkCTmgCyYy7wWm6rvLJJYFD8OuVeh/YCiyVwW01gcIKTbK6rU2Z+ZytojhkAAAADBX97Sdglq1gVMj3do3ovxU7DU0fD+ay0CIjr2C9Zsd69ULP4t2va7RlGigNszbANX3oiUe2AkcjuU0EPf2x7Q</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

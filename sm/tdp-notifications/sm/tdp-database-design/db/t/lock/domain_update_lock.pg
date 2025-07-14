@@ -1,0 +1,138 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld 
+    FROM v_accreditation_tld
+    WHERE tld_name = 'help' 
+        AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+        AND is_default;
+
+
+-- create a domain entry for testing
+WITH test_domain AS (
+  INSERT INTO domain(
+    tenant_customer_id,
+    name,
+    accreditation_tld_id,
+    ry_created_date,
+    ry_expiry_date,
+    expiry_date
+  ) VALUES (
+    (SELECT id FROM _tenant_customer),
+    FORMAT('tdp-test-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+    (SELECT id FROM _acc_tld),
+    NOW(),
+    NOW() + ('1 years')::INTERVAL,
+    NOW() + ('1 years')::INTERVAL
+  ) RETURNING * 
+)
+SELECT * INTO TEMP _test_domain FROM test_domain;
+
+-- add lock for domain update
+SELECT lives_ok($$
+    INSERT INTO domain_lock (
+        domain_id,
+        type_id
+    ) VALUES (
+        (SELECT id FROM _test_domain),
+        tc_id_from_name('lock_type', 'update')
+    );
+$$,'insert lock for domain');
+
+
+-- create an order
+WITH o AS (
+INSERT INTO "order"(
+    tenant_customer_id,
+    type_id
+)
+VALUES(
+    (SELECT id FROM v_tenant_customer LIMIT 1),
+    (SELECT id FROM v_order_type WHERE product_name='domain' AND name='update')
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _order FROM o;
+
+SELECT throws_matching($$
+    INSERT INTO order_item_update_domain(
+        order_id,
+        name,
+        locks
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain),
+        '{}'::jsonb
+    );
+    $$,
+'update prohibited',
+'domain update is prohibited by update lock');
+
+
+SELECT lives_ok($$
+    INSERT INTO order_item_update_domain(
+        order_id,
+        name,
+        locks
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain),
+        '{"update":false}'::jsonb
+    );
+    $$,
+'domain update is allowed if update lock is removed by the order');
+
+
+-- add registrar lock for domain update
+SELECT lives_ok($$
+    INSERT INTO domain_lock (
+        domain_id,
+        type_id,
+        is_internal
+    ) VALUES (
+        (SELECT id FROM _test_domain),
+        tc_id_from_name('lock_type', 'update'),
+        TRUE
+    );
+$$,'insert registrar lock for domain');
+
+SELECT throws_matching($$
+    INSERT INTO order_item_update_domain(
+        order_id,
+        name,
+        locks
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain),
+        '{}'::jsonb
+    );
+    $$,
+'update prohibited by registrar',
+'domain update is prohibited by registrar update lock');
+
+
+SELECT throws_matching($$
+    INSERT INTO order_item_update_domain(
+        order_id,
+        name,
+        locks
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT name FROM _test_domain),
+        '{"update":false}'::jsonb
+    );
+    $$,
+'update prohibited by registrar',
+'domain update is prohibited by registrar update lock even though client lock is being removed');
+
+
+-- finish testing
+SELECT * FROM finish(true);
+
+--COMMIT;
+ROLLBACK;

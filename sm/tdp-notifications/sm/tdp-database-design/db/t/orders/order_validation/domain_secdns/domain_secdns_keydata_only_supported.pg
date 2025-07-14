@@ -1,0 +1,109 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- clean attr_value table
+DELETE FROM attr_value;
+
+-- update secdns supported list for .sexy TLD
+INSERT INTO attr_value(
+    key_id, 
+    value_text_list, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id FROM attr_key WHERE name = 'secdns_supported'),
+    ARRAY['keyData'],
+    (SELECT id FROM tld WHERE name = 'sexy'),
+    (SELECT tenant_id FROM v_tenant_customer limit 1)
+);
+
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+-- create a host parent domain entry for testing
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'sexy'
+  AND tenant_id=(SELECT tenant_id FROM v_tenant_customer limit 1)
+  AND is_default;
+
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        FORMAT('host-parent-domain-%s-%s-1.sexy',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _host_parent_domain FROM test_domain;
+
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+-- now we add the order item (order_item_create_domain)
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+WITH cd AS (
+    INSERT INTO order_item_create_domain(order_id, name, secdns_max_sig_life) 
+        VALUES(
+            (SELECT id FROM _order),
+            FORMAT('tdp-test-%s-%s.sexy',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT),
+            5    
+        ) RETURNING *
+)
+SELECT * INTO TEMP _oi_create_domain FROM cd;
+
+
+-- add secdns dsdata record
+WITH osdd AS (
+    INSERT INTO order_secdns_ds_data(key_tag, algorithm, digest)
+    VALUES (1, 3, 'test-digest')
+    RETURNING *
+)
+SELECT * INTO TEMP _order_secdns_ds_data FROM osdd;
+
+
+SELECT throws_imatching($$
+    INSERT INTO create_domain_secdns (create_domain_id, ds_data_id)
+    VALUES ((SELECT id FROM _oi_create_domain), (SELECT id FROM _order_secdns_ds_data))
+    $$,
+    'SecDNS Key data is only supported for TLD ''sexy''',
+    'fail domain secdns creation, domain secdns keydata is only supported'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+-- COMMIT;
+ROLLBACK;

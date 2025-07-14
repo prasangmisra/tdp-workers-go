@@ -1,0 +1,140 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+
+-- create an order
+WITH o AS (
+INSERT INTO "order"(
+    tenant_customer_id,
+    type_id
+)
+VALUES(
+    (SELECT id FROM v_tenant_customer LIMIT 1),
+    (SELECT id FROM v_order_type WHERE product_name='domain' AND name='update')
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _order FROM o;
+
+-- create a contact (personal)
+
+WITH oc AS (
+INSERT INTO order_contact (
+    order_id,
+    type_id,
+    email,
+    phone,
+    fax,
+    country,
+    tenant_customer_id
+)
+VALUES(
+    (SELECT id FROM _order),
+    tc_id_from_name('contact_type','individual'),
+    'person@test.example',
+    '+555.5555551212',
+    '+555.5555551213',
+    'US',
+    (SELECT id FROM v_tenant_customer LIMIT 1)
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _order_contact FROM oc;
+
+
+-- postal data as well
+WITH cp AS (
+INSERT INTO order_contact_postal
+(
+    contact_id,
+    is_international,
+    first_name,
+    last_name,
+    address1,
+    city,
+    postal_code,
+    state
+)
+VALUES(
+    (SELECT id FROM _order_contact),
+    TRUE,
+    'John',
+    'Smith',
+    '555 Adress line',
+    'Los Angeles',
+    '90210',
+    'California'
+    ) RETURNING *
+    )
+SELECT * INTO TEMP _order_contact_postal FROM cp;
+
+
+WITH cd AS (
+    INSERT INTO order_item_update_domain(
+    order_id,
+    name
+) VALUES(
+    (SELECT id FROM _order),
+    'example-to-be-deleted.sexy'
+    ) returning *
+    )
+SELECT * INTO TEMP _oi_update_domain FROM cd;
+
+-- make sure billing is not supported contact type_id
+INSERT INTO attr_value(
+    key_id, 
+    value_text_list, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id FROM attr_key WHERE name = 'optional_contact_types'),
+    ARRAY['tech'],
+    (SELECT id FROM tld WHERE name = 'help'),
+    (SELECT tenant_id FROM v_tenant_customer limit 1)
+);
+
+-- add the contacts for not supported contact types
+SELECT lives_ok($$
+    INSERT INTO update_domain_contact(
+        update_domain_id,
+        domain_contact_type_id,
+        order_contact_id
+    )
+    VALUES (
+        (SELECT id FROM _oi_update_domain),
+        tc_id_from_name('domain_contact_type', 'billing'),
+        (SELECT id FROM _order_contact)
+    );
+$$,'insert record in update_domain_contact');
+
+
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+
+-- let's grab that provision_contact entry
+WITH pc AS (
+    SELECT pc.*,ps.name AS status_name
+    FROM provision_contact pc
+             JOIN provision_status ps ON ps.id = pc.status_id
+    WHERE (
+              SELECT id FROM f_order_item_plan((SELECT id FROM _oi_update_domain))
+              WHERE object_name='contact'
+          ) = ANY(order_item_plan_ids)
+      AND ps.name = 'pending'
+)
+SELECT * INTO TEMP _prov_contact FROM pc;
+
+-- there should be no entry in provision_contact that is pending to be provisioned
+SELECT ok(
+   NOT EXISTS(
+       SELECT * FROM _prov_contact
+   )
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

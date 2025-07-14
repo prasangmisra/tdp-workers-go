@@ -1,0 +1,74 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_item_create_domain');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id, tld_id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- Update default value for "authcode_mandatory_for_orders" tld_setting
+INSERT INTO attr_value(
+    key_id, 
+    value_text_list, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id from attr_key WHERE name='authcode_mandatory_for_orders'), 
+    ARRAY['registration'],
+    (SELECT tld_id FROM _acc_tld),
+    (SELECT tenant_id FROM _tenant_customer)
+);
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM _tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='create')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+-- now we add the order item
+CREATE SEQUENCE IF NOT EXISTS domain_counter;
+
+WITH cd AS (
+    INSERT INTO order_item_create_domain(order_id,name)
+        VALUES((SELECT id FROM _order),FORMAT('tdp-test-%s-%s.help',NEXTVAL('domain_counter'),EXTRACT(epoch from NOW())::INT)) RETURNING *
+)
+SELECT * INTO TEMP _oi_create_domain FROM cd;
+
+-- check that auth info in _oi_create_domain is not null and exists
+SELECT ok(
+    (SELECT COUNT(*) > 0 FROM _oi_create_domain WHERE auth_info IS NOT NULL),
+    'auth_info is generated'
+);
+
+-- finish testing
+SELECT * FROM finish(true);
+
+ROLLBACK;

@@ -1,0 +1,57 @@
+services:
+  rmq:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_ERLANG_COOKIE='rabbitcookie'
+      - RABBITMQ_DEFAULT_USER=domains
+      - RABBITMQ_DEFAULT_PASS=tucows
+    networks:
+      - tdp-test
+
+  subdb:
+    build:
+      context: ../../database
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=tucows
+      - POSTGRES_PASSWORD=tucows1234
+    volumes:
+      - ../../database/etc/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ../../database/db/t:/tests/db/t
+      - ../../database/db:/db
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    working_dir: /db
+    healthcheck:
+      test: if [ ! -f ../ready ]; then touch ../ready && make all test-data; fi
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    networks:
+      - tdp-test
+
+  test:
+    build:
+      context: ../../
+      dockerfile: build/Dockerfile
+      target: app-test
+      args:
+        SERVICE_TYPE: enqueuer
+    depends_on:
+      rmq:
+        condition: service_started
+      subdb:
+        condition: service_healthy
+    environment:
+      - RABBITMQ_USER=domains
+      - RABBITMQ_PASS=tucows
+      - RABBITMQ_HOST=rmq
+      - RABBITMQ_PORT=5672
+    volumes:
+      - ${TMPDIR:-./tmp}/test_results/enqueuer:/test_results
+    networks:
+      - tdp-test
+
+networks:
+  tdp-test:
+    name: ${DC_PROJECT_NAME:-tdp-test}

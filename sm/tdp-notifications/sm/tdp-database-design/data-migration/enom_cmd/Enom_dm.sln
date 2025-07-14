@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{C9674DCB-5085-4A16-B785-4C70DD1589BD}") = "Enom_dm", "Enom_dm\Enom_dm.dtproj", "{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E5FBD10F-025B-41DD-9413-CD682086F354}"
+	ProjectSection(SolutionItems) = preProject
+		documentation.txt = documentation.txt
+		..\fdw to nazca_identity from dm_enom creation.sql = ..\fdw to nazca_identity from dm_enom creation.sql
+		..\TDP check migration result.sql = ..\TDP check migration result.sql
+		..\old dm_enom_schema_creation.sql = ..\old dm_enom_schema_creation.sql
+		..\old itdp_schema_creation.sql = ..\old itdp_schema_creation.sql
+		..\TDP cleaning script for repeating migration - array.sql = ..\TDP cleaning script for repeating migration - array.sql
+		..\TDP cleaning script for repeating migration.sql = ..\TDP cleaning script for repeating migration.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+		Local_prod|Default = Local_prod|Default
+		Local|Default = Local|Default
+		prod_snapshot|Default = prod_snapshot|Default
+		Prod|Default = Prod|Default
+		QA|Default = QA|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Development|Default.ActiveCfg = Development
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Development|Default.Build.0 = Development
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Local_prod|Default.ActiveCfg = Local_prod
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Local_prod|Default.Build.0 = Local_prod
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Local|Default.ActiveCfg = Local
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Local|Default.Build.0 = Local
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.prod_snapshot|Default.ActiveCfg = prod_snapshot
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.prod_snapshot|Default.Build.0 = prod_snapshot
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Prod|Default.ActiveCfg = Prod
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.Prod|Default.Build.0 = Prod
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.QA|Default.ActiveCfg = QA
+		{E3171EC1-6CE0-4A82-9F2B-E8176145DB62}.QA|Default.Build.0 = QA
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {862AB682-14C9-4A43-BA8B-ED3CF8207156}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,81 @@
+erDiagram 
+
+
+    
+
+     domainname_MSSQL {        
+      int domainnameid PK 
+	  varchar sld
+	  varchar tld 
+	  
+    }
+
+    domaincontact_MSSQL {     
+	int idx PK
+	int domainnameid FK
+	uuid regcontactid FK
+	uuid admincontactid FK
+	uuid techcontactid FK
+	uuid billcontactid FK	
+    }
+
+	domaincontact_PostgreSQL {     
+	int idx PK
+	int domainnameid FK
+	uuid regcontactid FK
+	uuid admincontactid FK
+	uuid techcontactid FK
+	uuid billcontactid FK	
+    }
+
+    contact_PostgreSQL{
+    uuid id PK
+	varchar contact_type 
+    varchar first_name 
+	varchar last_name 
+	varchar email_address 
+	varchar organization 
+	varchar address1 
+	varchar address2 
+	varchar address3 
+	varchar city 
+	varchar state 
+	varchar postal_code 
+	varchar country_code 
+	varchar phone_number 
+	varchar phone_extension 
+	varchar fax_number 
+	timestamptz creation_date 
+	timestamptz modification_date 
+	int reseller_id FK
+	timestamptz reported_active_date 
+    }
+
+    contact_extra_PostgreSQL{
+    int id PK 
+	varchar(2000) value 
+	uuid contact_id  FK
+	int field_id   FK
+    }
+
+	field{
+	int id PK
+	varchar name
+	}
+
+    
+  
+    
+    
+    
+    domaincontact_MSSQL }o--|| domainname_MSSQL : "domainnameid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "regcontactid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "admincontactid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "techcontactid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "billcontactid"
+    field  }o--|| contact_extra_PostgreSQL : "field_id"
+	contact_extra_PostgreSQL }o--|| contact_PostgreSQL : "contact_id"
+	domaincontact_PostgreSQL }o--|| contact_PostgreSQL : "regcontactid"
+    domaincontact_PostgreSQL }o--|| contact_PostgreSQL : "admincontactid"
+    domaincontact_PostgreSQL }o--|| contact_PostgreSQL : "techcontactid"
+    domaincontact_PostgreSQL }o--|| contact_PostgreSQL : "billcontactid"

@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  get_dd_env:
+    stdin_open: true
+    tty: true
+    image: artifacts.cnco.tucows.systems/domains-docker-virtual/envy:latest
+    volumes:
+      - ./generated_env:/envy_pwd
+    environment:
+      SSL_CERT_DIR: /envy/certs
+      VAULT_LOG_LEVEL: "debug"
+      VAULT_UI: "true"
+      VAULT_NAMESPACE: "dev-tucows-domains"
+      VAULT_ADDR: "https://vault.pre-hashicorp-ent.cnco.tucows.systems:8200"
+      ENVY_TEMPLATE: |
+        contents = <<EOH
+        DD_API_KEY={{ with secret "kv/data/datadog/tdp" }}{{ .Data.data.api_key }}{{ end }}
+        EOH
+        destination = "/envy_pwd/dd_agent.env"

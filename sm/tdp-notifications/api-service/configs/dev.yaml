@@ -1,0 +1,22 @@
+servicePort: 8190
+log:
+  outputsink: stderr
+swaggerurl: 'http://localhost:8190/swagger/doc.json'
+rmq:
+  hostname: rabbitmq-local
+  port: 5671
+  username: domains
+  password: tucows
+  exchange: test
+  queuetype: classic
+  tlsenabled: true
+  tlsskipverify: true
+  queuename: subscriptionmanager
+  verifyservername:
+healthcheck:
+  frequency: 30
+  latency: 3
+  timeout: 5
+validator:
+  httpsurl: true
+  urlreachability: false

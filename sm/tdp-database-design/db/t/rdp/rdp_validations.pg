@@ -1,0 +1,294 @@
+BEGIN;
+
+SELECT plan(12);  -- Adjusted plan to match actual test count
+
+-- Create temporary table for TLD ID
+WITH tld AS (
+    SELECT tc_id_from_name('tld', 'click') AS id
+) SELECT id INTO TEMP _tld_id FROM tld;
+
+-- Insert test domain data element for tech email
+WITH tech_email_de AS (
+    INSERT INTO domain_data_element (data_element_id, tld_id) VALUES (
+        (SELECT id FROM v_data_element WHERE full_name = 'tech.email'),
+        (SELECT id FROM _tld_id)
+    ) RETURNING id
+) SELECT id INTO TEMP _tech_email_de FROM tech_email_de;
+
+-- Test 1: Verify basic successful insertion with must_collect
+SELECT lives_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_email_de),
+        tc_id_from_name('permission', 'must_collect'),
+        tstzrange(NOW(), NOW() + INTERVAL '1 year')
+    );
+    $$,
+    'Should successfully insert must_collect permission'
+);
+
+-- Test 2: Verify past date rejection
+SELECT throws_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_email_de),
+        tc_id_from_name('permission', 'must_collect'),
+        tstzrange(NOW() - INTERVAL '1 year', NOW() - INTERVAL '1 day')
+    );
+    $$,
+    'Permission validity start date cannot be in the past',
+    'Should reject validity start date in the past'
+);
+
+-- Insert test domain data element for tech first_name
+WITH tech_first_name_de AS (
+    INSERT INTO domain_data_element (data_element_id, tld_id) VALUES (
+        (SELECT id FROM v_data_element WHERE full_name = 'tech.first_name'),
+        (SELECT id FROM _tld_id)
+    ) RETURNING id
+) SELECT id INTO TEMP _tech_first_name_de FROM tech_first_name_de;
+
+-- Test 3: Test must_not_collect insertion on clean data element
+SELECT lives_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_first_name_de),
+        tc_id_from_name('permission', 'must_not_collect'),
+        tstzrange(
+            date_trunc('MONTH', CURRENT_DATE)::DATE + INTERVAL '1 MONTH',
+            date_trunc('MONTH', CURRENT_DATE)::DATE + INTERVAL '2 MONTH' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Should successfully insert must_not_collect permission in new timeframe'
+);
+
+-- Test 4: Verify rejection of other permissions when must_not_collect exists
+SELECT throws_matching(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_first_name_de),
+        tc_id_from_name('permission', 'transmit_to_registry'),
+        tstzrange(
+            date_trunc('MONTH', CURRENT_DATE)::DATE + INTERVAL '1 MONTH',
+            date_trunc('MONTH', CURRENT_DATE)::DATE + INTERVAL '2 MONTH' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Cannot insert permission because must_not_collect is already set for this data_element',
+    'Should reject permission when must_not_collect exists in same period'
+);
+
+-- Insert test domain data element for tech last_name
+WITH tech_last_name_de AS (
+    INSERT INTO domain_data_element (data_element_id, tld_id) VALUES (
+        (SELECT id FROM v_data_element WHERE full_name = 'tech.last_name'),
+        (SELECT id FROM _tld_id)
+    ) RETURNING id
+) SELECT id INTO TEMP _tech_last_name_de FROM tech_last_name_de;
+
+-- Test 5: Verify collection group requirement
+SELECT throws_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_last_name_de),
+        tc_id_from_name('permission', 'transmit_to_registry'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'At least one permission from the collection group must be set or inserted for this data_element',
+    'Should reject non-collection permission without existing collection permission'
+);
+
+-- Insert test domain data element for mixed permission tests
+WITH tech_address1_de AS (
+    INSERT INTO domain_data_element (data_element_id, tld_id) VALUES (
+        (SELECT id FROM v_data_element WHERE full_name = 'tech.address1'),
+        (SELECT id FROM _tld_id)
+    ) RETURNING id
+) SELECT id INTO TEMP _tech_address1_de FROM tech_address1_de;
+
+-- Test 6: Verify successful mixed permission insertion
+SELECT lives_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_address1_de),
+        tc_id_from_name('permission', 'may_collect'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_address1_de),
+        tc_id_from_name('permission', 'transmit_to_registry'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Should successfully insert transmission permission with collection permission'
+);
+
+-- Test 7: Verify that must_not_collect cannot be inserted when other permissions exist
+SELECT throws_matching(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_address1_de),
+        tc_id_from_name('permission', 'must_not_collect'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Cannot insert must_not_collect as other permissions already exist for this data_element',
+    'Should reject must_not_collect when overlapping with existing permissions'
+);
+
+-- Create a new data element for non-overlapping range tests
+WITH tech_phone_de AS (
+    INSERT INTO domain_data_element (data_element_id, tld_id) VALUES (
+        (SELECT id FROM v_data_element WHERE full_name = 'tech.phone'),
+        (SELECT id FROM _tld_id)
+    ) RETURNING id
+) SELECT id INTO TEMP _tech_phone_de FROM tech_phone_de;
+
+-- Test 8: Verify multiple collection permissions in same period
+SELECT lives_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES
+    (
+        (SELECT id FROM _tech_phone_de),
+        tc_id_from_name('permission', 'may_collect'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '3 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    ),
+    (
+        (SELECT id FROM _tech_phone_de),
+        tc_id_from_name('permission', 'available_for_consent'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '3 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Should allow multiple collection permissions in same period'
+);
+
+-- Test 9: Verify that publish_by_default can be successfully inserted
+SELECT lives_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_address1_de),
+        tc_id_from_name('permission', 'publish_by_default'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Should successfully insert publish_by_default permission in new timeframe'
+);
+
+-- Test 10: Verify that available_for_consent cannot be inserted if publish_by_default is present
+SELECT throws_matching(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_address1_de),
+        tc_id_from_name('permission', 'available_for_consent'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Cannot insert permission as available_for_consent and publish_by_default are mutually exclusive',
+    'Should reject available_for_consent when overlapping with existing publish_by_default permissions'
+);
+
+-- Insert test domain data element for tech country
+WITH tech_country_de AS (
+    INSERT INTO domain_data_element (data_element_id, tld_id) VALUES (
+        (SELECT id FROM v_data_element WHERE full_name = 'tech.country'),
+        (SELECT id FROM _tld_id)
+    ) RETURNING id
+) SELECT id INTO TEMP _tech_country_de FROM tech_country_de;
+
+-- Test 11: Verify that available_for_consent can be successfully inserted
+SELECT lives_ok(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES
+    (
+        (SELECT id FROM _tech_country_de),
+        tc_id_from_name('permission', 'may_collect'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_country_de),
+        tc_id_from_name('permission', 'available_for_consent'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Should successfully insert available_for_consent permission in new timeframe'
+);
+
+-- Test 12: Verify that publish_by_default cannot be inserted if available_for_consent is present
+SELECT throws_matching(
+    $$
+    INSERT INTO domain_data_element_permission (domain_data_element_id, permission_id, validity)
+    VALUES (
+        (SELECT id FROM _tech_country_de),
+        tc_id_from_name('permission', 'publish_by_default'),
+        tstzrange(
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '1 YEAR',
+            date_trunc('YEAR', CURRENT_DATE)::DATE + INTERVAL '2 YEAR' - INTERVAL '1 DAY',
+            '[)'
+        )
+    );
+    $$,
+    'Cannot insert permission as available_for_consent and publish_by_default are mutually exclusive',
+    'Should reject publish_by_default when overlapping with existing available_for_consent permissions'
+);
+
+-- Run the tests
+SELECT * FROM finish();
+
+ROLLBACK;

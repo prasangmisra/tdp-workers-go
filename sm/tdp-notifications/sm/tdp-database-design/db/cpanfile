@@ -1,0 +1,15 @@
+requires "common::sense";
+requires "DateTime::Format::Pg";
+requires "DBD::Pg";
+requires "DBIx::Class::Schema::Loader";
+requires "DBIx::Class";
+requires "JSON::Validator";
+requires "JSON";
+requires "List::Util";
+requires "Moose";
+requires "MooseX::MarkAsMethods";
+requires "MooseX::NonMoose";
+requires "MooseX::Params::Validate";
+requires "Pod::Abstract";
+requires "String::CamelCase";
+requires "Text::Pluralize";

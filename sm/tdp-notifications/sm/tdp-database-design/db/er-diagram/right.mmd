@@ -1,0 +1,19 @@
+erDiagram
+    right_order {
+        timestamp_without_time_zone created_date 
+        timestamp_without_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_without_time_zone deleted_date 
+        text deleted_by 
+        integer id PK
+        text descr 
+        boolean block_matching 
+        uuid order_type_id FK
+        uuid tenant_id FK
+        uuid customer_id FK
+        uuid tenant_customer_id FK
+        uuid user_id FK
+        uuid product_id FK
+    }
+

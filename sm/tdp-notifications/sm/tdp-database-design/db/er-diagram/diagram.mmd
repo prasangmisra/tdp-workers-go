@@ -1,0 +1,1096 @@
+erDiagram
+    migration {
+        text version PK
+        text name 
+        timestamp_with_time_zone applied_date 
+    }
+
+    country {
+        uuid id PK
+        text name 
+        text alpha2 
+        text alpha3 
+        text calling_code 
+    }
+
+    language {
+        uuid id PK
+        text name 
+        text alpha2 
+        text alpha3t 
+        text alpha3b 
+    }
+
+    attribute_type {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    attribute {
+        uuid id PK
+        uuid type_id FK
+        text name 
+        text descr 
+        uuid parent_id FK
+        text filter 
+    }
+
+    error_category {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    error_dictionary {
+        integer id PK
+        uuid category_id FK
+        text message 
+        ARRAY columns_affected 
+    }
+
+    business_entity {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        text name 
+        text descr 
+        uuid parent_id FK
+    }
+
+    tenant {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid business_entity_id FK
+        text name 
+        text descr 
+    }
+
+    audit_trail_log {
+        bigint id PK
+        text table_name 
+        text operation 
+        uuid object_id 
+        USER-DEFINED old_value 
+        USER-DEFINED new_value 
+        timestamp_with_time_zone statement_date 
+        timestamp_with_time_zone created_date PK
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    audit_trail_log_202306 {
+        bigint id PK
+        text table_name 
+        text operation 
+        uuid object_id 
+        USER-DEFINED old_value 
+        USER-DEFINED new_value 
+        timestamp_with_time_zone statement_date 
+        timestamp_with_time_zone created_date PK
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    customer {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid business_entity_id FK
+        uuid parent_customer_id FK
+        text name 
+        text descr 
+    }
+
+    tenant_customer {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid tenant_id FK
+        uuid customer_id FK
+        text customer_number 
+    }
+
+    customer_user {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid customer_id FK
+        uuid user_id FK
+    }
+
+    user {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        text email 
+        text name 
+    }
+
+    audit_trail_log_202307 {
+        bigint id PK
+        text table_name 
+        text operation 
+        uuid object_id 
+        USER-DEFINED old_value 
+        USER-DEFINED new_value 
+        timestamp_with_time_zone statement_date 
+        timestamp_with_time_zone created_date PK
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    job {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        uuid type_id FK
+        uuid status_id FK
+        timestamp_with_time_zone start_date 
+        timestamp_with_time_zone end_date 
+        timestamp_with_time_zone retry_date 
+        integer retry_count 
+        uuid reference_id 
+        jsonb data 
+        text result_msg 
+        jsonb result_data 
+        text event_id 
+    }
+
+    job_type {
+        uuid id PK
+        text name 
+        text descr 
+        text reference_table 
+        text reference_status_table 
+        text reference_status_column 
+        text routing_key 
+    }
+
+    job_status {
+        uuid id PK
+        text name 
+        text descr 
+        boolean is_final 
+        boolean is_success 
+    }
+
+    registry {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid business_entity_id FK
+        text name 
+        text descr 
+    }
+
+    tld {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid registry_id FK
+        uuid parent_tld_id FK
+        text name 
+    }
+
+    provider {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid business_entity_id FK
+        text name 
+        text descr 
+    }
+
+    provider_instance {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_id FK
+        text name 
+        text descr 
+        boolean is_proxy 
+    }
+
+    provider_instance_tld {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_instance_id FK
+        uuid tld_id FK
+        tstzrange service_range 
+    }
+
+    provider_protocol {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_id FK
+        uuid supported_protocol_id FK
+        boolean is_enabled 
+    }
+
+    supported_protocol {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    certificate_authority {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text descr 
+        text cert 
+        tstzrange service_range 
+    }
+
+    tenant_cert {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text cert 
+        text key 
+        uuid ca_id FK
+        tstzrange service_range 
+    }
+
+    provider_instance_epp {
+        text host 
+        integer port 
+        integer conn_min 
+        integer conn_max 
+        uuid id PK
+        uuid provider_instance_id FK
+    }
+
+    provider_instance_epp_ext {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provider_instance_epp_id FK
+        uuid epp_extension_id FK
+    }
+
+    epp_extension {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text decr 
+        text doc_url 
+        boolean is_implemented 
+    }
+
+    provider_instance_http {
+        uuid id PK
+        uuid provider_instance_id FK
+        text url 
+        text api_key 
+    }
+
+    accreditation {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        uuid tenant_id FK
+        uuid provider_instance_id FK
+        tstzrange service_range 
+    }
+
+    accreditation_epp {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        text host 
+        integer port 
+        integer conn_min 
+        integer conn_max 
+        uuid id PK
+        uuid accreditation_id FK
+        uuid cert_id FK
+        text clid 
+        text pw 
+    }
+
+    accreditation_tld {
+        uuid id PK
+        uuid accreditation_id FK
+        uuid provider_instance_tld_id FK
+        boolean is_default 
+    }
+
+    contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid type_id FK
+        text title 
+        text org_reg 
+        text org_vat 
+        text org_duns 
+        uuid tenant_customer_id FK
+        text email 
+        text phone 
+        text fax 
+        text country FK
+        text language FK       
+        ARRAY tags 
+        ARRAY documentation 
+    }
+
+    contact_type {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    contact_postal {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid contact_id FK
+        boolean is_international 
+        text first_name 
+        text last_name 
+        text org_name 
+        text address1 
+        text address2 
+        text address3 
+        text city 
+        text postal_code 
+        text state 
+    }
+
+    domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        uuid accreditation_tld_id FK
+        text name 
+        text auth_info 
+        text roid 
+        timestamp_with_time_zone ry_created_date 
+        timestamp_with_time_zone ry_expiry_date 
+        timestamp_with_time_zone ry_updated_date 
+        timestamp_with_time_zone ry_transfered_date 
+        timestamp_with_time_zone expiry_date 
+    }
+
+    contact_attribute {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid attribute_id FK
+        uuid attribute_type_id FK
+        uuid contact_id FK
+        text value 
+    }
+
+    domain_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid domain_id FK
+        uuid contact_id FK
+        uuid domain_contact_type_id FK
+        boolean is_local_presence 
+        boolean is_privacy_proxy 
+    }
+
+    domain_contact_type {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        text name 
+        uuid domain_id FK
+    }
+
+    host_addr {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid host_id FK
+        inet address 
+    }
+
+    domain_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid domain_id FK
+        uuid host_id FK
+    }
+
+    product {
+        uuid id PK
+        text name 
+    }
+
+    order_type {
+        uuid id PK
+        uuid product_id FK
+        text name 
+    }
+
+    order_status_path {
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    order_status_transition {
+        uuid id PK
+        uuid path_id FK
+        uuid from_id FK
+        uuid to_id FK
+    }
+
+    order_status {
+        uuid id PK
+        text name 
+        text descr 
+        boolean is_final 
+        boolean is_success 
+    }
+
+    order {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        uuid type_id FK
+        uuid customer_user_id FK
+        uuid status_id FK
+        uuid path_id FK
+    }
+
+    order_item_status {
+        uuid id PK
+        text name 
+        text descr 
+        boolean is_final 
+        boolean is_success 
+    }
+
+    order_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid type_id 
+        text title 
+        text org_reg 
+        text org_vat 
+        text org_duns 
+        uuid tenant_customer_id 
+        text email 
+        text phone 
+        text fax 
+        text country 
+        text language         
+        ARRAY tags 
+        ARRAY documentation 
+        uuid order_id FK
+    }
+
+    order_contact_postal {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid contact_id FK
+        boolean is_international 
+        text first_name 
+        text last_name 
+        text org_name 
+        text address1 
+        text address2 
+        text address3 
+        text city 
+        text postal_code 
+        text state 
+    }
+
+     order_contact_attribute {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by 
+        uuid id PK
+        uuid attribute_id 
+        uuid attribute_type_id 
+        uuid contact_id FK
+        text value 
+    }
+
+     order_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        text name 
+        uuid domain_id FK
+    }
+
+     order_host_addr {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid host_id FK
+        inet address 
+    }
+
+    order_item_strategy {
+        uuid id PK
+        uuid order_type_id FK
+        uuid provider_instance_id FK
+        uuid object_id FK
+        integer provision_order 
+    }
+
+    order_item_object {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text descr 
+    }
+
+    order_item_plan_status {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        text name 
+        text descr 
+        boolean is_success 
+        boolean is_final 
+    }
+
+    order_item {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id FK
+    }
+
+    order_item_create_domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id 
+        text name 
+        integer registration_period 
+        uuid accreditation_tld_id FK
+    }
+
+    create_domain_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid create_domain_id FK
+        uuid domain_contact_type_id FK
+        uuid order_contact_id FK
+    }
+
+    create_domain_nameserver {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid create_domain_id FK
+        uuid host_id FK
+        text name 
+    }    
+
+    order_item_plan {
+        uuid id PK
+        uuid order_item_id 
+        uuid parent_id FK
+        uuid status_id FK
+        uuid order_item_object_id FK
+        uuid reference_id 
+        text result_message 
+        jsonb result_data 
+    }
+
+    create_domain_plan {
+        uuid id PK
+        uuid order_item_id FK
+        uuid parent_id 
+        uuid status_id 
+        uuid order_item_object_id 
+        uuid reference_id 
+        text result_message 
+        jsonb result_data 
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    order_item_renew_domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id 
+        text name 
+        integer period 
+        uuid accreditation_tld_id FK
+        timestamp_with_time_zone current_expiry_date 
+    }
+
+    renew_domain_plan {
+        uuid id PK
+        uuid order_item_id FK
+        uuid parent_id 
+        uuid status_id 
+        uuid order_item_object_id 
+        uuid reference_id 
+        text result_message 
+        jsonb result_data 
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    order_item_create_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id 
+        timestamp_with_time_zone deleted_date 
+        text deleted_by
+        uuid contact_id FK
+        
+    }
+
+    create_contact_plan {
+        uuid id PK
+        uuid order_item_id FK
+        uuid parent_id 
+        uuid status_id 
+        uuid order_item_object_id 
+        uuid reference_id 
+        text result_message 
+        jsonb result_data 
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }   
+    
+    order_item_create_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id FK
+        uuid host_id FK
+    }
+   
+
+    provision_status {
+        uuid id PK
+        text name 
+        text descr 
+        boolean is_success 
+        boolean is_final 
+    }
+
+    provision_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        uuid host_id FK
+    }
+
+    provision_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        uuid contact_id FK
+        text handle 
+        text pw 
+    }
+
+    provision_domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        text name 
+        integer registration_period 
+        text pw 
+        boolean is_complete 
+        uuid accreditation_tld_id FK
+        timestamp_with_time_zone ry_created_date 
+        timestamp_with_time_zone ry_expiry_date 
+    }
+
+    provision_domain_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provision_domain_id FK
+        uuid contact_id FK
+        uuid contact_type_id FK
+    }
+
+    attr_key {
+        uuid id PK
+        text name 
+        uuid category_id FK
+        text descr 
+        uuid value_type_id FK
+        text default_value 
+        boolean allow_null 
+    }
+
+    provision_domain_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid provision_domain_id FK
+        uuid host_id FK
+    }
+
+    attr_value_type {
+        uuid id PK
+        text name 
+        regtype data_type 
+    }
+
+    provision_domain_renew {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid accreditation_id 
+        uuid tenant_customer_id FK
+        timestamp_with_time_zone provisioned_date 
+        uuid status_id FK
+        text roid 
+        uuid job_id 
+        ARRAY order_item_plan_ids 
+        text result_message 
+        jsonb result_data 
+        uuid domain_id FK
+        integer period 
+        timestamp_with_time_zone current_expiry_date 
+        boolean is_auto 
+        timestamp_with_time_zone ry_expiry_date 
+    }
+
+    attr_category {
+        uuid id PK
+        text name 
+        text descr 
+        uuid parent_id FK
+    }
+
+    attr_value {
+        uuid id PK
+        uuid tenant_id FK
+        uuid key_id FK
+        uuid tld_id FK
+        uuid provider_instance_id FK
+        uuid provider_id FK
+        uuid registry_id FK
+        integer value_integer 
+        text value_text 
+        int4range value_integer_range 
+        boolean value_boolean 
+        ARRAY value_text_list 
+        ARRAY value_integer_list 
+    }
+
+    contact }o--|| country : "country"
+    contact }o--|| language : "language"
+    attribute }o--|| attribute_type : "type_id"
+    attribute }o--|| attribute : "parent_id"
+    contact_attribute }o--|| attribute : "attribute_id"
+    contact_attribute }o--|| attribute : "attribute_id"
+    contact_attribute }o--|| attribute : "attribute_type_id"
+    error_dictionary }o--|| error_category : "category_id"
+    business_entity }o--|| business_entity : "parent_id"
+    tenant }o--|| business_entity : "business_entity_id"
+    customer }o--|| business_entity : "business_entity_id"
+    registry }o--|| business_entity : "business_entity_id"
+    provider }o--|| business_entity : "business_entity_id"
+    tenant_customer }o--|| tenant : "tenant_id"
+    accreditation }o--|| tenant : "tenant_id"
+    attr_value }o--|| tenant : "tenant_id"
+    customer }o--|| customer : "parent_customer_id"
+    tenant_customer }o--|| customer : "customer_id"
+    customer_user }o--|| customer : "customer_id"
+    job }o--|| tenant_customer : "tenant_customer_id"
+    contact }o--|| tenant_customer : "tenant_customer_id"
+    domain }o--|| tenant_customer : "tenant_customer_id"
+    host }o--|| tenant_customer : "tenant_customer_id"
+    order }o--|| tenant_customer : "tenant_customer_id"
+    provision_host }o--|| tenant_customer : "tenant_customer_id"
+    provision_contact }o--|| tenant_customer : "tenant_customer_id"
+    provision_domain }o--|| tenant_customer : "tenant_customer_id"
+    provision_domain_renew }o--|| tenant_customer : "tenant_customer_id"
+    customer_user }o--|| user : "user_id"
+    order }o--|| customer_user : "customer_user_id"
+    job }o--|| job_type : "type_id"
+    job }o--|| job_status : "status_id"
+    tld }o--|| registry : "registry_id"
+    attr_value }o--|| registry : "registry_id"
+    tld }o--|| tld : "parent_tld_id"
+    provider_instance_tld }o--|| tld : "tld_id"
+    attr_value }o--|| tld : "tld_id"
+    provider_instance }o--|| provider : "provider_id"
+    provider_protocol }o--|| provider : "provider_id"
+    attr_value }o--|| provider : "provider_id"
+    provider_instance_tld }o--|| provider_instance : "provider_instance_id"
+    provider_instance_epp }o--|| provider_instance : "provider_instance_id"
+    provider_instance_http }o--|| provider_instance : "provider_instance_id"
+    accreditation }o--|| provider_instance : "provider_instance_id"
+    order_item_strategy }o--|| provider_instance : "provider_instance_id"
+    attr_value }o--|| provider_instance : "provider_instance_id"
+    accreditation_tld }o--|| provider_instance_tld : "provider_instance_tld_id"
+    provider_protocol }o--|| supported_protocol : "supported_protocol_id"
+    tenant_cert }o--|| certificate_authority : "ca_id"
+    accreditation_epp }o--|| tenant_cert : "cert_id"
+    provider_instance_epp_ext }o--|| provider_instance_epp : "provider_instance_epp_id"
+    provider_instance_epp_ext }o--|| epp_extension : "epp_extension_id"
+    accreditation_epp }o--|| accreditation : "accreditation_id"
+    accreditation_tld }o--|| accreditation : "accreditation_id"
+    domain }o--|| accreditation_tld : "accreditation_tld_id"
+    order_item_create_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    order_item_renew_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    provision_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    contact_attribute }o--|| contact : "contact_id"
+    contact }o--|| contact_type : "type_id"
+    contact_postal }o--|| contact : "contact_id"
+    domain_contact }o--|| contact : "contact_id"
+    provision_contact }o--|| contact : "contact_id"
+    provision_domain_contact }o--|| contact : "contact_id"
+    domain_contact }o--|| domain : "domain_id"
+    host }o--|| domain : "domain_id"
+    domain_host }o--|| domain : "domain_id"
+    provision_domain_renew }o--|| domain : "domain_id"
+    domain_contact }o--|| domain_contact_type : "domain_contact_type_id"
+    create_domain_contact }o--|| domain_contact_type : "domain_contact_type_id"
+    provision_domain_contact }o--|| domain_contact_type : "contact_type_id"
+    host_addr }o--|| host : "host_id"
+    domain_host }o--|| host : "host_id"
+    provision_host }o--|| host : "host_id"
+    provision_domain_host }o--|| host : "host_id"
+    order_type }o--|| product : "product_id"
+    order }o--|| order_type : "type_id"
+    order_item_strategy }o--|| order_type : "order_type_id"
+    order_status_transition }o--|| order_status_path : "path_id"
+    order }o--|| order_status_path : "path_id"
+    order_status_transition }o--|| order_status : "from_id"
+    order_status_transition }o--|| order_status : "to_id"
+    order }o--|| order_status : "status_id"
+    order_item }o--|| order : "order_id"
+    order_contact }o--|| order : "order_id"
+    order_item_create_domain }o--|| order : "order_id"
+    order_item_renew_domain }o--|| order : "order_id"
+    order_item_create_contact }o--|| order : "order_id"
+    order_item_create_contact }o--|| order_contact : "contact_id"
+    order_item }o--|| order_item_status : "status_id"
+    order_item_create_domain }o--|| order_item_status : "status_id"
+    order_item_renew_domain }o--|| order_item_status : "status_id"
+    order_item_create_contact }o--|| order_item_status : "status_id"
+    order_contact_postal }o--|| order_contact : "contact_id"
+    order_contact_attribute  }o--|| order_contact : "contact_id"
+    create_domain_contact }o--|| order_contact : "order_contact_id"
+    order_item_strategy }o--|| order_item_object : "object_id"
+    order_item_plan }o--|| order_item_object : "order_item_object_id"
+    order_item_plan }o--|| order_item_plan_status : "status_id"
+    order_item }o--|| order_item : "parent_order_item_id"
+    create_domain_contact }o--|| order_item_create_domain : "create_domain_id"
+    create_domain_nameserver }o--|| order_item_create_domain : "create_domain_id"
+    create_domain_nameserver }o--|| order_host : "host_id"
+    order_host_addr }o--|| order_host : "host_id"
+    order_item_create_host }o--|| order_host : "status_id"
+    create_domain_plan }o--|| order_item_create_domain : "order_item_id"
+    
+    order_item_plan }o--|| order_item_plan : "parent_id"
+    renew_domain_plan }o--|| order_item_renew_domain : "order_item_id"
+    create_contact_plan }o--|| order_item_create_contact : "order_item_id"     
+    provision_host }o--|| provision_status : "status_id"
+    provision_domain_renew }o--|| provision_status : "status_id"
+    provision_domain }o--|| provision_status : "status_id"
+    provision_contact }o--|| provision_status : "status_id"
+    provision_domain_contact }o--|| provision_domain : "provision_domain_id"
+    provision_domain_host }o--|| provision_domain : "provision_domain_id"
+    attr_key }o--|| attr_category : "category_id"
+    attr_key }o--|| attr_value_type : "value_type_id"
+    attr_value }o--|| attr_key : "key_id"
+    attr_category }o--|| attr_category : "parent_id"

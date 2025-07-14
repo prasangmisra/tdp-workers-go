@@ -1,0 +1,69 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('job');
+SELECT has_table('job_type');
+SELECT has_table('job_status');
+
+-- steps: create retriable job with n retries and immediate start date and small interval 
+-- fail the job once
+-- check that its pending retry
+-- fail the job n - 1 times
+-- check the job is failed
+
+-- clean job table
+DELETE FROM job;
+
+-- create retriable job
+
+SELECT job_submit_retriable(
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            'provision_domain_create',
+            gen_random_uuid(), -- generate random uuid
+            '{}'::JSONB,
+            NOW(),
+            INTERVAL '1 minute',
+            2
+        ) INTO _test_retriable_job_id;
+
+-- Check that test_job is not null
+-- SELECT id FROM test_job IS NOT NULL;
+
+SELECT ok(
+    EXISTS(SELECT * FROM job WHERE id=(SELECT id FROM _test_retriable_job_id))
+);
+
+SELECT is(
+    (SELECT status_id FROM job WHERE id = (SELECT id FROM _test_retriable_job_id)),
+    tc_id_from_name('job_status', 'submitted'),
+    'job status should be submitted'
+);
+
+-- Update the job status for the specified job ID
+UPDATE job SET status_id = tc_id_from_name('job_status', 'failed') WHERE id = (SELECT id FROM _test_retriable_job_id);
+
+SELECT is(
+    (SELECT status_id FROM job WHERE id = (SELECT id FROM _test_retriable_job_id)),
+    tc_id_from_name('job_status', 'submitted'),
+    'job status incorrect after failure'
+);
+
+
+-- fail the job again 
+UPDATE job SET status_id = tc_id_from_name('job_status', 'failed') WHERE id = (SELECT id FROM _test_retriable_job_id);
+
+-- job status should now finally be failed
+SELECT is(
+    (SELECT status_id FROM job WHERE id = (SELECT id FROM _test_retriable_job_id)),
+    tc_id_from_name('job_status', 'failed'),
+    'job status incorrect after failure'
+);
+
+SELECT * FROM finish(true);
+
+-- COMMIT;
+ROLLBACK;

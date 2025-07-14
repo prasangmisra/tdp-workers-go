@@ -1,0 +1,31 @@
+# These values are used for local run
+# For DEV they will be overwritten during deployment
+
+log:
+  outputsink: stderr
+http:
+  timeout: 10s
+
+rmq:
+  hostname: rabbitmq-local
+  port: 5671
+  username: domains
+  password: tucows
+  exchange: test
+  exchangekind: direct
+  exchangeDurable: true
+  queueType: classic
+  notificationwebhookDLExchange: notification_webhook_dlx
+  webhookSendQueue:
+    name: webhook_notification
+    maxpriority: 1
+  finalStatusQueue:
+    name: final_status_notification
+  retryQueuesConfig:
+    retryIntervals:
+      - 300 # 5 minutes before retry
+      - 3600 # 1 hour before retry
+      - 21600 # 6 hours before retry
+    maxpriority: 1
+  tlsenabled: true
+  tlsskipverify: true

@@ -1,0 +1,3 @@
+DROP TRIGGER IF EXISTS order_item_host_set_tenant_customer_id_tg ON order_item_create_host;
+
+DROP FUNCTION IF EXISTS order_item_host_set_tenant_customer_id;

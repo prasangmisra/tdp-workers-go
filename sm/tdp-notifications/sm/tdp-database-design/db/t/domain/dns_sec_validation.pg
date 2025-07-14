@@ -1,0 +1,170 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- clean attr_value table
+DELETE FROM attr_value;
+
+-- update secdns record range for .help TLD
+INSERT INTO attr_value(
+    key_id, 
+    value_integer_range, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id FROM attr_key WHERE name = 'secdns_record_count'),
+    int4range(0, 5, '[]'),
+    (SELECT id FROM tld WHERE name = 'help'),
+    (SELECT tenant_id FROM v_tenant_customer limit 1)
+);
+
+-- update secdns supported list for .help TLD
+INSERT INTO attr_value(
+    key_id, 
+    value_text_list, 
+    tld_id, 
+    tenant_id
+) VALUES (
+    (SELECT id FROM attr_key WHERE name = 'secdns_supported'),
+    ARRAY['dsData'],
+    (SELECT id FROM tld WHERE name = 'help'),
+    (SELECT tenant_id FROM v_tenant_customer limit 1)
+);
+
+-- validations to check. algorithm field on ds data and key data and
+-- their respective create tables,
+
+-- flags on key data and its create table
+
+-- "same type" trigger
+
+-- insert this, collect id and then check record exists
+WITH test_key_data_one AS (
+    INSERT INTO secdns_key_data 
+    (
+        flags,
+        protocol,
+        algorithm,
+        public_key
+    )
+    values
+    (
+        0,
+        3,
+        5,
+        'example-public-key'
+    ) RETURNING *
+) SELECT * INTO TEMP _test_key_data_one FROM test_key_data_one;
+
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "secdns_key_data" WHERE id = (SELECT id FROM _test_key_data_one)), 'is True!');
+
+WITH test_key_data_two AS (
+    INSERT INTO secdns_key_data 
+    (
+        flags,
+        protocol,
+        algorithm,
+        public_key
+    )
+    values
+    (
+        0,
+        3,
+        13,
+        'example-public-key'
+    ) RETURNING *
+) SELECT * INTO TEMP _test_key_data_two FROM test_key_data_two;
+
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "secdns_key_data" WHERE id = (SELECT id FROM _test_key_data_two)), 'is True!');
+
+PREPARE insert_fails_one AS INSERT INTO secdns_key_data 
+(
+    flags,
+    protocol,
+    algorithm,
+    public_key
+)
+values
+(
+    0,
+    3,
+    37,
+    'example-public-key'
+);
+
+SELECT throws_ok('insert_fails_one');
+
+-- next try and insert records of two types for the same domain
+
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    ) VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' and name='create')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+with cd AS(
+    INSERT INTO order_item_create_domain(
+        order_id, 
+        name
+    ) VALUES(
+        (SELECT id FROM _order),
+        FORMAT('tdp-test-dns-sec-test-%s.help', EXTRACT(epoch from NOW())::INT)
+    ) RETURNING * 
+)
+SELECT * INTO TEMP _oi_create_domain FROM cd;
+
+with ods_one AS (
+    INSERT INTO order_secdns_ds_data(
+        key_tag,
+        algorithm,
+        digest
+    ) VALUES (
+        1,
+        3,
+        'test-digest'
+    ) RETURNING *
+) SELECT * INTO TEMP _ods_one FROM ods_one;
+
+with okv_one AS (
+    INSERT INTO order_secdns_key_data(
+        flags,
+        algorithm,
+        public_key
+    ) VALUES (
+        0,
+        3,
+        'test-public-key'
+    ) RETURNING *
+) SELECT * INTO TEMP _okv_one FROM okv_one;
+
+-- first insert should be fine
+
+INSERT INTO create_domain_secdns(
+    create_domain_id,
+    ds_data_id
+) VALUES(
+    (SELECT id FROM _oi_create_domain),
+    (SELECT id FROM _ods_one)
+);
+
+PREPARE insert_fails_two AS INSERT INTO create_domain_secdns(
+    create_domain_id,
+    key_data_id
+) VALUES (
+    (SELECT id FROM _oi_create_domain),
+    (SELECT id FROM _okv_one)
+);
+
+SELECT throws_ok('insert_fails_two');
+
+SELECT * FROM finish(true);
+
+--COMMIT;
+
+ROLLBACK;

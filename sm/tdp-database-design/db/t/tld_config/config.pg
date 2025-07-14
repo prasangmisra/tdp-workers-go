@@ -1,0 +1,44 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+
+WITH tables AS ( 
+    SELECT table_name FROM (
+        VALUES
+        ('attr_category'),
+        ('attr_value_type'),
+        ('attr_key'),
+        ('attr_value')
+    ) AS t (table_name)
+)
+SELECT has_table(table_name) FROM tables;
+
+SELECT 
+    cmp_ok(c.value,'=',FALSE::TEXT,'IPv6 support is disabled')
+FROM v_attribute c 
+WHERE tld_name='auto' and key='tld.dns.ipv6_support' and tenant_name='opensrs';
+
+SELECT 
+    cmp_ok(c.is_default,'=',TRUE,'IPv6 support is using default value')
+FROM v_attribute c 
+WHERE tld_name='auto' and key='tld.dns.ipv6_support' and tenant_name='opensrs';
+
+UPDATE v_attribute 
+    SET value=TRUE::TEXT 
+WHERE tld_name='auto' AND key='tld.dns.ipv6_support' AND tenant_name='opensrs';
+
+SELECT 
+    cmp_ok(c.value,'=',TRUE::TEXT,'IPv6 support is disabled')
+FROM v_attribute c 
+WHERE tld_name='auto' and key='tld.dns.ipv6_support' and tenant_name='opensrs';
+
+SELECT 
+    cmp_ok(c.is_default,'=',FALSE,'IPv6 support is NOT using default value')
+FROM v_attribute c 
+WHERE tld_name='auto' and key='tld.dns.ipv6_support' and tenant_name='opensrs';
+
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

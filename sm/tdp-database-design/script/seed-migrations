@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# Script to seed migrations after a clean database install using "make all seed".
+
+# Honors $PSQL if set.
+# Honors $PGHOST if set.
+# Honors $PGDATABASE if set.
+# Honors $PGPORT if set.
+# Honors $DIR if set.
+
+usage() {
+    echo "Usage: $0 [<db_name>]"
+    echo
+    echo "Seeds database migration entries on a fresh database install."
+    echo "If <db_name> is not specified, uses \$PGDATABASE (currently \"$PGDATABASE\")."
+    echo "If \$PGDATABASE is not set, <db_name> must be specified."
+    echo "If \$PSQL is not set (currently \"$PSQL\"), will use \"psql\"."
+    echo "If \$PGHOST is not set (currently \"$PGHOST\"), will use \"localhost\"."
+    echo "If \$PGPORT is not set (currently \"$PGPORT\"), will use \"5432\"."
+    echo "If \$DIR is not set (currently \"$DIR\"), will use current directory (`pwd`). It can be used to configure a directory where migrations folder exists."
+}
+
+migration_applied_date() {
+  local version=$1
+  local applied_date=$($psqlcommand -U $user -h $host -p $port -v ON_ERROR_STOP=1 -v QUIET=1 -d $database -t -c "SELECT applied_date FROM migration WHERE version = '$version'")
+  if [[ ! $? ]]; then
+    echo "Unable to check status of migration ${version}."
+    exit 1
+  fi
+  echo $applied_date
+}
+
+record_migration() {
+  local version=$1
+  local name=$2
+  $psqlcommand -U $user -h $host -p $port -v ON_ERROR_STOP=1 -v QUIET=1 -d $database -c "INSERT INTO migration (version, name) VALUES ('$version', '$name');"
+}
+
+# Set DB credentials
+if [[ -z "$PGUSER" ]]; then
+  echo "PGUSER:"
+  read PGUSER
+fi
+
+if [[ -z "$PGPASSWORD" ]]; then
+  echo "PGPASSWORD:"
+  read PGPASSWORD
+fi
+
+database=${1:-$PGDATABASE}
+psqlcommand=${PSQL:-"psql"}
+host=${PGHOST:-"localhost"}
+port=${PGPORT:-"5432"}
+user=${PGUSER}
+
+if [[ ! -z "$DIR" ]]; then
+  cd $DIR
+fi
+
+if [[ ! -d migrations ]]; then
+    echo "Must be run from the parent directory of \"migrations\"."
+    echo
+    usage
+    exit 1
+fi
+
+if [[ -z "$database" ]]; then
+    echo "No database specified."
+    echo
+    usage
+    exit 1
+fi
+
+filenames=(`(cd migrations; find . -maxdepth 1 -name "*.sql") | sort -n`)
+
+if [ ${#filenames[@]} -ne 0 ]; then
+
+  echo "Seeding database migrations."
+  for filename in ${filenames[@]}; do
+    if [[ $filename =~ ^\./([0-9]{12})_(.*)\.sql$ ]]; then
+        echo -n "Seeding migration ${filename}... "
+        version=${BASH_REMATCH[1]}
+        name=${BASH_REMATCH[2]}
+        migration_applied_date=$(migration_applied_date $version)
+        if [[ "$migration_applied_date" ]]; then
+          echo "already applied at ${migration_applied_date}."
+        else
+          record_migration $version $name
+          echo "inserted."
+        fi
+    else
+        echo "Skipping unrecognized filename $filename."
+    fi
+  done
+
+else
+  echo "No migrations to seed."
+fi

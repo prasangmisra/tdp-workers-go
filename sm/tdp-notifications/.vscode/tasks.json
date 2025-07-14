@@ -1,0 +1,127 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Down_All_and_Start_RabbitMQ",
+            "dependsOn": [
+                "Close_All",
+                "Run_RabbitMQ"
+            ]
+        },
+        {
+            "label": "Run_RabbitMQ",
+            "type": "shell",
+            "command": "make rmq-up",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Close_RabbitMQ",
+            "type": "shell",
+            "command": "make rmq-down",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Close_All",
+            "type": "shell",
+            "command": "make rmq-down",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Override Config: API Service",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["api-service/configs/dev.yaml"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Restore Config: API Service",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["api-service/configs/dev.yaml", "restore"],
+            "problemMatcher": []
+          },
+        {
+            "label": "Override Config: Email Sender",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["email-sender-service/configs/dev.yaml"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Restore Config: Email Sender",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["email-sender-service/configs/dev.yaml", "restore"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Override Config: Enqueuer",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["enqueuer/configs/dev.yaml"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Restore Config: Enqueuer",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["enqueuer/configs/dev.yaml", "restore"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Override Config: Notification Manager",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["notification-manager-service/configs/dev.yaml"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Restore Config: Notification Manager",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["notification-manager-service/configs/dev.yaml", "restore"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Override Config: Subscription Manager",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["subscription-manager-service/configs/dev.yaml"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Restore Config: Subscription Manager",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["subscription-manager-service/configs/dev.yaml", "restore"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Override Config: Webhook Sender",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["webhook-sender-service/configs/dev.yaml"],
+            "problemMatcher": []
+          },
+          {
+            "label": "Restore Config: Webhook Sender",
+            "type": "shell",
+            "command": ".vscode/override-dev-config.sh",
+            "args": ["webhook-sender-service/configs/dev.yaml", "restore"],
+            "problemMatcher": []
+          }
+          
+    ]
+}

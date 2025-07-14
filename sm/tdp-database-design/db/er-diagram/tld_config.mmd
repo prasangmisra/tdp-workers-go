@@ -1,0 +1,49 @@
+erDiagram
+    attr_category {
+        uuid id PK
+        text name 
+        text descr 
+        uuid parent_id FK
+    }
+
+    attr_value_type {
+        uuid id PK
+        text name 
+        regtype data_type 
+    }
+
+    attr_key {
+        uuid id PK
+        text name 
+        uuid category_id FK
+        text descr 
+        uuid value_type_id FK
+        text default_value 
+        boolean allow_null 
+    }
+
+    attr_value {
+        uuid id PK
+        uuid tenant_id FK
+        uuid key_id FK
+        uuid tld_id FK
+        uuid provider_instance_id FK
+        uuid provider_id FK
+        uuid registry_id FK
+        integer value_integer 
+        text value_text 
+        int4range value_integer_range 
+        boolean value_boolean 
+        ARRAY value_text_list 
+        ARRAY value_integer_list 
+    }
+
+    attr_category }o--|| attr_category : "parent_id"
+    attr_key }o--|| attr_category : "category_id"
+    attr_key }o--|| attr_value_type : "value_type_id"
+    attr_value }o--|| attr_key : "key_id"
+    attr_value }o--|| tenant : "tenant_id"
+    attr_value }o--|| tld : "tld_id"
+    attr_value }o--|| provider_instance : "provider_instance_id"
+    attr_value }o--|| provider : "provider_id"
+    attr_value }o--|| registry : "registry_id"

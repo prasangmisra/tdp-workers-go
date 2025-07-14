@@ -1,0 +1,125 @@
+BEGIN;
+
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('order');
+SELECT has_table('order_item_transfer_in_domain');
+
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- create an order
+WITH o AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='transfer_in')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _order FROM o;
+
+
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- by default order should have a created status
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+
+-- now we add the order item (order_item_transfer_in_domain)
+WITH td AS (
+    INSERT INTO order_item_transfer_in_domain(
+        name,
+        accreditation_tld_id,
+        transfer_period,
+        auth_info,
+        order_id
+        ) VALUES(
+        'tdp-test-hello.help',
+        (SELECT id FROM _acc_tld),
+        1,
+        'xyzabc',
+        (SELECT id FROM _order)
+        ) RETURNING *
+)
+SELECT * INTO TEMP _oi_transfer_domain FROM td;
+
+-- disable validation for transfer domain
+SELECT lives_ok($$
+    UPDATE order_item_strategy SET is_validation_required = FALSE WHERE order_type_id = (SELECT type_id FROM _order);
+$$,'bypass domain validation for this test');
+
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (pending->processing)');
+
+-- order must be in status processing
+SELECT cmp_ok( 
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+-- order item must be in status 'ready' now
+SELECT cmp_ok( 
+    (SELECT s.name FROM order_item oi JOIN order_item_status s ON s.id=oi.status_id WHERE oi.order_id = (SELECT id FROM _order)),
+    '=',
+    'ready'
+);
+
+
+-- create a new order
+WITH o2 AS (
+    INSERT INTO "order"(
+        tenant_customer_id,
+        type_id
+    )
+    VALUES(
+        (SELECT id FROM v_tenant_customer LIMIT 1),
+        (SELECT id FROM v_order_type WHERE product_name='domain' AND name='transfer_in')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _another_order FROM o2;
+
+
+-- now we add a new order item (order_item_transfer_in_domain)
+SELECT throws_matching($$
+    INSERT INTO order_item_transfer_in_domain(
+        name,
+        accreditation_tld_id,
+        transfer_period,
+        auth_info,
+        order_id
+    ) VALUES(
+        'tdp-test-hello.help',
+        (SELECT id FROM _acc_tld),
+        1,
+        'xyzabc',
+        (SELECT id FROM _another_order)
+    );
+    $$,
+'duplicate key value violates unique constraint',
+'Check if domain can be transferred');
+
+-- finish testing
+SELECT * FROM finish(true);
+
+-- ROLLBACK;

@@ -1,0 +1,122 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+SELECT has_table('order');
+SELECT has_table('order_host');
+SELECT has_table('order_host_addr');
+SELECT has_table('order_item_create_host');
+
+SELECT * INTO TEMP _tenant_customer FROM v_tenant_customer LIMIT 1;
+
+SELECT accreditation_tld_id as id INTO TEMP _acc_tld
+FROM v_accreditation_tld
+WHERE tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer)
+  AND is_default;
+
+-- set host_object_supported to false
+Update v_attribute
+SET value=false 
+WHERE key='tld.order.host_object_supported'
+  AND tld_name = 'help'
+  AND tenant_id=(SELECT tenant_id FROM _tenant_customer);
+
+-- create a domain entry for testing
+WITH test_domain AS (
+    INSERT INTO domain(
+        tenant_customer_id,
+        name,
+        accreditation_tld_id,
+        ry_created_date,
+        ry_expiry_date,
+        expiry_date
+    ) VALUES (
+        (SELECT id FROM _tenant_customer),
+        FORMAT('tdp-test-%s.help', EXTRACT(epoch from NOW())::INT),
+        (SELECT id FROM _acc_tld),
+        NOW(),
+        NOW() + ('1 years')::INTERVAL,
+        NOW() + ('1 years')::INTERVAL
+    ) RETURNING *
+)
+SELECT * INTO TEMP _domain FROM test_domain;
+
+-- create a host json to be used with the tests
+CREATE TEMP TABLE _host_js ON COMMIT DROP AS SELECT
+    ('{
+        "tenant_customer_id":   "' || (SELECT id FROM v_tenant_customer LIMIT 1) || '",
+        "customer_user_id":     "' || (SELECT tc_id_from_name('v_customer_user','John Doe Squarespace')) || '",          
+		"name": "ns1.' || (SELECT name from _domain) ||'",		
+        "order_host_addrs": []      
+    }')::JSONB AS value;
+
+-- create a create host order
+SELECT lives_ok($$
+    SELECT create_host_order_from_jsonb((SELECT value FROM _host_js));
+$$,'create a create host order');
+
+-- verify a order has been created
+SELECT lives_ok($$
+    SELECT * FROM "order" WHERE created_date = NOW();
+$$, 'verify an order has been created');
+
+-- verify a create host order item has been created
+SELECT lives_ok($$
+    SELECT * FROM order_item_create_host WHERE created_date = NOW();
+$$, 'verify a create host order item has been create');
+
+-- verify a create order_host has been created
+SELECT lives_ok($$
+    SELECT * FROM order_host oh JOIN order_item_create_host oich ON oich.host_id=oh.id WHERE oich.created_date = NOW();
+$$, 'verify a order_host has been create');
+
+-- verify a create order_host_addr has been created
+SELECT lives_ok($$
+    SELECT * FROM order_host_addr oha JOIN order_item_create_host oich ON oich.host_id=oha.id WHERE oich.created_date = NOW();
+$$, 'verify a create order_host_addr has been create');
+
+
+-- check whether the order matches the _host_js.value
+SELECT cmp_ok(
+    (SELECT jsonb_get_create_host_order_by_id((SELECT id FROM "order" WHERE created_date = NOW()))),
+    '@>',
+    (SELECT value FROM _host_js),
+    'check whether the order matches the _host_js.value'
+);
+
+-- check whether the order retrieved using jsonb_get_order_by_id matches the _host_js.value
+SELECT cmp_ok(
+    (SELECT order_data FROM jsonb_get_order_by_id((SELECT id FROM "order" WHERE created_date = NOW()))),
+    '@>',
+    (SELECT value FROM _host_js),
+   'check whether the order matches the _host_js.value'
+);
+
+-- check whether the product name retrieved using jsonb_get_order_by_id is host
+SELECT cmp_ok(
+    (SELECT product_name FROM jsonb_get_order_by_id((SELECT id FROM "order" WHERE created_date = NOW()))),
+    '=',
+    'host',
+   'check whether the order product name is host'
+);
+
+-- move order status from pending to processing
+SELECT lives_ok($$
+    UPDATE "order" SET
+        status_id = order_next_status((SELECT order_id FROM order_item_create_host WHERE created_date = NOW()), TRUE)
+    WHERE id = (SELECT order_id FROM order_item_create_host WHERE created_date = NOW());
+$$,'move order status from pending to processing');
+
+-- check host was created locally
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = ((SELECT id FROM "order" WHERE created_date = NOW()))),
+    '=',
+    'failed'
+);
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

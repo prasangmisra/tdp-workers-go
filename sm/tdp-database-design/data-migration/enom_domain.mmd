@@ -1,0 +1,88 @@
+erDiagram 
+
+
+    
+
+     domainname_MSSQL {        
+      int domainnameid PK 
+	  varchar sld varchar
+	  varchar tld 
+     varchar customerdomainstatus 
+	  varchar registrationstatus 
+	  varchar renew 
+	  int regperiod 
+	  int website 
+	  bpchar encodingtype 
+	  bit hold
+	  varchar rrprocessor 
+	  bit allowparent 
+	  bit bulkwhois 
+	  int promotionid 
+	  uuid billingpartyid 
+	  int filtermask int
+	timestamp inserteddate 
+	varchar slddottld 
+	uuid enduserpartyid 
+	bit ispremium 
+	timestamp nextattempttime 
+	varchar originalregistrationstatus 
+	varchar roid 
+	varchar authinfo 
+	varchar svtrid 
+	int2 issync 
+	bit isverified 
+	timestamp lastsyncdate 
+	timestamp lastauthinfosync 
+	timestamp expdate 
+	int2 expstatusid 
+	timestamp statusdate 
+	timestamp creationdate 
+	bit escrowhold 
+	timestamp escrowdate 	 }
+
+    domaincontact_MSSQL {     
+	int idx PK
+	int domainnameid FK
+	uuid regcontactid FK
+	uuid admincontactid FK
+	uuid techcontactid FK
+	uuid billcontactid FK	
+    }
+
+    contact_PostgreSQL {
+    uuid id PK
+	varchar contact_type 
+    varchar first_name 
+	varchar last_name 
+	varchar email_address 
+	
+    }
+
+    contact_extra_PostgreSQL {
+    int id PK 
+	varchar(2000) value 
+	uuid contact_id  FK
+	int field_id   FK
+    }
+
+    NameServers_MSSQL{
+     int Idx PK
+	int DomainNameID FK
+	varchar Name 
+	varchar IPAddress 
+	datetime InsertedDate 
+    }
+
+    
+  
+    
+    
+    
+    domaincontact_MSSQL }o--|| domainname_MSSQL : "domainnameid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "regcontactid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "admincontactid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "techcontactid"
+    domaincontact_MSSQL }o--|| contact_PostgreSQL : "billcontactid"
+    contact_extra_PostgreSQL }o--|| contact_PostgreSQL : "contact_id"
+
+    NameServers_MSSQL }o--|| domainname_MSSQL : "domainnameid"

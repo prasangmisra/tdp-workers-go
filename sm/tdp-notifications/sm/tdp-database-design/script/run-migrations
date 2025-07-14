@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+# Script to check for and run missing DB migrations.
+
+# Honors $PSQL if set.
+# Honors $PGHOST if set.
+# Honors $PGDATABASE if set.
+# Honors $PGPORT if set.
+# Honors $DIR if set.
+
+usage() {
+    echo "Usage: $0 [<db_name> <version_number> <description>]"
+    echo
+    echo "Apply database migrations that have not already been applied."
+    echo "If <db_name> is not specified, uses \$PGDATABASE (currently \"$PGDATABASE\")."
+    echo "If \$PGDATABASE is not set, <db_name> must be specified."
+    echo "If \$PSQL is not set (currently \"$PSQL\"), will use \"psql\"."
+    echo "If \$PGHOST is not set (currently \"$PGHOST\"), will use \"localhost\"."
+    echo "If \$PGPORT is not set (currently \"$PGPORT\"), will use \"5432\"."
+    echo "If \$DIR is not set (currently \"$DIR\"), will use current directory (`pwd`). It can be used to configure a directory where migrations folder exists."
+}
+
+migration_applied_date() {
+  local version=$1
+  local applied_date=$($psqlcommand -U $user -h $host -p $port -v ON_ERROR_STOP=1 -v QUIET=1 -d $database -t -c "SELECT applied_date FROM migration WHERE version = '$version'")
+  if [[ ! $? ]]; then
+    echo "Unable to check status of migration ${version}."
+    exit 1
+  fi
+  echo $applied_date
+}
+
+apply_migration() {
+  local migration_path="migrations/$1"
+  $psqlcommand -U $user -h $host -p $port -v ON_ERROR_STOP=1 -v QUIET=1 -d $database -f $migration_path
+}
+
+record_migration() {
+  local version=$1
+  local name=$2
+  local version_number=$3
+  $psqlcommand -U $user -h $host -p $port -v ON_ERROR_STOP=1 -v QUIET=1 -d $database -c "INSERT INTO migration (version, name, version_number, applied_date) VALUES ('$version', '$name', '$version_number', CURRENT_TIMESTAMP);"
+}
+
+# Set DB credentials
+if [[ -z "$PGUSER" ]]; then
+  echo "PGUSER:"
+  read PGUSER
+fi
+
+if [[ -z "$PGPASSWORD" ]]; then
+  echo "PGPASSWORD:"
+  read PGPASSWORD
+fi
+
+database=${1:-$PGDATABASE}
+psqlcommand=${PSQL:-"psql"}
+host=${PGHOST:-"localhost"}
+port=${PGPORT:-"5432"}
+user=${PGUSER}
+pass=${PGPASSWORD}
+
+if [[ ! -z "$DIR" ]]; then
+  cd $DIR
+fi
+
+if [[ ! -d migrations ]]; then
+    echo "Must be run from the parent directory of \"migrations\"."
+    echo
+    usage
+    exit 1
+fi
+
+if [[ -z "$database" ]]; then
+    echo "No database specified."
+    echo
+    usage
+    exit 1
+fi
+
+if [[ -z "$2" || ! $2 =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "version number must be specified and must match '^v[0-9]+\.[0-9]+\.[0-9]+$'. for example v1.0.1"
+    usage
+    exit 1
+fi
+
+version_number=$2
+
+filenames=(`(cd migrations; find . -maxdepth 1 -name "*.sql") | sort -n`)
+
+if [ ${#filenames[@]} -ne 0 ]; then
+
+  for filename in ${filenames[@]}; do
+    echo
+    if [[ $filename =~ ^\./([0-9]{12})_(.*)\.sql$ ]]; then
+        echo "Processing migration ${filename}..."
+        version=${BASH_REMATCH[1]}
+        name=${BASH_REMATCH[2]}
+        migration_applied_date=$(migration_applied_date $version)
+        if [[ "$migration_applied_date" ]]; then
+          echo "Migration already applied on ${migration_applied_date}."
+        else
+          if apply_migration $filename; then
+            echo "Migration $filename succeeded."
+            record_migration $version $name $version_number
+          else
+            echo "Migration $filename failed; aborting."
+            exit 1
+          fi
+        fi
+    else
+        echo "Skipping unrecognized filename $filename."
+    fi
+  done
+
+else
+  echo "No migrations to run."
+fi

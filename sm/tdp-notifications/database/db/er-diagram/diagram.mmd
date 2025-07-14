@@ -1,0 +1,50 @@
+erDiagram
+    SUBSCRIPTION ||--o{ WEBHOOK : contains
+    SUBSCRIPTION ||--|| SUBSCRIPTION_STATUS : has
+    SUBSCRIPTION {
+        uuid    id PK
+        text    descr
+        text    notification_email
+        text    webhook_url
+        jsonb   metadata
+        text[]  tags
+        text    signing_secret
+        uuid    status_id FK
+        uuid    tenant_customer_id FK
+    }
+    SUBSCRIPTION_STATUS {
+        uuid    id PK
+        text    name
+        text    descr
+    }
+    WEBHOOK {
+        uuid                       id PK
+        uuid                       type_id FK
+        bytea                      payload
+        timestamp_with_time_zone   created_date
+        timestamp_with_time_zone   updated_date
+        text                       created_by
+        text                       updated_by
+        uuid                       subscription_id FK
+        uuid                       status_id FK
+        integer                    retries
+    }
+    SUBSCRIPTION_NOTIFICATION {
+        uuid    id PK
+        uuid    subscription_id FK
+        uuid    type_id FK
+    }
+    SUBSCRIPTION ||--o{ SUBSCRIPTION_NOTIFICATION : "has many"
+    NOTIFICATION_TYPE ||--o{ SUBSCRIPTION_NOTIFICATION : "has many"
+    WEBHOOK ||--|| WEBHOOK_STATUS : has
+    WEBHOOK_STATUS {
+        uuid    id PK
+        text    name
+        text    descr
+    }
+    WEBHOOK ||--|| NOTIFICATION_TYPE : has
+    NOTIFICATION_TYPE {
+        uuid    id PK
+        text    name
+        text    descr
+    }

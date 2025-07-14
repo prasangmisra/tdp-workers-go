@@ -1,0 +1,65 @@
+erDiagram
+    order_item_create_domain {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id 
+        text name 
+        integer registration_period 
+        uuid accreditation_tld_id FK
+    }
+
+    create_domain_contact {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid create_domain_id FK
+        uuid domain_contact_type_id FK
+        uuid order_contact_id FK
+    }
+
+    create_domain_nameserver {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid create_domain_id FK
+        uuid host_id FK
+        text name 
+    }
+
+    create_domain_plan {
+        uuid id PK
+        uuid order_item_id FK
+        uuid parent_id 
+        uuid status_id 
+        uuid order_item_object_id 
+        uuid reference_id 
+        text result_message 
+        jsonb result_data 
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+    }
+
+    order_item_create_domain }o--|| accreditation_tld : "accreditation_tld_id"
+    order_item_create_domain }o--|| order : "order_id"
+    order_item_create_domain }o--|| order_item_status : "status_id"
+    create_domain_contact }o--|| order_item_create_domain : "create_domain_id"
+    create_domain_nameserver }o--|| order_item_create_domain : "create_domain_id"
+    create_domain_plan }o--|| order_item_create_domain : "order_item_id"
+    create_domain_contact }o--|| domain_contact_type : "domain_contact_type_id"
+    create_domain_contact }o--|| order_contact : "order_contact_id"
+    create_domain_nameserver }o--|| order_host : "host_id"
+    order_host_addr }o--|| order_host : "host_id"
+    order_contact_postal }o--|| order_contact : "contact_id"
+    order_contact_attribute  }o--|| order_contact : "contact_id"
+   

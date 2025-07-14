@@ -1,0 +1,163 @@
+BEGIN;
+
+-- start testing
+SELECT * FROM no_plan();
+
+-- First, we check the schema itself, to ensure it looks like we expect
+
+SELECT has_table('language');
+SELECT has_table('template_engine');
+SELECT has_table('template_type');
+SELECT has_table('template_status');
+SELECT has_table('template');
+SELECT has_table('section');
+SELECT has_table('template_section');
+SELECT has_table('notification_template_type');
+
+
+-- create a template type for testing and associate with notification type
+WITH test_template_type AS (
+  INSERT INTO template_type (name, descr) 
+    VALUES 
+      ('Test Template Type', 'Template for testing')
+    RETURNING *
+),
+test_notification_type AS (
+  INSERT INTO notification_type (name, descr) VALUES ('test.notification', 'Test Notification')
+  RETURNING *
+),
+test_notification_template_type AS (
+  INSERT INTO notification_template_type (notification_type_id, template_type_id) VALUES (
+    (SELECT id FROM test_notification_type),
+    (SELECT id FROM test_template_type)
+  )
+)
+SELECT * INTO TEMP _test_template_type FROM test_template_type;
+
+
+-- create test template
+WITH test_template AS (
+  INSERT INTO template (subject, type_id, engine_id, status_id, content)
+    VALUES
+      (
+        'TEST SUBJECT',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'published'),
+        '<p>TEST TEMPLATE BODY</p>'
+      )
+    RETURNING id
+)
+SELECT * INTO TEMP _test_template FROM test_template;
+
+-- create a subscription entry for testing
+WITH test_sub AS (
+  INSERT INTO subscription(
+    notification_email,
+    tenant_id,
+    tenant_customer_id
+  ) VALUES (
+    'test@tucows.net',
+    '678b93b4-8d2f-4a34-86d1-36d568bbb043',
+    'd50ff47e-2a80-4528-b455-6dc5d200ecbe'
+  ) RETURNING *
+),
+test_channel AS (
+  INSERT INTO subscription_email_channel (type_id, subscription_id)
+    VALUES
+      (tc_id_from_name('subscription_channel_type', 'email'), (SELECT id FROM test_sub))
+),
+test_sub_notification AS (
+  INSERT INTO subscription_notification_type(subscription_id, type_id)
+    VALUES (
+      (SELECT id FROM test_sub),
+      tc_id_from_name('notification_type', 'test.notification')
+    )
+)
+SELECT * INTO TEMP _test_sub FROM test_sub;
+
+SELECT lives_ok($$
+  INSERT INTO notification(
+    type_id,
+    tenant_id,
+    tenant_customer_id,
+    payload
+  ) VALUES (
+    tc_id_from_name('notification_type', 'test.notification'),
+    '678b93b4-8d2f-4a34-86d1-36d568bbb043',
+    'd50ff47e-2a80-4528-b455-6dc5d200ecbe',
+    '{"key": "value"}'::JSONB
+  )
+$$, 'inserted email notification');
+
+-- check view returns notification with email_subject 
+SELECT cmp_ok(
+  (SELECT email_subject FROM v_notification vn WHERE vn.type = 'test.notification'),
+  '=',
+  'TEST SUBJECT',
+  'check notification email subject'
+);
+
+-- check view returns notification with email_template
+SELECT cmp_ok(
+  (SELECT email_template FROM v_notification vn WHERE vn.type = 'test.notification'),
+  '=',
+  '<p>TEST TEMPLATE BODY</p>',
+  'check notification email template'
+);
+
+
+-- create test template for tenant
+WITH test_template_tenant AS (
+  INSERT INTO template (subject, type_id, engine_id, status_id, content, tenant_id)
+    VALUES
+      (
+        'TEST SUBJECT',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'published'),
+        '<p>TEST TEMPLATE BODY TENANT SPECIFIC</p>',
+        '678b93b4-8d2f-4a34-86d1-36d568bbb043'
+      )
+    RETURNING id
+)
+SELECT * INTO TEMP _test_template_tenant FROM test_template_tenant;
+
+-- check view gives precedence to tenant specific template 
+SELECT cmp_ok(
+  (SELECT email_template FROM v_notification vn WHERE vn.type = 'test.notification'),
+  '=',
+  '<p>TEST TEMPLATE BODY TENANT SPECIFIC</p>',
+  'check notification email template override for tenant'
+);
+
+-- create test template for tenant customer
+WITH test_template_tenant_customer AS (
+  INSERT INTO template (subject, type_id, engine_id, status_id, content, tenant_id, tenant_customer_id)
+    VALUES
+      (
+        'TEST SUBJECT',
+        (SELECT id FROM _test_template_type),
+        tc_id_from_name('template_engine', 'go-template'),
+        tc_id_from_name('template_status', 'published'),
+        '<p>TEST TEMPLATE BODY TENANT CUSTOMER SPECIFIC</p>',
+        '678b93b4-8d2f-4a34-86d1-36d568bbb043',
+        'd50ff47e-2a80-4528-b455-6dc5d200ecbe'
+      )
+    RETURNING id
+)
+SELECT * INTO TEMP _test_template_tenant_customer FROM test_template_tenant_customer;
+
+-- check view gives precedence to tenant customer specific template 
+SELECT cmp_ok(
+  (SELECT email_template FROM v_notification vn WHERE vn.type = 'test.notification'),
+  '=',
+  '<p>TEST TEMPLATE BODY TENANT CUSTOMER SPECIFIC</p>',
+  'check notification email template override for tenant customer'
+);
+
+
+SELECT * FROM finish(true);
+
+
+ROLLBACK;

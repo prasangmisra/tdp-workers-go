@@ -1,0 +1,50 @@
+erDiagram 
+
+
+    
+
+     order_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid tenant_customer_id FK
+        text name 
+        uuid domain_id FK
+    }
+
+     order_host_addr {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid host_id FK
+        inet address 
+    }
+
+    
+  
+    
+    order_item_create_host {
+        timestamp_with_time_zone created_date 
+        timestamp_with_time_zone updated_date 
+        text created_by 
+        text updated_by 
+        uuid id PK
+        uuid order_id FK
+        uuid status_id FK
+        uuid parent_order_item_id FK
+        uuid host_id FK
+    }
+   
+
+    
+
+    
+
+    
+    order_host_addr }o--|| order_host : "host_id"
+    order_item_create_host }o--|| order_host : "status_id"
+    

@@ -1,0 +1,40 @@
+BEGIN;
+
+SELECT plan(3);
+
+-- Test 1: Verify error on null tld_id
+SELECT throws_ok(
+    $$
+    SELECT * FROM get_domain_data_elements_for_permission(p_tld_id => NULL);
+    $$,
+    'P0001',  -- PostgreSQL error code for RAISE EXCEPTION
+    'Either p_tld_id or p_tld_name must be provided',
+    'Should throw error for missing tld_id argument'
+);
+
+-- Test 2: Verify error on null tld_name
+SELECT throws_ok(
+    $$
+    SELECT * FROM get_domain_data_elements_for_permission(p_tld_name => NULL);
+    $$,
+    'P0001',  -- PostgreSQL error code for RAISE EXCEPTION
+    'Either p_tld_id or p_tld_name must be provided',
+    'Should throw error for missing tld_id argument'
+);
+
+-- Test 3: Verify elements for tld registrant allowed for registry transmission
+SELECT cmp_ok( 
+    (SELECT get_domain_data_elements_for_permission(
+        p_tld_name => 'click',
+        p_data_element_parent_name => 'registrant',
+        p_permission_name => 'transmit_to_registry'
+
+    ))::TEXT,
+    '=',
+    '{email}'
+);
+
+-- Run the tests
+SELECT * FROM finish();
+
+ROLLBACK;

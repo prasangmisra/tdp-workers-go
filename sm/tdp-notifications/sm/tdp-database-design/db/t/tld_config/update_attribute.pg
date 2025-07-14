@@ -1,0 +1,94 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+-- both opensrs and enom should have default value for secdns_record_count
+SELECT
+    cmp_ok(c.is_default,'=',TRUE,'secdns_record_count is using default value for opensrs')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='opensrs';
+
+SELECT
+    cmp_ok(c.value,'=','[0, 0]','secdns_record_count is using default value for opensrs')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='opensrs';
+
+
+SELECT
+    cmp_ok(c.is_default,'=',TRUE,'secdns_record_count is using default value for enom')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='enom';
+
+SELECT
+    cmp_ok(c.value,'=','[0, 0]','secdns_record_count is using default value for enom')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='enom';
+-------------------------------------------------------------------------------------------------
+
+-- Update the value for opensrs
+UPDATE v_attribute
+    SET value='[2,21)'
+WHERE tld_name='auto' AND key='tld.dns.secdns_record_count' AND tenant_name='opensrs';
+
+
+-- opensrs value for secdns_record_count should be updated to custom value
+SELECT
+    cmp_ok(c.is_default,'=',FALSE,'secdns_record_count is using custom value for opensrs after update')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='opensrs';
+
+SELECT
+    cmp_ok(c.value,'=','[2,21)','secdns_record_count is using custom value for opensrs after update')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='opensrs';
+
+-- enom should have default value for secdns_record_count
+SELECT
+    cmp_ok(c.is_default,'=',TRUE,'secdns_record_count is using default value for enom')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='enom';
+
+SELECT
+    cmp_ok(c.value,'=','[0, 0]','secdns_record_count is using default value for enom')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='enom';
+
+-------------------------------------------------------------------------------------------------
+
+-- Update the value for both opensrs and enom now
+UPDATE v_attribute
+    SET value='[5,11)'
+WHERE tld_name='auto' AND key='tld.dns.secdns_record_count' AND tenant_name='opensrs';
+
+UPDATE v_attribute
+    SET value='[6,10)'
+WHERE tld_name='auto' AND key='tld.dns.secdns_record_count' AND tenant_name='enom';
+
+
+-- both opensrs and enom should use custom value for secdns_record_count
+SELECT
+    cmp_ok(c.is_default,'=',FALSE,'secdns_record_count is using custom value for opensrs after update')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='opensrs';
+
+SELECT
+    cmp_ok(c.value,'=','[5,11)','secdns_record_count is using custom value for opensrs after update')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='opensrs';
+
+-- enom should have default value for secdns_record_count
+SELECT
+    cmp_ok(c.is_default,'=',FALSE,'secdns_record_count is using default value for enom after update')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='enom';
+
+SELECT
+    cmp_ok(c.value,'=','[6,10)','secdns_record_count is using default value for enom after update')
+FROM v_attribute c
+WHERE tld_name='auto' and key='tld.dns.secdns_record_count' and tenant_name='enom';
+
+-------------------------------------------------------------------------------------------------
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

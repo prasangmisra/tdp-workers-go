@@ -1,0 +1,127 @@
+-- turn this into a functioning unit test
+BEGIN;
+
+SELECT * FROM no_plan();
+
+SELECT has_table('order_item_create_hosting');
+SELECT has_table('order_item_create_hosting_client');
+SELECT has_table('order_hosting_certificate');
+SELECT has_table('create_hosting_plan');
+
+-- create an order to use
+WITH o AS (
+    INSERT INTO "order"
+        (tenant_customer_id, type_id)
+        VALUES ((SELECT id FROM tenant_customer where true limit 1), (SELECT id FROM v_order_type WHERE product_name='hosting' AND name='create'))
+        RETURNING *
+) SELECT * INTO TEMP _order FROM o;
+
+-- TEST 5
+-- check that the order ID exists
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order" WHERE id = (SELECT id FROM _order)),'is TRUE!');
+
+-- TEST 6
+-- check the order status should be 'created'
+SELECT is(
+    (SELECT name FROM order_status WHERE id=(SELECT status_id FROM _order)),
+    'created',
+    'order status is ''created'' by default'
+);
+
+
+-- add and check for the order items
+CREATE SEQUENCE IF NOT EXISTS hosting_counter;
+WITH oihc AS (
+    INSERT INTO order_item_create_hosting_client(
+            tenant_customer_id,
+            email
+        ) VALUES(
+            (SELECT id FROM v_tenant_customer LIMIT 1),
+            FORMAT('test%s@email.com', NEXTVAL('hosting_counter'))
+        ) RETURNING *
+)
+SELECT * into TEMP _order_item_create_hosting_client FROM oihc;
+
+-- TEST 7
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_item_create_hosting_client" WHERE id = (SELECT id FROM _order_item_create_hosting_client)),'is TRUE!');
+
+
+WITH oih AS(
+    INSERT INTO order_item_create_hosting(
+        order_id,
+        tenant_customer_id,
+        client_id,
+        domain_name,
+        product_id,
+        region_id
+    ) VALUES(
+        (SELECT id FROM _order),
+        (SELECT tenant_customer_id FROM _order),
+        (SELECT id FROM _order_item_create_hosting_client),
+        FORMAT('test%s.link', NEXTVAL('hosting_counter')),
+        tc_id_from_name('hosting_product','Wordpress'),
+        tc_id_from_name('hosting_region', 'US East (N. Virginia)')
+    ) RETURNING *
+)
+SELECT * INTO TEMP _oi_create_hosting FROM oih;
+
+-- TEST 8
+SELECT ok((SELECT LENGTH(id::TEXT) > 0 FROM "order_item_create_hosting" WHERE id = (SELECT id FROM _oi_create_hosting)),'is TRUE!');
+
+-- TEST 9
+-- the order should now be set to processing
+SELECT lives_ok($$
+    UPDATE "order" SET status_id = order_next_status((SELECT id FROM _order),TRUE) WHERE id=(SELECT id FROM _order);
+$$,'move order to next status (created->processing)');
+
+-- TEST 10
+-- order must be in status processing
+SELECT cmp_ok(
+    (SELECT s.name FROM "order" o JOIN order_status s ON s.id=o.status_id WHERE o.id = (SELECT id FROM _order)),
+    '=',
+    'processing'
+);
+
+-- after this point, try inserting another create hosting order for the same domain
+with no as (
+insert into "order"(
+	tenant_customer_id,
+	type_id 
+) values (
+	(select id from tenant_customer order by created_date limit 1),
+	(select id from order_type where name = 'create' and product_id = (select id from product where name = 'hosting'))
+) returning *
+) select * into temp _no from no;
+
+with hc as (
+	insert into order_item_create_hosting_client (
+		tenant_customer_id,
+		email 
+	) values (
+		(select id from tenant_customer order by created_date limit 1),
+		'test@test.com'
+	) returning *
+) select * into temp _hc from hc;
+
+select throws_ok($$
+insert into order_item_create_hosting (
+	order_id,
+	domain_name,
+	product_id,
+	region_id,
+	client_id,
+	tenant_customer_id
+) values (
+	(select id from _no),
+	(select domain_name from order_item_create_hosting WHERE status_id = (select id from order_item_status where name = 'pending') or status_id = (select id from order_item_status where name = 'ready') LIMIT 1),
+	(select id from hosting_product limit 1),
+	(select id from hosting_region limit 1),
+	(select id from _hc),
+	(select id from tenant_customer order by created_date limit 1)
+)
+$$, '23505');
+
+select * from finish(true);
+
+--COMMIT;
+ROLLBACK;

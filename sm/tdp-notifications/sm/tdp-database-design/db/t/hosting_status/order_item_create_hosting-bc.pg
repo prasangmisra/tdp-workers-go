@@ -1,0 +1,432 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+CREATE SEQUENCE IF NOT EXISTS hosting_counter;
+CREATE OR REPLACE FUNCTION new_order_item_create_hosting(_hosting_status_id UUID, _status TEXT) RETURNS order_item_create_hosting AS $$
+DECLARE
+    _oi_create_hosting      order_item_create_hosting;
+    _tenant_customer_id     UUID;
+    _order_id               UUID;
+    _client_id      UUID;
+BEGIN
+
+    SELECT id FROM v_tenant_customer LIMIT 1 into _tenant_customer_id;
+
+    INSERT INTO "order" (tenant_customer_id, type_id)
+    VALUES (
+        _tenant_customer_id,
+        (SELECT id FROM v_order_type WHERE product_name='hosting' AND name='create')
+    ) RETURNING id INTO _order_id;
+
+    INSERT INTO order_item_create_hosting_client(tenant_customer_id, email)
+    VALUES(
+        _tenant_customer_id,
+        FORMAT('test%s@email.com', NEXTVAL('hosting_counter'))
+    ) RETURNING id INTO _client_id;
+
+    INSERT INTO order_item_create_hosting(
+            order_id,
+            tenant_customer_id,
+            client_id,
+            domain_name,
+            product_id,
+            region_id,
+            hosting_status_id,
+            status
+        ) VALUES(
+            _order_id,
+            _tenant_customer_id,
+            _client_id,
+            FORMAT('test%s.link', NEXTVAL('hosting_counter')),
+            tc_id_from_name('hosting_product','Wordpress'),
+            tc_id_from_name('hosting_region', 'US East (N. Virginia)'),
+            _hosting_status_id,
+            _status
+        ) RETURNING * INTO _oi_create_hosting;
+    RETURN(_oi_create_hosting);
+
+END;
+$$ LANGUAGE plpgsql;
+
+------------------- order_item_create_hosting backward compatibility of status and hosting_status_id ------------------------------
+
+-- INSERT - only status provided
+SELECT * INTO TEMP _h_status FROM new_order_item_create_hosting(NULL, 'Cancelled');
+
+-- TEST 1
+-- order_item_create_hosting status must be 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 2
+-- hosting status must be 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 3
+-- order_item_create_hosting hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- TEST 4
+-- hosting hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- UPDATE - only status provided
+UPDATE order_item_create_hosting SET status = 'Requested' WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 5
+-- order_item_create_hosting status must be 'Requested'
+SELECT cmp_ok(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Requested'
+);
+
+-- TEST 6
+-- hosting status must remain 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 7
+-- order_item_create_hosting hosting_status_id must be an id of 'Requested' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Requested')
+);
+
+-- TEST 8
+-- hosting hosting_status_id must remain as an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- both status and hosting_status_id provided
+UPDATE order_item_create_hosting SET status = 'Failed', hosting_status_id =  tc_id_from_name('hosting_status', 'Failed') WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 9
+-- order_item_create_hosting status must be 'Failed'
+SELECT cmp_ok(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Failed'
+);
+
+-- TEST 10
+-- hosting status must remain 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 11
+-- order_item_create_hosting hosting_status_id must be an id of 'Failed' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Failed')
+);
+
+-- TEST 12
+-- hosting hosting_status_id must remain as an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- UPDATE - status set to NULL
+UPDATE order_item_create_hosting SET status = NULL WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 13
+-- order_item_create_hosting status must be NULL
+SELECT is(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- TEST 14
+-- order_item_create_hosting hosting_status_id must be NULL
+SELECT is(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- TEST 15
+-- hosting status must remain 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 16
+-- hosting hosting_status_id must remain as an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- UPDATE - only hosting_status_id provided
+UPDATE order_item_create_hosting SET hosting_status_id = tc_id_from_name('hosting_status', 'Requested') WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 17
+-- order_item_create_hosting status must be 'Requested'
+SELECT cmp_ok(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Requested'
+);
+
+-- TEST 18
+-- order_item_create_hosting hosting_status_id must be an id of 'Requested' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Requested')
+);
+
+-- TEST 19
+-- hosting status must remain 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 20
+-- hosting hosting_status_id must remain as an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- UPDATE - hosting_status_id set to NULL
+UPDATE order_item_create_hosting SET hosting_status_id = NULL WHERE id = (SELECT id FROM _h_status);
+
+-- TEST 21
+-- order_item_create_hosting status must be NULL
+SELECT is(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- TEST 22
+-- order_item_create_hosting hosting_status_id must be NULL
+SELECT is(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status)),
+    NULL
+);
+
+-- TEST 23
+-- hosting status must remain 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 24
+-- hosting hosting_status_id must remain as an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_status)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- INSERT - only hosting_status_id provided
+SELECT * INTO TEMP _h_status_id FROM new_order_item_create_hosting(tc_id_from_name('hosting_status', 'Cancelled'), NULL);
+
+-- TEST 25
+-- order_item_create_hosting status must be 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status_id)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 26
+-- order_item_create_hosting hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_status_id)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- TEST 27
+-- hosting status must be 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_status_id)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 28
+-- hosting hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_status_id)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- INSERT - both status and hosting_status_id provided
+SELECT * INTO TEMP _h_both FROM new_order_item_create_hosting(tc_id_from_name('hosting_status', 'Cancelled'), 'Failed');
+
+-- TEST 29
+-- order_item_create_hosting status must be 'Failed'
+SELECT cmp_ok(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_both)),
+    '=',
+    'Failed'
+);
+
+-- TEST 30
+-- order_item_create_hosting hosting_status_id must be an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_both)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- TEST 31
+-- hosting status must remain 'Cancelled'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_both)),
+    '=',
+    'Cancelled'
+);
+
+-- TEST 32
+-- hosting hosting_status_id must remain as an id of 'Cancelled' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_both)),
+    '=',
+    tc_id_from_name('hosting_status', 'Cancelled')
+);
+
+-- INSERT - both status and hosting_status_id are NULL
+SELECT * INTO TEMP _h_null FROM new_order_item_create_hosting(NULL, NULL);
+
+-- TEST 33
+-- order_item_create_hosting status must be NULL
+SELECT is(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+-- TEST 34
+-- order_item_create_hosting hosting_status_id must be NULL
+SELECT is(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+-- TEST 35
+-- hosting status must remain 'Cancelled'
+SELECT is(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+-- TEST 36
+-- hosting hosting_status_id must remain as an id of 'Cancelled' status
+SELECT is(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+-- UPDATE - only hosting
+UPDATE ONLY hosting SET status = 'Requested' WHERE id = (SELECT id FROM _h_null);
+
+-- TEST 37
+-- hosting status must be 'Requested'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_null)),
+    '=',
+    'Requested'
+);
+
+-- TEST 38
+-- hosting hosting_status_id must be an id of 'Requested' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_null)),
+    '=',
+    tc_id_from_name('hosting_status', 'Requested')
+);
+
+-- TEST 39
+-- order_item_create_hosting status must remain NULL
+SELECT is(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+-- TEST 40
+-- order_item_create_hosting hosting_status_id must remain NULL
+SELECT is(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_null)),
+    NULL
+);
+
+-- UPDATE - hosting without only
+UPDATE hosting SET status = 'Pending DNS' WHERE id = (SELECT id FROM _h_null);
+
+-- TEST 41
+-- hosting status must be 'Pending DNS'
+SELECT cmp_ok(
+    (SELECT status FROM ONLY hosting WHERE id = (SELECT id FROM _h_null)),
+    '=',
+    'Pending DNS'
+);
+
+-- TEST 42
+-- hosting hosting_status_id must be an id of 'Pending DNS' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM ONLY hosting WHERE id = (SELECT id FROM _h_null)),
+    '=',
+    tc_id_from_name('hosting_status', 'Pending DNS')
+);
+
+-- TEST 43
+-- order_item_create_hosting status must be 'Pending DNS'
+SELECT cmp_ok(
+    (SELECT status FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_null)),
+    '=',
+    'Pending DNS'
+);
+
+-- TEST 44
+-- order_item_create_hosting hosting_status_id must be an id of 'Pending DNS' status
+SELECT cmp_ok(
+    (SELECT hosting_status_id FROM order_item_create_hosting WHERE id = (SELECT id FROM _h_null)),
+    '=',
+    tc_id_from_name('hosting_status', 'Pending DNS')
+);
+
+select * from finish(true);
+
+ROLLBACK;
+

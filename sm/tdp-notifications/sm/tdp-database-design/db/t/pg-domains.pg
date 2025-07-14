@@ -1,0 +1,67 @@
+BEGIN;
+
+SELECT * FROM no_plan();
+
+SELECT has_domain('fqdn');
+SELECT has_domain('mbox');
+
+PREPARE mbox_stmt AS
+SELECT $1::Mbox;
+
+PREPARE lhs_stmt AS
+SELECT $1::Mbox;
+
+PREPARE fqdn_stmt AS
+SELECT $1::Fqdn;
+
+SELECT lives_ok('EXECUTE mbox_stmt(''f@d.example'')', 
+'simple mbox f@d.example');
+
+SELECT lives_ok('EXECUTE mbox_stmt(''f.o@d.example'')',
+'simple dotted mbox f.o@d.example');
+
+SELECT lives_ok('EXECUTE mbox_stmt(''fo@d.example'')',
+'simple mbox fo@d.example');
+
+SELECT lives_ok('EXECUTE mbox_stmt(''1234567890123456789012345678901234567890123456789012345678901234@d.example'')',
+'very long but valid mbox');
+
+SELECT lives_ok('EXECUTE mbox_stmt(''f+o@d.example'')',
+'plus sign mbox');
+
+SELECT throws_matching('EXECUTE mbox_stmt(''12345678901234567890123456789012345678901234567890123456789012345@d.example'')',
+'violates check constraint "mbox_check"',
+'too long to be a valid mbox');
+
+SELECT throws_matching('EXECUTE mbox_stmt(''f@.example'')',
+'violates check constraint "mbox_check"',
+'mbox with invalid rhs .example');
+
+SELECT throws_matching('EXECUTE mbox_stmt(''f@d.'')',
+'violates check constraint "mbox_check"',
+'mbox with invalid rhs of single dot');
+
+SELECT throws_matching('EXECUTE mbox_stmt(''f@link'')',
+'violates check constraint "mbox_check"',
+'mbox with invalid rhs, single label');
+
+SELECT lives_ok('EXECUTE mbox_stmt(''f.@d.example'')',
+'mbox with lhs ending in a dot');
+
+SELECT lives_ok('EXECUTE mbox_stmt(''f..o@d.example'')',
+'mbox with two consecutive dots');
+
+SELECT lives_ok('EXECUTE mbox_stmt(''.a@d.example'')',
+'mbox with lhs starting with a dot');
+
+SELECT throws_matching('EXECUTE mbox_stmt(''a@d.example.'')',
+'violates check constraint "mbox_check"',
+'mbox with rhs ending with a dot');
+
+SELECT throws_matching('EXECUTE mbox_stmt(''a@d.example@b.example'')',
+'violates check constraint "mbox_check"',
+'mbox with multiple rhs');
+
+SELECT * FROM finish(true);
+
+ROLLBACK;

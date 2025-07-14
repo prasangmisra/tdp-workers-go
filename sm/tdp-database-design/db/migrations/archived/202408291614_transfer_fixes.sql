@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS provision_domain_transfer_away DROP CONSTRAINT IF EXISTS provision_domain_transfer_away_domain_id_fkey;
